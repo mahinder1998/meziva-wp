@@ -1,13 +1,68 @@
 /**
-Theme Name: Astra Child
+Theme Name: Astra Child - STAGING
 Author: Brainstorm Force
 Author URI: http://wpastra.com/about/
 Description: Astra is the fastest, fully customizable & beautiful theme suitable for blogs, personal portfolios and business websites. It is very lightweight (less than 50KB on frontend) and offers unparalleled speed. Built with SEO in mind, Astra comes with schema.org code integrated so search engines will love your site. Astra offers plenty of sidebar options and widget areas giving you a full control for customizations. Furthermore, we have included special features and templates so feel free to choose any of your favorite page builder plugin to create pages flexibly. Some of the other features: # WooCommerce Ready # Responsive # Compatible with major plugins # Translation Ready # Extendible with premium addons # Regularly updated # Designed, Developed, Maintained & Supported by Brainstorm Force. Looking for a perfect base theme? Look no further. Astra is fast, fully customizable and beautiful theme!
 Version: 1.0.0
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: astra-child
+Text Domain: astra-child-staging
 Template: astra
 */  
 
+
+/* Reset menu lists */
+.meziva-mobile-menu,
+.meziva-mobile-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Desktop hover underline animation */
+.meziva-navlink {
+  position: relative;
+  padding: 6px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none !important;
+}
+
+.meziva-navlink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0px;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms ease;
+  background: #9B4A6A;
+  border-radius: 999px;
+}
+
+.meziva-navlink:hover::after {
+  transform: scaleX(1);
+}
+
+/* Desktop: show "+" only if submenu */
+.meziva-desktop-menu > li.menu-item-has-children > a::before {
+  content: "+";
+  font-weight: 600;
+  opacity: 0.8;
+  transform: translateY(-1px);
+  font-size: 14px;
+}
+
+/* Sticky header shrink */
+.meziva-header--shrink .meziva-header-inner {
+  height: 56px !important;
+}
+@media (min-width: 768px) {
+  .meziva-header--shrink .meziva-header-inner {
+    height: 64px !important;
+  }
+}
 

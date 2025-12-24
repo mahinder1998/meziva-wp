@@ -70,8 +70,6 @@ if ( apply_filters( 'astra_header_profile_gmpg_link', true ) ) {
 	astra_content_before();
 	?>
 	<div id="content" class="site-content">
-    <div class="-black text-white p-4 bg-slate-500">
-  Tailwind OK mb
-</div>
+    
 		<div class="ast-container">
 		<?php astra_content_top(); ?>
