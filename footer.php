@@ -1,4 +1,8 @@
 <?php
+if ( ! defined('ABSPATH') ) exit;
+?>
+
+<?php
 $front_id = (int) get_option('page_on_front');
 $footer_text = '© ' . date('Y') . ' Meziva Beauty. All rights reserved.';
 $newsletter_title = 'Get updates & offers';
@@ -7,7 +11,7 @@ if ($front_id && function_exists('get_field')) {
   $footer_text = get_field('meziva_footer_text', $front_id) ?: $footer_text;
   $newsletter_title = get_field('meziva_footer_newsletter_title', $front_id) ?: $newsletter_title;
 }
-?>
+?> 
 
 <footer class="mz-bg-brand-secondary mz-border-t mz-border-black/5">
   <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 mz-py-10">
@@ -66,3 +70,8 @@ if ($front_id && function_exists('get_field')) {
     </div>
   </div>
 </footer>
+
+
+<?php wp_footer(); ?>
+</body>
+</html>
