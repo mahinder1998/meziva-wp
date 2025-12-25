@@ -9,7 +9,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: astra-child-staging
 Template: astra
 */  
-
+html{
+  overflow-x: hidden;
+}
 
 /* Reset menu lists */
 .meziva-mobile-menu,
@@ -17,6 +19,9 @@ Template: astra
   list-style: none;
   margin: 0;
   padding: 0;
+}
+.meziva-mobile-menu li a {
+  color: #000;
 }
 
 /* Desktop hover underline animation */
@@ -28,8 +33,11 @@ Template: astra
   gap: 8px;
   text-decoration: none !important;
 }
+.meziva-navlink:hover, .link-text:hover {
+  color: #9B4A6A;
+}
 
-.meziva-navlink::after {
+/* .meziva-navlink::after {
   content: "";
   position: absolute;
   left: 0;
@@ -45,7 +53,7 @@ Template: astra
 
 .meziva-navlink:hover::after {
   transform: scaleX(1);
-}
+} */
 
 /* Desktop: show "+" only if submenu */
 .meziva-desktop-menu > li.menu-item-has-children > a::before {
