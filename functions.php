@@ -105,10 +105,10 @@ add_action('astra_header_before', function () {
   if (!$text) return;
   ?>
   <div
-    class="mz-w-full mz-text-center mz-text-sm md:mz-text-base mz-font-body"
+    class="mz-w-full mz-text-center mz-text-sm md:mz-text-[14px] mz-font-body"
     style="background: <?php echo esc_attr($bg); ?>; color: <?php echo esc_attr($textColor); ?>;"
   >
-    <div class="mz-max-w-[1240px] mz-mx-auto mz-px-3 mz-py-2 mz-flex mz-items-center mz-justify-center mz-gap-2 mz-flex-wrap">
+    <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 mz-py-2 mz-inline-block mz-items-center mz-justify-center mz-gap-2 mz-flex-wrap">
       <span class="mz-tracking-wide">
         <?php echo esc_html($text); ?>
         <?php if ($code): ?>
@@ -119,7 +119,7 @@ add_action('astra_header_before', function () {
       <?php if (!empty($linkUrl)): ?>
         <a
           href="<?php echo esc_url($linkUrl); ?>"
-          class="mz-font-semibold mz-underline mz-underline-offset-4 hover:mz-opacity-90 mz-transition"
+          class="mz-font-semibold  mz-underline-offset-4 hover:mz-opacity-90 mz-transition"
         >
           <?php echo esc_html($linkText); ?>
         </a>
