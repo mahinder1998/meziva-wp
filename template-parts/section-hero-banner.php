@@ -1,6 +1,3 @@
-
-
-
 <?php
 /**
  * SECTION: Meziva Hero Banner
@@ -10,7 +7,7 @@
 
 if (!function_exists('get_field')) return;
 
-$type = get_field('banner_type') ?: 'option_b'; 
+$type = get_field('banner_type') ?: 'option_b';
 
 /* Helper */
 function mz_img($img) {
@@ -86,9 +83,3 @@ function mz_img($img) {
 <?php endif; ?>
 
 </section>
-
-
-
-
- 
-<h1>ccscscs</h1>
