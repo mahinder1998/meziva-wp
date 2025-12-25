@@ -134,7 +134,7 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
 
 <?php if ( $ann_enabled && ( $ann_text || $ann_code || ($ann_link_text && $ann_link_url) ) ) : ?>
   <div class="mz-w-full mz-text-center mz-text-sm mz-font-medium mz-py-2" style="<?php echo esc_attr($ann_style); ?>">
-    <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 xl:mz-px-0 mz-flex mz-flex-wrap mz-items-center mz-justify-center mz-gap-x-2 mz-gap-y-1 lg:mz-py-[4px]">
+    <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 xl:mz-px-0 mz-flex mz-flex-wrap mz-items-center mz-justify-center mz-gap-x-2 mz-gap-y-1 lg:mz-py-[3px]">
       <?php if ( $ann_text ) : ?><span><?php echo esc_html($ann_text); ?></span><?php endif; ?>
       <?php if ( $ann_code ) : ?><span class="mz-font-semibold"><?php echo esc_html($ann_code); ?></span><?php endif; ?>
       <?php if ( $ann_link_text && $ann_link_url ) : ?>

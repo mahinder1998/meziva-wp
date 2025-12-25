@@ -61,14 +61,14 @@ function mz_img($img) {
       <?php endif; ?>
 
       <!-- Content -->
-      <div class="mz-text-white mz-order-1 mz-text-center xl:mz-text-left xl:mz-order-2">
+      <div class="mz-text-white mz-order-1 mz-text-center md:mz-text-left md:mz-order-2">
         <?php if ($k = get_field('banner_kicker')): ?> 
           <p class="mz-uppercase mz-font-heading   mz-tracking-widest mz-text-sm mz-mb-3"><?= esc_html($k) ?></p>
         <?php endif; ?>
 
         <?php if ($h = get_field('banner_heading')): ?>
-          <h1 class="mz-text-[48px] mz-max-w-[200px] xl:mz-max-w-full mz-mx-auto mz-leading-[45px] md:mz-text-5xl  mz-font-bold mz-mb-6
-          mz-text-white xl:mz-text-[100px] xl:mz-px-0
+          <h1 class="mz-text-[48px] mz-max-w-[200px] md:mz-max-w-full mz-mx-auto mz-leading-[45px] md:mz-text-5xl  mz-font-bold mz-mb-6
+          mz-text-white md:mz-text-[60px] xl:mz-text-[100px] xl:mz-px-0
 
           ">
             <?= esc_html($h) ?>
@@ -77,9 +77,9 @@ function mz_img($img) {
 
         <?php if ($cta = get_field('cta_text')): ?>
           <a href="<?= esc_url(get_field('cta_link')) ?>"
-             class="mz-inline-block mz-bg-primary mz-bg-brand-primary mz-text-white mz-px-5 mz-py-3 mz-rounded-lg hover:mz-bg-opacity-90 mz-transition
-             mz-text-sm mz-font-medium hover:mz-bg-brand-accent hover:mz-text-white
-             xl:mz-min-w-[150px] xl:mz-py-[18px]  xl:mz-text-center xl:mz-text-[15px]
+             class="mz-inline-block mz-bg-primary mz-bg-brand-accent mz-text-white mz-px-5 mz-py-3 mz-rounded-lg hover:mz-bg-opacity-90 mz-transition
+             mz-text-sm mz-font-bold hover:mz-bg-brand-primary hover:mz-text-white
+            md:mz-min-w-[140px] md:mz-py-4 md:mz-text-center xl:mz-min-w-[150px] xl:mz-py-[18px]  xl:mz-text-center xl:mz-text-[15px] xl:mz-rounded-xl
              ">
             <?= esc_html($cta) ?>
           </a>
