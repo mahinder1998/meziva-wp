@@ -48,31 +48,39 @@ function mz_img($img) {
       <?php endif; ?>
     </picture>
 
-    <div class="mz-max-w-[1200px] mz-mx-auto mz-px-4 mz-py-16 md:mz-py-24 mz-grid md:mz-grid-cols-2 mz-gap-10 mz-items-center">
+    <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 mz-py-10 md:mz-py-24 mz-grid md:mz-grid-cols-2 mz-gap-10 mz-items-center
+    xl:mz-px-0
+    ">
 
       <!-- Product -->
       <?php if ($product): ?>
-        <div class="mz-flex mz-justify-center">
+        <div class="mz-flex mz-justify-center mz-order-2">
           <img src="<?= $product ?>" alt="Product"
-               class="mz-max-h-[420px] mz-w-auto">
+               class="mz-max-h-[420px] xl:mz-max-h-[580px] mz-w-auto">
         </div>
       <?php endif; ?>
 
       <!-- Content -->
-      <div class="mz-text-white">
-        <?php if ($k = get_field('banner_kicker')): ?>
-          <p class="mz-uppercase mz-tracking-widest mz-text-sm mz-mb-3"><?= esc_html($k) ?></p>
+      <div class="mz-text-white mz-order-1 mz-text-center xl:mz-text-left xl:mz-order-2">
+        <?php if ($k = get_field('banner_kicker')): ?> 
+          <p class="mz-uppercase mz-font-heading   mz-tracking-widest mz-text-sm mz-mb-3"><?= esc_html($k) ?></p>
         <?php endif; ?>
 
         <?php if ($h = get_field('banner_heading')): ?>
-          <h1 class="mz-text-4xl md:mz-text-5xl mz-font-bold mz-leading-tight mz-mb-6">
+          <h1 class="mz-text-[48px] mz-max-w-[200px] xl:mz-max-w-full mz-mx-auto mz-leading-[45px] md:mz-text-5xl  mz-font-bold mz-mb-6
+          mz-text-white xl:mz-text-[100px] xl:mz-px-0
+
+          ">
             <?= esc_html($h) ?>
           </h1>
         <?php endif; ?>
 
         <?php if ($cta = get_field('cta_text')): ?>
           <a href="<?= esc_url(get_field('cta_link')) ?>"
-             class="mz-inline-block mz-bg-primary mz-text-white mz-px-8 mz-py-3 mz-rounded-lg hover:mz-bg-opacity-90 mz-transition">
+             class="mz-inline-block mz-bg-primary mz-bg-brand-primary mz-text-white mz-px-5 mz-py-3 mz-rounded-lg hover:mz-bg-opacity-90 mz-transition
+             mz-text-sm mz-font-medium hover:mz-bg-brand-accent hover:mz-text-white
+             xl:mz-min-w-[150px] xl:mz-py-[18px]  xl:mz-text-center xl:mz-text-[15px]
+             ">
             <?= esc_html($cta) ?>
           </a>
         <?php endif; ?>

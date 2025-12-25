@@ -1,117 +1,78 @@
-(function () {
-  function ready(fn) {
-    if (document.readyState !== "loading") fn();
-    else document.addEventListener("DOMContentLoaded", fn);
-  }
+(() => {
+  const openBtn = document.querySelector('[data-meziva-menu-open]');
+  const closeBtn = document.querySelector('[data-meziva-menu-close]');
+  const overlay = document.querySelector('[data-meziva-overlay]');
+  const drawer = document.querySelector('[data-meziva-drawer]');
 
-  ready(function () {
-    const header = document.querySelector("[data-meziva-header]");
-    const openBtn = document.querySelector("[data-meziva-menu-open]");
-    const closeBtn = document.querySelector("[data-meziva-menu-close]");
-    const overlay = document.querySelector("[data-meziva-overlay]");
-    const drawer = document.querySelector("[data-meziva-drawer]");
+  const lock = () => document.body.classList.add('overflow-hidden');
+  const unlock = () => document.body.classList.remove('overflow-hidden');
 
-    if (!header) return;
+  const open = () => {
+    if (!drawer || !overlay) return;
+    drawer.classList.remove('mz-translate-x-full');
+    drawer.setAttribute('aria-hidden', 'false');
+    overlay.classList.remove('mz-hidden');
+    lock();
+  };
 
-    function openMenu() {
-      if (!drawer) return;
-      drawer.classList.remove("mz-translate-x-full");
-      overlay && overlay.classList.remove("mz-hidden");
-      drawer.setAttribute("aria-hidden", "false");
-      document.documentElement.classList.add("mz-overflow-hidden");
-    }
+  const close = () => {
+    if (!drawer || !overlay) return;
+    drawer.classList.add('mz-translate-x-full');
+    drawer.setAttribute('aria-hidden', 'true');
+    overlay.classList.add('mz-hidden');
+    unlock();
+  };
 
-    function closeMenu() {
-      if (!drawer) return;
-      drawer.classList.add("mz-translate-x-full");
-      overlay && overlay.classList.add("mz-hidden");
-      drawer.setAttribute("aria-hidden", "true");
-      document.documentElement.classList.remove("mz-overflow-hidden");
-    }
+  if (openBtn) openBtn.addEventListener('click', open);
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  if (overlay) overlay.addEventListener('click', close);
 
-    openBtn && openBtn.addEventListener("click", openMenu);
-    closeBtn && closeBtn.addEventListener("click", closeMenu);
-    overlay && overlay.addEventListener("click", closeMenu);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') close();
+  });
 
-    // Sticky: shadow + shrink (custom class)
-    function onScroll() {
-      const y = window.scrollY || 0;
-      header.classList.toggle("mz-shadow-md", y > 8);
-      header.classList.toggle("meziva-header--shrink", y > 40);
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+  // ✅ Smooth scroll only when SAME page
+  const smoothScrollToHash = (hash) => {
+    const el = document.querySelector(hash);
+    if (!el) return false;
 
-    // Smart anchor same-page smooth scroll
-    document.addEventListener("click", function (e) {
-      const link = e.target.closest('a[href*="#"]');
-      if (!link) return;
+    // small offset for sticky header
+    const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+    return true;
+  };
 
-      const href = link.getAttribute("href");
-      if (!href || href === "#") return;
+  // ✅ If page loads with hash, scroll smoothly (after load)
+  window.addEventListener('load', () => {
+    if (window.location.hash) smoothScrollToHash(window.location.hash);
+  });
 
-      const url = new URL(href, window.location.origin);
-      const samePage =
-        url.pathname.replace(/\/$/, "") === window.location.pathname.replace(/\/$/, "");
+  // ✅ Intercept clicks
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a) return;
 
-      if (!samePage) return;
+    const href = a.getAttribute('href');
+    if (!href || href[0] === '#') return; // ignore pure hash
 
-      const id = url.hash.replace("#", "");
-      if (!id) return;
+    // Only handle links having #something
+    if (!href.includes('#')) return;
 
-      const target = document.getElementById(id);
-      if (!target) return;
+    let url;
+    try { url = new URL(href, window.location.origin); } catch { return; }
 
-      e.preventDefault();
-      closeMenu();
-
-      const offset = header.offsetHeight + 8;
-      const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
-      window.scrollTo({ top, behavior: "smooth" });
-    });
-
-    // Mobile menu accordion (+ only if submenu)
-    if (drawer) {
-      const ul = drawer.querySelector(".meziva-mobile-menu");
-      if (ul) {
-        ul.classList.add("mz-flex", "mz-flex-col");
-
-        const items = ul.querySelectorAll(":scope > li");
-        items.forEach((li) => {
-          li.classList.add("mz-border-b", "mz-border-white/10", "mz-py-3");
-
-          const a = li.querySelector(":scope > a");
-          if (a) a.classList.add("mz-flex", "mz-items-center", "mz-justify-between", "mz-text-white", "mz-text-base");
-
-          const sub = li.querySelector(":scope > ul");
-          if (sub) {
-            sub.classList.add("mz-mt-2", "mz-pl-3", "mz-hidden", "mz-flex", "mz-flex-col", "mz-gap-2");
-
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.className =
-              "mz-ml-3 mz-h-8 mz-w-8 mz-rounded-full mz-flex mz-items-center mz-justify-center hover:mz-bg-white/10 mz-transition";
-            btn.setAttribute("aria-label", "Toggle submenu");
-            btn.innerHTML = `<span class="mz-text-xl mz-leading-none">+</span>`;
-
-            if (a) a.appendChild(btn);
-
-            btn.addEventListener("click", function (ev) {
-              ev.preventDefault();
-              ev.stopPropagation();
-              const opening = sub.classList.contains("mz-hidden");
-              sub.classList.toggle("mz-hidden", !opening);
-              btn.innerHTML = opening
-                ? `<span class="mz-text-xl mz-leading-none">−</span>`
-                : `<span class="mz-text-xl mz-leading-none">+</span>`;
-            });
-
-            sub.querySelectorAll("a").forEach((sa) => {
-              sa.classList.add("mz-text-white/80", "hover:mz-text-white", "mz-transition", "mz-text-[15px]");
-            });
-          }
-        });
+    // Same page? smooth scroll + close drawer
+    if (url.pathname === window.location.pathname && url.hash) {
+      const ok = smoothScrollToHash(url.hash);
+      if (ok) {
+        e.preventDefault();
+        close();
       }
+      return;
     }
+
+    // Other page (example: /#ingredients) -> allow default navigation
+    // but close drawer for UX
+    close();
   });
 })();
