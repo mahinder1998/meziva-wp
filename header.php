@@ -3,6 +3,7 @@ if ( ! defined('ABSPATH') ) exit;
 ?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
+
 <head>
   <meta charset="<?php bloginfo('charset'); ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,16 +13,15 @@ if ( ! defined('ABSPATH') ) exit;
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
-
 <?php
 if ( ! defined('ABSPATH') ) exit;
 ?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
+
 <head>
   <meta charset="<?php bloginfo('charset'); ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <?php wp_head(); ?>
 </head>
 
@@ -84,7 +84,7 @@ if (function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart) {
             'theme_location' => 'meziva_primary',
             'container'      => false,
             'fallback_cb'    => '__return_empty_string',
-            'menu_class'     => 'meziva-desktop-menu mz-flex mz-items-center mz-gap-8 mz-font-body mz-text-text-heading mz-text-[15px] mz-font-semibold',
+            'menu_class'     => 'meziva-desktop-menu mz-flex mz-items-center mz-gap-6 mz-text-[15px] mz-font-medium',
             'depth'          => 2,
           ]);
         ?>
@@ -93,7 +93,7 @@ if (function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart) {
       <!-- RIGHT: ICONS -->
       <div class="mz-col-span-6 md:mz-col-span-3 mz-flex mz-items-center mz-justify-end mz-gap-1 md:mz-gap-2">
         <a href="<?php echo esc_url($account_url); ?>"
-           class="mz-hidden md:mz-inline-flex mz-font-body mz-text-[14px] mz-text-text-heading hover:mz-opacity-80 mz-transition mz-px-2">
+           class="link-text mz-hidden md:mz-inline-flex mz-font-body mz-text-[14px] mz-text-text-heading hover:mz-opacity-80 mz-transition mz-px-2">
           Login / Register
         </a>
 
@@ -132,19 +132,17 @@ if (function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart) {
   </div>
 
   <!-- Overlay -->
-  <div data-meziva-overlay class="mz-hidden mz-fixed mz-inset-0 mz-bg-black/60 mz-z-[998]"></div>
+  <div data-meziva-overlay class="mz-hidden mz-fixed mz-inset-0 mz-bg-black/60 mz-z-[998] mz-h-screen"></div>
 
   <!-- Mobile Drawer -->
-  <aside data-meziva-drawer
-    class="mz-fixed mz-top-0 mz-right-0 mz-h-full mz-w-[88%] mz-max-w-[360px] mz-bg-black mz-text-white mz-z-[999]
-           mz-translate-x-full mz-transition-transform mz-duration-300 mz-ease-out"
-    aria-hidden="true"
-  >
+  <aside data-meziva-drawer class="mz-fixed mz-top-0 mz-right-0 mz-h-screen mz-w-[88%] mz-max-w-[360px] mz-bg-white mz-text-text-heading mz-z-[999] mz-translate-x-full mz-transition-transform mz-duration-300 mz-ease-out" aria-hidden="true">
     <div class="mz-h-16 mz-px-5 mz-flex mz-items-center mz-justify-between mz-border-b mz-border-white/10">
       <span class="mz-font-heading mz-text-base mz-tracking-wide">Menu</span>
-      <button type="button" data-meziva-menu-close
-        class="mz-h-10 mz-w-10 mz-rounded-full hover:mz-bg-white/10 mz-transition"
-        aria-label="Close menu">✕</button>
+      <button type="button" data-meziva-menu-close class="mz-h-10 mz-w-10 mz-rounded-full hover:mz-bg-white/10 mz-transition mz-flex mz-items-center mz-justify-center" aria-label="Close menu">
+        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke="#383838" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+        </svg>
+      </button>
     </div>
 
     <div class="mz-px-5 mz-py-4 mz-overflow-y-auto mz-h-[calc(100%-64px)]">
