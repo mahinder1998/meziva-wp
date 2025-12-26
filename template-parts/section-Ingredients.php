@@ -1,0 +1,165 @@
+<?php
+/**
+ * Section: Ingredients / Benefits
+ * ACF FREE (Fixed 4 Features)
+ * Tailwind Prefix: mz-
+ */
+
+$section_bg        = get_field('section_bg');          // Color Picker
+$section_text_color = get_field('section_text_color'); // Color Picker
+
+$heading     = get_field('heading');
+$sub_heading = get_field('sub_heading');
+$right_image = get_field('right_image');
+
+// Features
+$f1_icon  = get_field('feature_1_icon');
+$f1_title = get_field('feature_1_title');
+$f1_desc  = get_field('feature_1_description');
+
+$f2_icon  = get_field('feature_2_icon');
+$f2_title = get_field('feature_2_title');
+$f2_desc  = get_field('feature_2_description');
+
+$f3_icon  = get_field('feature_3_icon');
+$f3_title = get_field('feature_3_title');
+$f3_desc  = get_field('feature_3_description');
+
+$f4_icon  = get_field('feature_4_icon');
+$f4_title = get_field('feature_4_title');
+$f4_desc  = get_field('feature_4_description');
+
+$features = [
+  ['icon' => $f1_icon, 'title' => $f1_title, 'desc' => $f1_desc],
+  ['icon' => $f2_icon, 'title' => $f2_title, 'desc' => $f2_desc],
+  ['icon' => $f3_icon, 'title' => $f3_title, 'desc' => $f3_desc],
+  ['icon' => $f4_icon, 'title' => $f4_title, 'desc' => $f4_desc],
+];
+
+// Fallbacks
+$bg_color   = !empty($section_bg) ? $section_bg : '#2f6f44';
+$text_color = !empty($section_text_color) ? $section_text_color : '#ffffff';
+?>
+
+<section
+  class="mz-w-full mz-relative"
+  style="
+    background-color: <?php echo esc_attr($bg_color); ?>;
+    color: <?php echo esc_attr($text_color); ?>;
+  "
+>
+  <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-[60px] md:mz-py-20 xl:mz-px-0"> 
+
+    <div class="mz-grid mz-grid-cols-1 lg:mz-grid-cols-2 mz-gap-12 lg:mz-gap-20 mz-items-start
+    
+    xl:mz-flex
+    ">
+
+      <!-- LEFT : FEATURES -->
+      <div class="mz-order-2 lg:mz-order-2 lg:mz-col-span-2 xl:mz-order-1 xl:mz-w-[66%]">
+        <div class="mz-grid mz-grid-cols-1 sm:mz-grid-cols-2 mz-gap-10 md:mz-gap-12 xl::mz-gap-12">
+
+          <?php foreach ($features as $item): ?>
+            <?php 
+              $title = trim((string)($item['title'] ?? ''));
+              $desc  = $item['desc'] ?? '';
+              $icon  = trim((string)($item['icon'] ?? ''));
+
+              if ($title === '' && empty($desc) && $icon === '') continue;
+            ?>
+            <div class="mz-text-center mz-grid mz-gap-3 xl:mz-gap-3 md:mz-text-left">
+ 
+              <!-- ICON -->
+              <?php if ($icon !== ''): ?>
+                <div class=" mz-w-[60px] mz-h-[60px] mz-mx-auto md:mz-ml-0">
+                  <?php echo $icon; ?>
+                </div>
+              <?php else: ?>
+                <div class="mz-w-12 mz-h-12 mz-opacity-70 ">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" class="mz-w-full mz-h-full">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M12 3v18m9-9H3" />
+                  </svg>
+                </div>
+              <?php endif; ?>
+
+              <!-- TITLE -->
+              <?php if ($title !== ''): ?>
+                <h3 class="mz-text-2xl mz-font-heading md:mz-text-2xl mz-font-semibold mz-leading-snug xl:mz-pt-3"
+                style="
+                        color: <?php echo esc_attr($text_color); ?>;
+                    "
+                >
+                  <?php echo esc_html($title); ?>
+                </h3>
+              <?php endif; ?>
+
+              <!-- DESCRIPTION -->
+              <?php if (!empty($desc)): ?>
+                <div class="mz-text-base md:mz-text-[15px] xl:mz-text-[16px] mz-leading-relaxed mz-font-medium mz-px-4 md:mz-px-0">
+                  <?php echo wp_kses_post($desc); ?>
+                </div>
+              <?php endif; ?>
+
+            </div>
+          <?php endforeach; ?>
+
+        </div>
+      </div>
+
+      <!-- RIGHT : CONTENT -->
+       <div class="section-header md:mz-col-span-2 mz-order-1 lg:mz-order-1 md:mz-text-center xl:md:mz-col-span-1 xl:mz-text-left 
+       xl:mz-w-1/3 xl:mz-mt-0
+       ">
+               <div class=" lg:mz-order-2 mz-text-center xl:mz-text-left mz-relative">
+        <?php if (!empty($heading)): ?>
+          <h2 class="mz-text-[36px] xl:mz-text-[50px] mz-leading-[1.05] mz-font-extrabold mz-tracking-tight
+                mz-mb-8 xl:mz-mb-5
+                "
+                 style="
+    color: <?php echo esc_attr($text_color); ?>;"
+                
+                >
+                        <?php
+                echo wp_kses(
+                $heading,
+                [
+                    'br' => []
+                ]
+                );
+                ?>
+
+          </h2>
+        <?php endif; ?>
+
+        <?php if (!empty($sub_heading)): ?>
+          <p class="mz-mt-4 mz-text-[18px] md:mz-text-[18px] mz-font-semibold mz-text-text-heading"
+          style="
+    color: <?php echo esc_attr($text_color); ?>;"
+          >
+            <?php echo esc_html($sub_heading); ?>
+          </p>
+        <?php endif; ?>
+
+        <?php if (!empty($right_image) && is_array($right_image)): ?>
+          <div class="mz-relative mz-mt-4 mz-w-full mz-max-w-[420px] lg:mz-max-w-[460px]
+          md:mz-hidden xl:mz-block mz-mx-auto xl:mz-absolute  xl:mz-top-[180px]
+          "> 
+            <img
+              src="<?php echo esc_url($right_image['url']); ?>"
+              alt="<?php echo esc_attr($right_image['alt'] ?? ''); ?>"
+              class="mz-w-full mz-h-auto mz-rounded-xl mz-shadow-lg"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        <?php endif; ?>
+      </div>
+
+            </div>
+      
+
+    </div>
+  </div>
+</section>
