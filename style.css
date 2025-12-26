@@ -68,9 +68,26 @@ html{
 .meziva-header--shrink .meziva-header-inner {
   height: 56px !important;
 }
+
+#ast-scroll-top {
+  background: #F6EFEA;
+  border-radius: 100%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-content: center;
+}
+#ast-scroll-top .ast-icon.icon-arrow svg {
+  fill: #000;
+  left: 12px;
+}
+
+
 @media (min-width: 768px) {
   .meziva-header--shrink .meziva-header-inner {
     height: 64px !important;
   }
-}
-
+  #ast-scroll-top .ast-icon.icon-arrow svg {
+    left: 7px;
+  }
+}  

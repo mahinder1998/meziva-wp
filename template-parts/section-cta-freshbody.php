@@ -68,7 +68,7 @@ $img_alt = !empty($img['alt']) ? $img['alt'] : 'Product';
 
 
 
-          <div class="mz-mt-8">
+          <div class="mz-mt-8 mz-text-center xl:mz-text-left">
             <a   href="<?php echo esc_url($btn_link); ?>" class="
             mz-inline-block mz-bg-primary mz-bg-brand-accent mz-text-white mz-px-5 mz-py-3 mz-rounded-lg hover:mz-bg-opacity-90 mz-transition
                 mz-text-sm mz-font-bold hover:mz-bg-brand-primary hover:mz-text-white
@@ -81,7 +81,7 @@ start
 
           </div>
 
-          <div class="mz-mt-10">
+          <div class="mz-mt-10 mz-text-center xl:mz-text-left">
             <div class="mz-text-[14px] mz-opacity-70" style="color: <?php echo esc_attr($t_color); ?>;">
               <?php echo esc_html($call_label); ?>
             </div>
@@ -91,7 +91,7 @@ start
               <?php echo esc_html($phone); ?>
             </div>
 
-            <div class="mz-mt-8 mz-text-[13px] mz-opacity-60" style="color: <?php echo esc_attr($t_color); ?>;">
+            <div class="mz-mt-4 mz-text-[13px] mz-opacity-60" style="color: <?php echo esc_attr($t_color); ?>;">
               <?php echo esc_html($note); ?>
             </div>
           </div>  

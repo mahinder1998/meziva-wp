@@ -168,6 +168,17 @@ function mz_success_stories_assets() {
 add_action('wp_enqueue_scripts', 'mz_success_stories_assets');
 
 
+if (function_exists('acf_add_options_page')) {
+  acf_add_options_page([
+    'page_title' => 'Footer Settings',
+    'menu_title' => 'Footer Settings',
+    'menu_slug'  => 'footer-settings',
+    'capability' => 'manage_options',
+    'redirect'   => false,
+  ]);
+}
+
+
 /**
  * Custom footer include
  */
