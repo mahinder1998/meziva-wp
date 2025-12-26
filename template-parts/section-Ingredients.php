@@ -97,7 +97,7 @@ $text_color = !empty($section_text_color) ? $section_text_color : '#ffffff';
 
               <!-- DESCRIPTION -->
               <?php if (!empty($desc)): ?>
-                <div class="mz-text-base md:mz-text-[15px] xl:mz-text-[16px] mz-leading-relaxed mz-font-medium mz-px-4 md:mz-px-0">
+                <div class="mz-text-base md:mz-text-[15px] xl:mz-text-[16px] mz-leading-relaxed mz-px-4 md:mz-px-0">
                   <?php echo wp_kses_post($desc); ?>
                 </div>
               <?php endif; ?>
