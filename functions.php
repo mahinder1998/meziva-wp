@@ -140,6 +140,35 @@ add_action('astra_header_before', function () {
 }, 2);
 
 /**
+ * Customer Reviews include
+ */
+function mz_success_stories_assets() {
+
+  wp_enqueue_style(
+    'keen-slider',
+    'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css'
+  );
+
+  wp_enqueue_script(
+    'keen-slider',
+    'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js',
+    [],
+    null,
+    true
+  );
+
+  wp_enqueue_script(
+    'mz-success-stories',
+    get_stylesheet_directory_uri() . '/assets/js/success-stories.js',
+    ['keen-slider'],
+    null,
+    true
+  );
+}
+add_action('wp_enqueue_scripts', 'mz_success_stories_assets');
+
+
+/**
  * Custom footer include
  */
 add_action('astra_footer_before', function () {

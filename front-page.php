@@ -6,6 +6,8 @@ get_template_part('template-parts/section-hero-banner');
 get_template_part('template-parts/section-about-product');
 get_template_part('template-parts/section-Ingredients');
 get_template_part('template-parts/section-how-it-works');
+get_template_part('template-parts/section-success-stories');
+
 
 if ( have_posts() ) {
   while ( have_posts() ) {
