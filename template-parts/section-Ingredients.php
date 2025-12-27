@@ -48,7 +48,7 @@ $text_color = !empty($section_text_color) ? $section_text_color : '#ffffff';
     color: <?php echo esc_attr($text_color); ?>;
   "
 >
-  <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-[60px] md:mz-py-20 xl:mz-px-0"> 
+  <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-[60px] md:mz-py-20 xl:mz-px-0"> 
 
     <div class="mz-grid mz-grid-cols-1 lg:mz-grid-cols-2 mz-gap-12 lg:mz-gap-20 mz-items-start
     

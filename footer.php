@@ -64,7 +64,7 @@ function mz_footer_link($item) {
   class="mz-w-full mz-border-t mz-border-black/5"
   style="background-color: <?php echo esc_attr($bg); ?>; color: <?php echo esc_attr($text_color); ?>;"
 >
-  <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-12 md:mz-py-14 xl:mz-px-0">
+  <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-12 md:mz-py-14 xl:mz-px-0">
 
     <!-- Layout: mobile stacked / desktop 4 columns -->
     <div class="mz-grid mz-grid-cols-1 md:mz-grid-cols-12 mz-gap-10 md:mz-gap-8 mz-items-start">

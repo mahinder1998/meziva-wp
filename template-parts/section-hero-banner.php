@@ -48,7 +48,7 @@ function mz_img($img) {
       <?php endif; ?>
     </picture>
 
-    <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 mz-py-10 md:mz-py-24 mz-grid md:mz-grid-cols-2 mz-gap-10 mz-items-center
+    <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 mz-py-10 md:mz-py-24 mz-grid md:mz-grid-cols-2 mz-gap-10 mz-items-center
     xl:mz-px-0
     ">
 

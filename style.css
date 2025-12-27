@@ -10,7 +10,7 @@ Text Domain: astra-child-staging
 Template: astra
 */  
 html{
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
 /* Reset menu lists */
@@ -37,23 +37,6 @@ html{
   color: #9B4A6A;
 }
 
-/* .meziva-navlink::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0px;
-  height: 2px;
-  width: 100%;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 220ms ease;
-  background: #9B4A6A;
-  border-radius: 999px;
-}
-
-.meziva-navlink:hover::after {
-  transform: scaleX(1);
-} */
 
 /* Desktop: show "+" only if submenu */
 .meziva-desktop-menu > li.menu-item-has-children > a::before {
@@ -83,6 +66,76 @@ html{
 }
 
 
+/* ===============================
+   PDP Gallery Fix (flex-viewport inline width issue)
+================================ */
+.single-product .woocommerce-product-gallery,
+.single-product .woocommerce-product-gallery__wrapper,
+.single-product .woocommerce-product-gallery__image,
+.single-product .woocommerce-product-gallery .flex-viewport {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.single-product .woocommerce-product-gallery .flex-viewport {
+  inline-size: 100% !important;
+  overflow: hidden !important;
+}
+
+.single-product .woocommerce-product-gallery .slides,
+.single-product .woocommerce-product-gallery .slides li {
+  width: 100% !important;
+}
+
+.single-product .woocommerce-product-gallery img,
+.single-product .woocommerce-product-gallery img.wp-post-image {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  display: block;
+  object-fit: contain;
+}
+
+/* Nice height feel (optional) */
+.single-product .woocommerce-product-gallery__image img {
+  max-height: 520px;
+}
+@media (max-width: 767px) {
+  .single-product .woocommerce-product-gallery__image img {
+    max-height: 420px;
+  }
+}
+
+/* Accordion smooth */
+[data-mz-acc-panel]{
+  overflow: hidden;
+  transition: height 300ms ease;
+}
+
+/* Better header look */
+[data-mz-acc-trigger]{
+  background: transparent;
+}
+
+/* open item bg highlight like premium pdp */
+.mz-acc-open > [data-mz-acc-trigger]{
+  background: #0b5ea8; /* same blue vibe */
+  color: #fff;
+}
+.mz-acc-open > [data-mz-acc-trigger] span{
+  color: #fff;
+}
+.mz-acc-open > [data-mz-acc-trigger] [data-mz-acc-icon]{
+  color: #111;
+}
+
+/* Panel padding area */
+.mz-acc-open [data-mz-acc-panel]{
+  background: #fff;
+}
+
+
+
 @media (min-width: 768px) {
   .meziva-header--shrink .meziva-header-inner {
     height: 64px !important;
@@ -90,4 +143,10 @@ html{
   #ast-scroll-top .ast-icon.icon-arrow svg {
     left: 7px;
   }
+   .woocommerce header img, 
+     .woocommerce-page header img {
+    height: 3rem;
+  }
+
+  
 }  

@@ -3,6 +3,7 @@ module.exports = {
   prefix: "mz-",
   content: [
     "./**/*.php",
+    './woocommerce/**/*.php',
     "./src/**/*.{js,css}",
   ],
   theme: {

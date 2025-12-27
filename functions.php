@@ -3,6 +3,8 @@
  * Astra Child Theme functions and definitions
  */
 
+defined('ABSPATH') || exit;
+
 define('CHILD_THEME_ASTRA_CHILD_VERSION', '1.0.0');
 
 /**
@@ -119,7 +121,7 @@ add_action('astra_header_before', function () {
       <?php if (!empty($linkUrl)): ?>
         <a
           href="<?php echo esc_url($linkUrl); ?>"
-          class="mz-font-semibold  mz-underline-offset-4 hover:mz-opacity-90 mz-transition"
+          class="mz-font-semibold mz-underline-offset-4 hover:mz-opacity-90 mz-transition"
         >
           <?php echo esc_html($linkText); ?>
         </a>
@@ -140,10 +142,9 @@ add_action('astra_header_before', function () {
 }, 2);
 
 /**
- * Customer Reviews include
+ * Customer Reviews include (Keen slider - your existing)
  */
 function mz_success_stories_assets() {
-
   wp_enqueue_style(
     'keen-slider',
     'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css'
@@ -167,7 +168,6 @@ function mz_success_stories_assets() {
 }
 add_action('wp_enqueue_scripts', 'mz_success_stories_assets');
 
-
 if (function_exists('acf_add_options_page')) {
   acf_add_options_page([
     'page_title' => 'Footer Settings',
@@ -178,6 +178,84 @@ if (function_exists('acf_add_options_page')) {
   ]);
 }
 
+/**
+ * WooCommerce PDP setup: we render summary in our template
+ */
+add_action('after_setup_theme', function () {
+  remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_title', 5);
+  remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10);
+  remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_price', 10);
+  remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
+  remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30);
+  remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40);
+
+  // We'll not use default tabs
+  remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10);
+
+  // We will call related manually in template
+  remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20);
+}, 20);
+
+
+add_action('wp_enqueue_scripts', function () {
+  if (!function_exists('is_product') || !is_product()) return;
+
+  // Fancybox v5
+  wp_enqueue_style('mz-fancybox', 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css', [], null);
+  wp_enqueue_script('mz-fancybox', 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js', [], null, true);
+
+  // Keen slider (thumbs)
+  wp_enqueue_style('mz-keen', 'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css', [], null);
+  wp_enqueue_script('mz-keen', 'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js', [], null, true);
+
+  // Our gallery js
+  $gpath = get_stylesheet_directory() . '/assets/js/mz-gallery.js';
+  if (file_exists($gpath)) {
+    wp_enqueue_script('mz-gallery', get_stylesheet_directory_uri() . '/assets/js/mz-gallery.js', ['mz-keen','mz-fancybox'], filemtime($gpath), true);
+  }
+
+  // Our accordion js (your working one)
+  $apath = get_stylesheet_directory() . '/assets/js/mz-pdp.js';
+  if (file_exists($apath)) {
+    wp_enqueue_script('mz-pdp', get_stylesheet_directory_uri() . '/assets/js/mz-pdp.js', [], filemtime($apath), true);
+  }
+}, 50);
+  
+
+/**
+ * Helper: Parse "Label: Value" lines from a textarea
+ */
+function mz_parse_label_value_lines($text) {
+  $out = [];
+  if (!$text) return $out;
+
+  $lines = preg_split("/\r\n|\n|\r/", trim((string)$text));
+  foreach ($lines as $line) {
+    $line = trim($line);
+    if ($line === '') continue;
+
+    $parts = explode(':', $line, 2);
+    if (count($parts) === 2) {
+      $label = trim($parts[0]);
+      $value = trim($parts[1]);
+      if ($label !== '' && $value !== '') {
+        $out[] = ['label' => $label, 'value' => $value];
+      }
+    } else {
+      $out[] = ['label' => '', 'value' => $line];
+    }
+  }
+  return $out;
+}
+
+/**
+ * Safe ACF getter
+ */
+function mz_get_acf($key, $post_id = null) {
+  if (function_exists('get_field')) return get_field($key, $post_id);
+  $post_id = $post_id ?: get_the_ID();
+  return get_post_meta($post_id, $key, true);
+}
 
 /**
  * Custom footer include

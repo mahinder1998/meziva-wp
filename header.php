@@ -4,24 +4,7 @@ if ( ! defined('ABSPATH') ) exit;
 $home     = home_url('/');
 $front_id = (int) get_option('page_on_front');
 
-/**
- * Helper: ACF field get
- * - First try from Home page (front_id)
- * - Then fallback to option (if you ever move fields there)
- */
-function mz_get_acf($key, $front_id, $fallback = '') {
-  if ( ! function_exists('get_field') ) return $fallback;
 
-  // Try from Home page
-  $v = get_field($key, $front_id);
-  if ($v !== null && $v !== '' && $v !== false) return $v;
-
-  // Fallback: options (optional)
-  $v2 = get_field($key, 'option');
-  if ($v2 !== null && $v2 !== '' && $v2 !== false) return $v2;
-
-  return $fallback;
-}
 
 // =========================
 // LOGO (ACF on Home)
@@ -39,7 +22,7 @@ if ( $front_id && function_exists('get_field') ) {
   } elseif ( is_numeric($logo) ) {
     $logo_url = wp_get_attachment_image_url((int)$logo, 'full') ?: '';
   }
-}
+} 
 
 // =========================
 // ANNOUNCEMENT (ACF on Home)
@@ -134,7 +117,7 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
 
 <?php if ( $ann_enabled && ( $ann_text || $ann_code || ($ann_link_text && $ann_link_url) ) ) : ?>
   <div class="mz-w-full mz-text-center mz-text-sm mz-font-medium mz-py-2" style="<?php echo esc_attr($ann_style); ?>">
-    <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 xl:mz-px-0 mz-flex mz-flex-wrap mz-items-center mz-justify-center mz-gap-x-2 mz-gap-y-1 lg:mz-py-[3px]">
+    <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 xl:mz-px-0 mz-flex mz-flex-wrap mz-items-center mz-justify-center mz-gap-x-2 mz-gap-y-1 lg:mz-py-[3px]">
       <?php if ( $ann_text ) : ?><span><?php echo esc_html($ann_text); ?></span><?php endif; ?>
       <?php if ( $ann_code ) : ?><span class="mz-font-semibold"><?php echo esc_html($ann_code); ?></span><?php endif; ?>
       <?php if ( $ann_link_text && $ann_link_url ) : ?>
@@ -150,7 +133,7 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
   data-meziva-header
   class="mz-sticky mz-top-0 mz-z-[999] mz-backdrop-blur mz-border-b mz-border-black/5"
 >
-  <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 xl:mz-px-0">
+  <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 xl:mz-px-0">
     <div class="mz-h-16 md:mz-h-20 mz-grid mz-grid-cols-12 mz-items-center">
 
       <!-- LOGO -->

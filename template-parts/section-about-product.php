@@ -24,7 +24,7 @@ if ( ! $title && ! $subtitle && ! $content_html && ! $img_url ) return;
 ?>
 
 <section class="mz-w-full mz-bg-white">
-  <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 mz-py-10 mz-pb-0 md:mz-py-20  md:mz-pb-0  xl:mz-px-0">
+  <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 mz-py-10 mz-pb-0 md:mz-py-20  md:mz-pb-0  xl:mz-px-0">
 
     <!-- Ref-like layout: desktop 2 columns, mobile stacked + centered text -->
     <div class="mz-grid md:mz-grid-cols-2 mz-text-center md:mz-gap-10 

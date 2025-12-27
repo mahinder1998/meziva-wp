@@ -26,7 +26,7 @@ $img_alt = !empty($img['alt']) ? $img['alt'] : 'Product';
   class="mz-w-full"
   style="background-color: <?php echo esc_attr($bg); ?>;"
 >
-  <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-14 md:mz-py-20">
+  <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-14 md:mz-py-20">
 
     <div class="mz-grid mz-grid-cols-1 md:mz-grid-cols-12 md:mz-gap-10 mz-items-center">
 

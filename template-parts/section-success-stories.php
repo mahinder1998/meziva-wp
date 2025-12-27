@@ -30,7 +30,7 @@ $after  = get_field('ss_after_image');
 <section
   style="background-color: <?php echo esc_attr($bg_color); ?>; color: <?php echo esc_attr($text_color); ?>;"
 >
-  <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 mz-py-10 md:mz-py-20 xl:mz-px-0">
+  <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 mz-py-10 md:mz-py-20 xl:mz-px-0">
 
     <div class="mz-grid mz-grid-cols-1 md:mz-grid-cols-12 mz-gap-10 xl:mz-gap-[100px] ">
 
@@ -45,7 +45,7 @@ $after  = get_field('ss_after_image');
                 </h2>
                     <?php if ($subheading): ?>
                 <p class="mz-mt-4 mz-text-[18px] md:mz-text-[18px] mz-font-semibold mz-text-text-heading">
-                    <?php echo esc_html($subheading); ?>
+                    <?php echo esc_html($subheading); ?> 
                     
                 </p>
                 <?php endif; ?>

@@ -47,7 +47,7 @@ $show_stat   = get_field('show_stat');
 </style>
 
 <section class="mz-w-full">
-  <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 mz-py-10 md:mz-py-20 xl:mz-px-0">
+  <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 mz-py-10 md:mz-py-20 xl:mz-px-0">
   <?php if ($heading): ?>
     <div class="section-header md:mz-col-span-2 mz-mb-8 mz-text-center  xl:md:mz-col-span-1 xl:mz-text-left">
         <h2 class="mz-text-[36px] xl:mz-text-[50px] mz-leading-[1.05] mz-font-extrabold mz-tracking-tight mz-text-brand-accent
