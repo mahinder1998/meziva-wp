@@ -541,6 +541,29 @@ add_action('wp_footer', function () {
   </script>
   <?php
 });
+
+
+/**
+ * checkout page
+ */
+add_filter('body_class', function($classes){
+  if (is_checkout()) $classes[] = 'mz-checkout';
+  return $classes;
+});
+
+add_filter('woocommerce_checkout_fields', function($fields){
+  // optional: field classes for better spacing
+  foreach ($fields as $section_key => $section) {
+    foreach ($section as $key => $field) {
+      $fields[$section_key][$key]['input_class'][] = 'mz-w-full';
+      $fields[$section_key][$key]['class'][] = 'mz-mb-4';
+    }
+  }
+  return $fields;
+});
+
+
+
 /**
  * Custom footer include
  */
