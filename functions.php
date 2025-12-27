@@ -257,6 +257,290 @@ function mz_get_acf($key, $post_id = null) {
   return get_post_meta($post_id, $key, true);
 }
 
+add_action('wp_head', function () {
+  if (!is_cart()) return;
+  echo '<style>button[name="update_cart"]{display:none!important;}</style>';
+});
+
+/**
+ * AJAX: Update cart quantity (no reload)
+ */
+// ===============================
+// 1) Hide Update Cart button
+// ===============================
+add_action('wp_head', function () {
+  if (!is_cart()) return;
+  echo '<style>button[name="update_cart"]{display:none!important;}</style>';
+});
+
+// ===============================
+// 2) Helpers: render totals + notices
+// =============================== 
+function mz_cart_render_totals_html() {
+  ob_start();
+  wc_get_template('cart/cart-totals.php');
+  return ob_get_clean();
+}
+
+function mz_cart_render_notices_html() {
+  ob_start();
+  wc_print_notices();
+  return ob_get_clean();
+}
+
+// ===============================
+// 3) AJAX: Update qty
+// ===============================
+add_action('wp_ajax_mz_update_cart_qty', 'mz_update_cart_qty');
+add_action('wp_ajax_nopriv_mz_update_cart_qty', 'mz_update_cart_qty');
+
+function mz_update_cart_qty() {
+  check_ajax_referer('mz_cart_nonce', 'nonce');
+
+  if (!isset($_POST['cart_item_key'], $_POST['quantity'])) {
+    wp_send_json_error(['message' => 'Missing data']);
+  }
+
+  $cart_item_key = wc_clean(wp_unslash($_POST['cart_item_key']));
+  $qty = max(0, intval($_POST['quantity']));
+
+  if (!WC()->cart) wc_load_cart();
+
+  WC()->cart->set_quantity($cart_item_key, $qty, true);
+  WC()->cart->calculate_totals();
+
+  $cart_item = WC()->cart->get_cart_item($cart_item_key);
+  $line_total_html = '';
+  if ($cart_item && isset($cart_item['data'])) {
+    $line_total_html = WC()->cart->get_product_subtotal($cart_item['data'], $cart_item['quantity']);
+  }
+
+  wp_send_json_success([
+    'totals_html' => mz_cart_render_totals_html(),
+    'notices_html' => mz_cart_render_notices_html(),
+    'line_total_html' => $line_total_html,
+    'cart_count' => WC()->cart->get_cart_contents_count(),
+  ]);
+}
+
+// ===============================
+// 4) AJAX: Apply coupon
+// ===============================
+add_action('wp_ajax_mz_apply_coupon', 'mz_apply_coupon');
+add_action('wp_ajax_nopriv_mz_apply_coupon', 'mz_apply_coupon');
+
+function mz_apply_coupon() {
+  check_ajax_referer('mz_cart_nonce', 'nonce');
+
+  if (!WC()->cart) wc_load_cart();
+
+  $code = isset($_POST['coupon_code']) ? wc_format_coupon_code(wp_unslash($_POST['coupon_code'])) : '';
+  $code = trim($code);
+
+  wc_clear_notices();
+
+  if ($code === '') {
+    wc_add_notice(__('Please enter a coupon code.', 'woocommerce'), 'error');
+    wp_send_json_success([
+      'totals_html' => mz_cart_render_totals_html(),
+      'notices_html' => mz_cart_render_notices_html(),
+    ]);
+  }
+
+  $applied = WC()->cart->apply_coupon($code);
+  WC()->cart->calculate_totals();
+
+  // apply_coupon already adds notices sometimes, but ensure some feedback
+  if (!$applied) {
+    if (!wc_notice_count('error')) {
+      wc_add_notice(__('Coupon could not be applied.', 'woocommerce'), 'error');
+    }
+  } else {
+    if (!wc_notice_count('success')) {
+      wc_add_notice(__('Coupon applied successfully.', 'woocommerce'), 'success');
+    }
+  }
+
+  wp_send_json_success([
+    'totals_html' => mz_cart_render_totals_html(),
+    'notices_html' => mz_cart_render_notices_html(),
+  ]);
+}
+
+// ===============================
+// 5) AJAX: Remove coupon
+// ===============================
+add_action('wp_ajax_mz_remove_coupon', 'mz_remove_coupon');
+add_action('wp_ajax_nopriv_mz_remove_coupon', 'mz_remove_coupon');
+
+function mz_remove_coupon() {
+  check_ajax_referer('mz_cart_nonce', 'nonce');
+
+  if (!WC()->cart) wc_load_cart();
+
+  $code = isset($_POST['coupon_code']) ? wc_format_coupon_code(wp_unslash($_POST['coupon_code'])) : '';
+  $code = trim($code);
+
+  wc_clear_notices();
+
+  if ($code === '') {
+    wc_add_notice(__('Invalid coupon.', 'woocommerce'), 'error');
+  } else {
+    WC()->cart->remove_coupon($code);
+    WC()->cart->calculate_totals();
+    wc_add_notice(__('Coupon removed.', 'woocommerce'), 'success');
+  }
+
+  wp_send_json_success([
+    'totals_html' => mz_cart_render_totals_html(),
+    'notices_html' => mz_cart_render_notices_html(),
+  ]);
+}
+
+// ===============================
+// 6) Cart page JS: qty + coupon apply/remove (AJAX)
+// ===============================
+add_action('wp_footer', function () {
+  if (!is_cart()) return;
+  ?>
+  <script>
+    (function(){
+      const ajaxUrl = "<?php echo esc_js(admin_url('admin-ajax.php')); ?>";
+      const nonce   = "<?php echo esc_js(wp_create_nonce('mz_cart_nonce')); ?>";
+
+      function setLoading(el, loading){
+        if(!el) return;
+        el.style.opacity = loading ? '0.6' : '';
+        el.style.pointerEvents = loading ? 'none' : '';
+      }
+
+      function updateUI(data){
+        if(!data) return;
+
+        // totals
+        const totalsWrap = document.querySelector('#mz-cart-totals');
+        if (totalsWrap && data.totals_html) totalsWrap.innerHTML = data.totals_html;
+
+        // notices
+        const noticesWrap = document.querySelector('#mz-cart-notices');
+        if (noticesWrap && data.notices_html !== undefined) noticesWrap.innerHTML = data.notices_html;
+
+        // cart count (optional)
+        const badge = document.querySelector('[data-mz-cart-count]');
+        if (badge && data.cart_count !== undefined) badge.textContent = data.cart_count;
+      }
+
+      function post(action, payload){
+        const fd = new FormData();
+        fd.append('action', action);
+        fd.append('nonce', nonce);
+        Object.keys(payload || {}).forEach(k => fd.append(k, payload[k]));
+
+        return fetch(ajaxUrl, { method:'POST', body: fd }).then(r => r.json());
+      }
+
+      // ---------------------
+      // Qty AJAX
+      // ---------------------
+      function postQty(cartItemKey, qty, rowEl){
+        setLoading(rowEl, true);
+
+        post('mz_update_cart_qty', { cart_item_key: cartItemKey, quantity: qty })
+          .then(res => {
+            if(!res || !res.success) return;
+
+            updateUI(res.data);
+
+            // line total
+            const lineTotal = rowEl.querySelector('[data-mz-line-total]');
+            if (lineTotal && res.data.line_total_html) lineTotal.innerHTML = res.data.line_total_html;
+          })
+          .finally(() => setLoading(rowEl, false));
+      }
+
+      document.addEventListener('click', function(e){
+        const btn = e.target.closest('[data-mz-qty-btn]');
+        if(!btn) return;
+
+        const row = btn.closest('[data-mz-cart-row]');
+        const input = row.querySelector('input[data-mz-qty-input]');
+        const key = row.getAttribute('data-mz-cart-row');
+
+        let val = parseInt(input.value || '0', 10);
+        if (isNaN(val)) val = 0;
+
+        if(btn.dataset.mzQtyBtn === 'plus') val += 1;
+        if(btn.dataset.mzQtyBtn === 'minus') val = Math.max(0, val - 1);
+
+        input.value = val;
+        postQty(key, val, row);
+      });
+
+      document.addEventListener('change', function(e){
+        const input = e.target.closest('input[data-mz-qty-input]');
+        if(!input) return;
+
+        const row = input.closest('[data-mz-cart-row]');
+        const key = row.getAttribute('data-mz-cart-row');
+
+        let val = parseInt(input.value || '0', 10);
+        if (isNaN(val) || val < 0) val = 0;
+
+        input.value = val;
+        postQty(key, val, row);
+      });
+
+      // ---------------------
+      // Coupon APPLY AJAX
+      // ---------------------
+      document.addEventListener('click', function(e){
+        const btn = e.target.closest('[data-mz-apply-coupon]');
+        if(!btn) return;
+
+        const input = document.querySelector('#mz-coupon-code');
+        const code = input ? input.value.trim() : '';
+
+        setLoading(btn, true);
+
+        post('mz_apply_coupon', { coupon_code: code })
+          .then(res => {
+            if(!res || !res.success) return;
+            updateUI(res.data);
+
+            // clear input on success (optional)
+            // input.value = '';
+          })
+          .finally(() => setLoading(btn, false));
+      });
+
+      // ---------------------
+      // Coupon REMOVE AJAX (from totals remove link)
+      // Woo outputs link like ?remove_coupon=welcome&_wpnonce=...
+      // We'll intercept click and call our AJAX.
+      // ---------------------
+      document.addEventListener('click', function(e){
+        const link = e.target.closest('#mz-cart-totals a.woocommerce-remove-coupon');
+        if(!link) return;
+
+        e.preventDefault();
+
+        const url = new URL(link.href, window.location.origin);
+        const code = url.searchParams.get('remove_coupon');
+
+        setLoading(link, true);
+
+        post('mz_remove_coupon', { coupon_code: code || '' })
+          .then(res => {
+            if(!res || !res.success) return;
+            updateUI(res.data);
+          })
+          .finally(() => setLoading(link, false));
+      });
+
+    })();
+  </script>
+  <?php
+});
 /**
  * Custom footer include
  */
