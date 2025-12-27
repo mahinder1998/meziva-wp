@@ -563,6 +563,16 @@ add_filter('woocommerce_checkout_fields', function($fields){
 });
 
 
+/**
+ * Customers pages
+ */
+add_filter('body_class', function ($classes) {
+  if (is_account_page()) {
+    $classes[] = 'mz-account';
+  }
+  return $classes;
+});
+
 
 /**
  * Custom footer include
