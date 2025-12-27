@@ -13,6 +13,11 @@ html{
   overflow-x: hidden !important;
 }
 
+.logo-cols svg{
+  width: 110px;
+  height: auto;
+}
+
 /* Reset menu lists */
 .meziva-mobile-menu,
 .meziva-mobile-menu ul {
@@ -147,6 +152,10 @@ html{
      .woocommerce-page header img {
     height: 3rem;
   }
+
+  .logo-cols svg{
+  width: 125px;
+}
 
   
 }  
@@ -441,4 +450,37 @@ html{
 /* Logout link */
 .mz-account .woocommerce-MyAccount-navigation .woocommerce-MyAccount-navigation-link--customer-logout a {
   color: #c00;
+}
+
+
+
+
+
+
+
+
+
+/* product page */
+.woocommerce-Price-amount bdi{
+  color: #9B4A6A;
+}
+.woocommerce-product-details__short-description {
+  font-size: 16px;
+}
+/* Hide browser number arrows */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+
+.woocommerce-js div.product form.cart div.quantity {
+  margin: 0;
+  border: none;
+}
+.woocommerce-js div.product form.cart div.quantity  .qty {
+  border: none;
+  user-select: none;
+}
+.woocommerce-js div.product form.cart .button {
+  margin-bottom: 0;
 }

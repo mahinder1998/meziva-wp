@@ -248,6 +248,94 @@ function mz_parse_label_value_lines($text) {
   return $out;
 }
 
+
+
+/**
+ * PDP page
+ */
+add_action('wp_enqueue_scripts', function () {
+  if (is_product()) {
+    wp_enqueue_script('wc-add-to-cart-variation');
+
+    wp_enqueue_script(
+      'mz-variants',
+      get_stylesheet_directory_uri() . '/assets/js/mz-variants.js',
+      ['jquery', 'wc-add-to-cart-variation'],
+      '1.0.2',
+      true
+    );
+
+    wp_enqueue_script(
+      'mz-pdp',
+      get_stylesheet_directory_uri() . '/assets/js/mz-pdp.js',
+      [],
+      '1.0.2',
+      true
+    );
+  }
+}, 20);
+
+
+
+/***
+ * PDP add to cart
+ * 
+ */
+add_action('wp_footer', function () {
+  if (!is_product()) return;
+  ?>
+  <script>
+    (function(){
+      function findQtyInput(scope){
+        return scope.querySelector('input.qty')
+          || scope.querySelector('input[name="quantity"]')
+          || scope.querySelector('input[type="number"]');
+      }
+
+      function triggerAll(input){
+        // native + jQuery triggers for max compatibility (ajax cart plugins)
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+
+        if (window.jQuery) {
+          window.jQuery(input).trigger('input').trigger('change');
+        }
+      }
+
+      document.addEventListener('click', function(e){
+        const btn = e.target.closest('.mz-qty-btn');
+        if(!btn) return;
+
+        const form = btn.closest('form.cart') || btn.closest('.cart');
+        if(!form) return;
+
+        const input = findQtyInput(form);
+        if(!input) return;
+
+        const type = btn.getAttribute('data-type');
+        const step = parseFloat(input.getAttribute('step')) || 1;
+        const min  = input.getAttribute('min') !== null ? parseFloat(input.getAttribute('min')) : 1;
+        const max  = input.getAttribute('max') !== null ? parseFloat(input.getAttribute('max')) : Infinity;
+
+        let val = parseFloat(input.value);
+        if (isNaN(val)) val = min;
+
+        if(type === 'plus') val += step;
+        if(type === 'minus') val -= step;
+
+        if(val < min) val = min;
+        if(val > max) val = max;
+
+        input.value = val;
+        triggerAll(input);
+      });
+    })();
+  </script>
+  <?php
+});
+
+
+
 /**
  * Safe ACF getter
  */
@@ -572,6 +660,7 @@ add_filter('body_class', function ($classes) {
   }
   return $classes;
 });
+
 
 
 /**

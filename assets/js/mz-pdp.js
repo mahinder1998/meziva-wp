@@ -3,51 +3,62 @@
     const triggers = document.querySelectorAll("[data-mz-acc-trigger]");
     if (!triggers.length) return;
 
+    function setPanel(panel, open) {
+      if (!panel) return;
+      if (open) {
+        panel.style.height = panel.scrollHeight + "px";
+        panel.dataset.open = "1";
+      } else {
+        panel.style.height = "0px";
+        panel.dataset.open = "0";
+      }
+    }
+
     triggers.forEach((btn) => {
-      const item = btn.closest("div");
+      const item = btn.closest("[data-mz-acc-item]");
       const panel = item ? item.querySelector("[data-mz-acc-panel]") : null;
       const icon = btn.querySelector("[data-mz-acc-icon]");
       if (!panel) return;
 
-      // initial state based on aria-expanded
+      // initial state
       const isOpen = btn.getAttribute("aria-expanded") === "true";
+      // if panel had auto height from PHP, normalize it
       if (isOpen) {
         panel.style.height = panel.scrollHeight + "px";
         panel.dataset.open = "1";
         if (icon) icon.textContent = "−";
+        item.classList.add("mz-acc-open");
       } else {
         panel.style.height = "0px";
         panel.dataset.open = "0";
         if (icon) icon.textContent = "+";
+        item.classList.remove("mz-acc-open");
       }
 
       btn.addEventListener("click", () => {
         const open = panel.dataset.open === "1";
 
-        // close all others (optional; comment out if multi-open needed)
+        // close others (tabs style)
         triggers.forEach((b) => {
           if (b === btn) return;
-          const it = b.closest("div");
+          const it = b.closest("[data-mz-acc-item]");
           const p = it ? it.querySelector("[data-mz-acc-panel]") : null;
           const ic = b.querySelector("[data-mz-acc-icon]");
           if (!p) return;
           b.setAttribute("aria-expanded", "false");
-          p.dataset.open = "0";
-          p.style.height = "0px";
+          setPanel(p, false);
           if (ic) ic.textContent = "+";
-          it.classList.remove("mz-acc-open");
+          if (it) it.classList.remove("mz-acc-open");
         });
 
         if (open) {
           btn.setAttribute("aria-expanded", "false");
-          panel.dataset.open = "0";
-          panel.style.height = "0px";
+          setPanel(panel, false);
           if (icon) icon.textContent = "+";
           item.classList.remove("mz-acc-open");
         } else {
           btn.setAttribute("aria-expanded", "true");
-          panel.dataset.open = "1";
-          panel.style.height = panel.scrollHeight + "px";
+          setPanel(panel, true);
           if (icon) icon.textContent = "−";
           item.classList.add("mz-acc-open");
         }
@@ -68,4 +79,3 @@
     initAccordion();
   }
 })();
- 
