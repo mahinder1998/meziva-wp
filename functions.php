@@ -671,3 +671,14 @@ add_action('astra_footer_before', function () {
   $file = get_stylesheet_directory() . '/template-parts/meziva-footer.php';
   if (file_exists($file)) include $file;
 }, 1);
+
+
+
+/**
+ * cache ISSUE fix
+ */
+add_action('send_headers', function() {
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+});
