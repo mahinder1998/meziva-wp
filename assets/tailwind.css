@@ -644,8 +644,8 @@ h1, h2, h3, h4, h5, h6 {
   top: 50%;
 }
 
-.mz-top-2 {
-  top: 0.5rem;
+.mz-top-3 {
+  top: 0.75rem;
 }
 
 .mz-top-4 {
@@ -863,10 +863,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-h-\[60px\] {
   height: 60px;
-}
-
-.mz-h-\[6s0px\] {
-  height: 6s0px;
 }
 
 .mz-h-\[86px\] {
@@ -1204,10 +1200,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-rounded-2xl {
   border-radius: 1rem;
-}
-
-.mz-rounded-3xl {
-  border-radius: 1.5rem;
 }
 
 .mz-rounded-\[4px\] {

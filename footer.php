@@ -81,19 +81,17 @@ function mz_footer_link($item) {
               type="email"
               name="email"
               placeholder="<?php echo esc_attr($placeholder); ?>"
-              class="mz-w-full mz-h-[6s0px] mz-rounded-3xl mz-border mz-border-black/10
+              class="mz-w-full mz-h-[60px] mz-rounded-xl mz-border mz-border-black/10
                      mz-bg-white mz-px-4 mz-pr-12 mz-text-[14px] mz-text-black
                      focus:mz-outline-none focus:mz-ring-2 focus:mz-ring-black/10
                      "
-
-                     style="border-radius:100px;" 
             />
             <button
               type="submit"
               class="mz-absolute mz-right-2 mz-top-1/2 -mz-translate-y-1/2
                      mz-w-[36px] mz-h-[36px] mz-rounded-[4px]
                      mz-flex mz-items-center mz-justify-center
-                     hover:mz-opacity-80 mz-transition mz-text-black 
+                     hover:mz-opacity-80 mz-transition mz-text-text-heading mz-border-none hover:mz-bg-transparent
                      "
               aria-label="Subscribe"
             >

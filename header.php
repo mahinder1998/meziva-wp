@@ -211,7 +211,7 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
            mz-bg-white mz-text-text-heading mz-z-[999]
            mz-translate-x-full mz-transition-transform mz-duration-300 mz-ease-out"
     aria-hidden="true">
-    <div class="mz-h-4 mz-px-4 mz-flex mz-items-center mz-absolute mz-top-2 mz-right-1 mz-left-auto mz-justify-between">
+    <div class="mz-h-4 mz-px-4 mz-flex mz-items-center mz-absolute mz-top-3 mz-right-1 mz-left-auto mz-justify-between">
       <button type="button" data-meziva-menu-close
         class="mz-h-8 mz-w-8 mz-rounded-full hover:mz-bg-black/5 mz-transition mz-flex mz-items-center mz-justify-center"
         aria-label="Close menu">

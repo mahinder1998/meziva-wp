@@ -662,7 +662,6 @@ add_filter('body_class', function ($classes) {
 });
 
 
-
 /**
  * Custom footer include
  */
