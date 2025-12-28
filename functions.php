@@ -583,3 +583,9 @@ add_action('astra_footer_before', function () {
   $file = get_stylesheet_directory() . '/template-parts/meziva-footer.php';
   if (file_exists($file)) include $file;
 }, 1);
+
+// About Us 
+
+add_action('acf/init', function () {
+  error_log('ACF Loaded');
+});
