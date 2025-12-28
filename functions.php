@@ -682,3 +682,24 @@ add_action('send_headers', function() {
     header("Pragma: no-cache");
     header("Expires: 0");
 });
+
+
+
+if ( ! defined('ABSPATH') ) exit;
+/**
+ *  Home page ID (Front page)
+ */
+
+
+$home_id = (int) get_option('9'); // mostly your Home page ID
+
+$newsletter_text = get_field('ft_newsletter_text', $home_id) ?: 'Get the latest news, events & more delivered to your inbox.';
+$placeholder     = get_field('ft_newsletter_placeholder', $home_id) ?: 'Email address...';
+
+$bg         = get_field('ft_bg_color', $home_id) ?: '#FFFFFF';
+$text_color = get_field('ft_text_color', $home_id) ?: '#6B7280';
+$social_bg  = get_field('ft_social_bg', $home_id) ?: '#2E2E2E';
+$social_col = get_field('ft_social_color', $home_id) ?: '#FFFFFF';
+
+
+

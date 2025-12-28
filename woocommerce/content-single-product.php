@@ -100,12 +100,14 @@ $short = $product ? $product->get_short_description() : '';
         <!-- Hidden fancybox items (all images) -->
         <div class="mz-hidden">
           <?php foreach ($image_ids as $img_id) :
+            if ((int)$img_id === (int)$first_id) continue; // ✅ skip first (already main)
             $full = wp_get_attachment_image_url($img_id, 'full');
-            $alt = get_post_meta($img_id, '_wp_attachment_image_alt', true);
+            $alt  = get_post_meta($img_id, '_wp_attachment_image_alt', true);
           ?>
             <a href="<?php echo esc_url($full); ?>" data-fancybox="mz-product" data-caption="<?php echo esc_attr($alt); ?>"></a>
           <?php endforeach; ?>
         </div>
+
 
         <!-- Thumbnails slider -->
         <div class="mz-mt-4">

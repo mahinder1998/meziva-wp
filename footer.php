@@ -1,10 +1,22 @@
 <?php if ( ! defined('ABSPATH') ) exit; ?>
 
 <?php
-// If you use ACF Options Page, use: get_field('field_name', 'option')
-// Otherwise remove 'option' and it will read from current page.
+/**
+ * FOOTER (Same Design) - Global ACF values
+ * - If ACF Options Page exists => use 'option'
+ * - Else use Front Page (Home) ID so footer settings apply site-wide
+ */
 
-$ctx = function_exists('acf_add_options_page') ? 'option' : null;
+// Context decide
+if ( function_exists('acf_add_options_page') ) {
+  $ctx = 'option';
+} else {
+  // Use front page ID as global source
+  $ctx = (int) get_option('page_on_front');
+  if ( ! $ctx ) {
+    $ctx = 9; // fallback home page id (change if needed)
+  }
+}
 
 $newsletter_text = get_field('ft_newsletter_text', $ctx) ?: 'Get the latest news, events & more delivered to your inbox.';
 $placeholder     = get_field('ft_newsletter_placeholder', $ctx) ?: 'Email address...';
@@ -96,10 +108,9 @@ function mz_footer_link($item) {
               aria-label="Subscribe"
             >
               <span class="mz-text-[18px]">
-                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4"/>
-                  </svg>
-
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4"/>
+                </svg>
               </span>
             </button>
           </div>
