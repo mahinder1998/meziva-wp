@@ -13,11 +13,12 @@ define('CHILD_THEME_ASTRA_CHILD_VERSION', '1.0.0');
 add_action('wp_enqueue_scripts', function () {
   wp_enqueue_style(
     'astra-child-theme-css',
-    get_stylesheet_directory_uri() . '/style.css',
+    get_stylesheet_uri(),
     ['astra-theme-css'],
-    CHILD_THEME_ASTRA_CHILD_VERSION
+    filemtime(get_stylesheet_directory() . '/style.css')
   );
 }, 15);
+
 
 /**
  * Enqueue Tailwind CSS output
