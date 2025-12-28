@@ -45,10 +45,10 @@ $short = $product ? $product->get_short_description() : '';
   </div>
 
   <!-- Top Grid -->
-  <div class="mz-grid mz-grid-cols-1 lg:mz-grid-cols-2 mz-gap-8 lg:mz-gap-12">
+  <div class="mz-grid mz-grid-cols-1 lg:mz-grid-cols-2 mz-gap-[50px] lg:mz-gap-12">
 
     <!-- LEFT: Custom Gallery -->
-    <div class="mz-bg-white mz-border mz-border-gray-200 mz-rounded-2xl mz-p-4 md:mz-p-5 lg:mz-sticky lg:mz-top-24 mz-h-fit">
+    <div class="mz-bg-white lg:mz-sticky lg:mz-top-24 mz-h-fit">
 
       <?php if (!empty($image_ids)) : ?>
         <?php
@@ -91,7 +91,7 @@ $short = $product ? $product->get_short_description() : '';
 
           <!-- Sale badge (optional) -->
           <?php if ($product->is_on_sale()) : ?>
-            <span class="mz-absolute mz-top-4 mz-left-4 mz-bg-white mz-text-gray-900 mz-text-xs mz-font-semibold mz-px-3 mz-py-1.5 mz-rounded-full mz-shadow">
+            <span class="mz-absolute mz-top-4 mz-left-4 mz-bg-brand-accent mz-text-white mz-text-xs mz-font-semibold mz-px-3 mz-py-1.5 mz-rounded-full mz-shadow">
               Sale!
             </span>
           <?php endif; ?>
@@ -100,12 +100,14 @@ $short = $product ? $product->get_short_description() : '';
         <!-- Hidden fancybox items (all images) -->
         <div class="mz-hidden">
           <?php foreach ($image_ids as $img_id) :
+            if ((int)$img_id === (int)$first_id) continue; // ✅ skip first (already main)
             $full = wp_get_attachment_image_url($img_id, 'full');
-            $alt = get_post_meta($img_id, '_wp_attachment_image_alt', true);
+            $alt  = get_post_meta($img_id, '_wp_attachment_image_alt', true);
           ?>
             <a href="<?php echo esc_url($full); ?>" data-fancybox="mz-product" data-caption="<?php echo esc_attr($alt); ?>"></a>
           <?php endforeach; ?>
         </div>
+
 
         <!-- Thumbnails slider -->
         <div class="mz-mt-4">
@@ -118,14 +120,14 @@ $short = $product ? $product->get_short_description() : '';
             ?>
               <button
                 type="button"
-                class="keen-slider__slide mz-p-2"
+                class="keen-slider__slide"
                 data-mz-thumb
                 data-large="<?php echo esc_url($large); ?>"
                 data-full="<?php echo esc_url($full); ?>"
                 aria-label="Select image <?php echo (int)($i + 1); ?>"
               >
-                <span class="mz-block mz-rounded-xl mz-border mz-border-gray-200 mz-bg-gray-50 mz-overflow-hidden mz-h-20 mz-flex mz-items-center mz-justify-center">
-                  <img src="<?php echo esc_url($thumb); ?>" alt="<?php echo esc_attr($alt); ?>" class="mz-max-h-full mz-max-w-full mz-object-contain" loading="lazy" />
+                <span class="mz-rounded-xl  mz-overflow-hidden mz-h-20 mz-p-1  mz-flex mz-items-center mz-justify-center">
+                  <img src="<?php echo esc_url($thumb); ?>" alt="<?php echo esc_attr($alt); ?>" class="mz-max-h-full mz-rounded-lg mz-max-w-full mz-object-contain" loading="lazy" />
                 </span>
               </button>
             <?php endforeach; ?>
@@ -138,42 +140,33 @@ $short = $product ? $product->get_short_description() : '';
     </div>
 
     <!-- RIGHT: Summary -->
-    <div class="mz-bg-white mz-border mz-border-gray-200 mz-rounded-2xl mz-p-5 md:mz-p-6">
-
+    <div class="mz-text-center lg:mz-text-left xl:mz-ml-12">
       <div class="mz-flex mz-flex-col mz-gap-3">
-        <h1 class="mz-text-2xl md:mz-text-3xl mz-font-semibold mz-text-gray-900 mz-leading-tight">
+        <h1 class="mz-text-3xl md:mz-text-3xl mz-text-text-heading mz-font-semibold mz-leading-tight">
           <?php the_title(); ?>
         </h1>
 
         <!-- Price + Rating + Reviews scroll -->
-        <div class="mz-flex mz-items-center mz-gap-4 mz-flex-wrap">
-          <div class="mz-text-xl md:mz-text-2xl mz-font-semibold mz-text-gray-900">
+        <div class="mz-flex  mz-gap-4 mz-flex-col">
+          <?php if (wc_review_ratings_enabled()) : ?>
+            <div class="mz-flex mz-gap-1 mz-flex-row-reverse mz-justify-center lg:mz-justify-end">
+              <a href="#mz-reviews" class="mz-text-sm mz-text-gray-900 mz-font-semibold hover:mz-underline">
+                <?php echo $review_count ? ' (' . (int)$review_count . ')' : ''; ?>
+              </a>
+              <?php echo wc_get_rating_html($average); ?>
+              
+            </div>
+          <?php endif; ?>
+
+          <div class="mz-text-xl md:mz-text-2xl mz-font-semibold mz-text-brand-accent">
             <?php woocommerce_template_single_price(); ?>
           </div>
 
-          <?php if (wc_review_ratings_enabled()) : ?>
-            <div class="mz-flex mz-items-center mz-gap-2">
-              <?php echo wc_get_rating_html($average); ?>
-              <a href="#mz-reviews" class="mz-text-sm mz-text-gray-900 mz-font-semibold hover:mz-underline">
-                Customer reviews<?php echo $review_count ? ' (' . (int)$review_count . ')' : ''; ?>
-              </a>
-            </div>
-          <?php endif; ?>
         </div>
 
-        <div class="mz-text-gray-600 mz-leading-relaxed">
+        <div class="mz-text-gray-600 mz-leading-relaxed mz-px-4 lg:mz-px-0">
           <?php woocommerce_template_single_excerpt(); ?>
         </div>
-      </div>
-
-      <!-- Trust pills -->
-      <div class="mz-mt-6 mz-grid mz-grid-cols-2 mz-gap-3">
-        <?php foreach (['Fast Shipping','Easy Returns','COD Available','Secure Payments'] as $t): ?>
-          <div class="mz-flex mz-items-center mz-gap-2 mz-text-sm mz-text-gray-700 mz-bg-gray-50 mz-border mz-border-gray-200 mz-rounded-xl mz-px-3 mz-py-2">
-            <span class="mz-inline-block mz-w-2 mz-h-2 mz-rounded-full mz-bg-gray-900"></span>
-            <span><?php echo esc_html($t); ?></span>
-          </div>
-        <?php endforeach; ?>
       </div>
 
       <!-- Add to cart -->
@@ -182,29 +175,27 @@ $short = $product ? $product->get_short_description() : '';
       </div>
 
       <!-- Meta -->
-      <div class="mz-mt-6 mz-text-sm mz-text-gray-500 mz-border-t mz-border-gray-200 mz-pt-4">
+      <!-- <div class="mz-mt-6 mz-text-sm mz-text-gray-500 mz-border-t mz-border-gray-200 mz-pt-4">
         <?php woocommerce_template_single_meta(); ?>
-      </div>
+      </div> -->
 
-    </div>
-  </div>
 
-  <!-- Accordion Info -->
-  <div class="mz-mt-10 mz-bg-white mz-border mz-border-gray-200 mz-rounded-2xl mz-overflow-hidden">
+        <!-- Accordion Info -->
+  <div class="mz-mt-14 mz-text-left">
     <?php
       $sections = [];
 
       if (!empty($short)) {
         $sections[] = [
           'title' => 'Features',
-          'content_html' => '<div class="mz-prose mz-max-w-none mz-text-gray-700">' . wp_kses_post($short) . '</div>',
+          'content_html' => '<div class="mz-prose mz-max-w-none mz-text-text-body">' . wp_kses_post($short) . '</div>',
         ];
       }
 
       if (!empty($mz_how_to_use)) {
         $sections[] = [
           'title' => 'How to use',
-          'content_html' => '<div class="mz-prose mz-max-w-none mz-text-gray-700">' . wp_kses_post($mz_how_to_use) . '</div>',
+          'content_html' => '<div class="mz-prose mz-max-w-none mz-text-text-body">' . wp_kses_post($mz_how_to_use) . '</div>',
         ];
       }
 
@@ -216,7 +207,7 @@ $short = $product ? $product->get_short_description() : '';
         }
         $sections[] = [
           'title' => 'Ingredients',
-          'content_html' => '<div class="mz-prose mz-max-w-none mz-text-gray-700">' . wp_kses_post($ing_html) . '</div>',
+          'content_html' => '<div class="mz-prose mz-max-w-none mz-text-text-body">' . wp_kses_post($ing_html) . '</div>',
         ];
       }
 
@@ -225,12 +216,14 @@ $short = $product ? $product->get_short_description() : '';
         foreach ($additional_rows as $r) {
           $label = $r['label']; $value = $r['value'];
           if ($label) {
-            $rows_html .= '<div class="mz-flex mz-flex-col sm:mz-flex-row sm:mz-gap-3">';
-            $rows_html .= '<div class="mz-text-gray-900 mz-font-semibold sm:mz-w-[260px]">' . esc_html($label) . '</div>';
-            $rows_html .= '<div class="mz-text-gray-700">' . esc_html($value) . '</div>';
+            $rows_html .= '<div class="mz-flex mz-flex-col sm:mz-flex-row sm:mz-gap-3 lg:mz-grid lg:mz-grid-cols-[200px,1fr]">';
+            $rows_html .= '<div class="mz-text-gray-body mz-font-medium mz-font-text-sm sm:mz-w-[260px]
+            lg:mz-w-[200px]
+            ">' . esc_html($label) . '</div>';
+            $rows_html .= '<div class="mz-text-text-body">' . esc_html($value) . '</div>';
             $rows_html .= '</div>';
           } else {
-            $rows_html .= '<div class="mz-text-gray-700">' . esc_html($value) . '</div>';
+            $rows_html .= '<div class="mz-text-text-body">' . esc_html($value) . '</div>';
           }
         }
         $rows_html .= '</div>';
@@ -243,54 +236,176 @@ $short = $product ? $product->get_short_description() : '';
     ?>
 
     <?php foreach ($sections as $index => $sec): ?>
-      <div class="mz-border-b mz-border-gray-200 last:mz-border-b-0">
+      <div class="mz-border-b mz-border-[#dfdfdf] pdp-accordion mz-py-4 " data-mz-acc-item>
         <button
           type="button"
-          class="mz-w-full mz-flex mz-items-center mz-justify-between mz-gap-4 mz-px-5 md:mz-px-6 mz-py-5 md:mz-py-6 mz-text-left"
+          class="mz-w-full mz-flex mz-items-center mz-justify-between mz-text-base
+          mz-bg-transparent mz-text-text-heading mz-border-none mz-outline-none mz-shadow-none hover:mz-bg-transparent
+          "
           data-mz-acc-trigger
           aria-expanded="<?php echo $index === 0 ? 'true' : 'false'; ?>"
         >
-          <span class="mz-tracking-widest mz-text-xs mz-font-semibold mz-text-gray-900 mz-uppercase">
+          <span class="mz-text-[15px] lg:mz-text-[16px] mz-tracking-normal  mz-font-medium mz-text-gray-900 mz-uppercase">
             <?php echo esc_html($sec['title']); ?>
           </span>
 
-          <span class="mz-inline-flex mz-items-center mz-justify-center mz-w-8 mz-h-8 mz-rounded-full mz-border mz-border-gray-300 mz-text-gray-700">
+          <span class="mz-inline-flex mz-items-center mz-justify-center mz-w-8 mz-h-8 mz-rounded-full  mz-text-text-body">
             <span class="mz-text-lg mz-leading-none" data-mz-acc-icon>
               <?php echo $index === 0 ? '−' : '+'; ?>
             </span>
           </span>
         </button>
 
-       <div class="mz-px-5 md:mz-px-6" data-mz-acc-panel>
-          <?php echo $sec['content_html']; ?>
+        <div
+          class=" mz-overflow-hidden mz-transition-[height] mz-duration-300"
+          data-mz-acc-panel
+          style="height: <?php echo $index === 0 ? 'auto' : '0px'; ?>;"
+        >
+          <div class="mz-py-5">
+            <?php echo $sec['content_html']; ?>
+          </div>
         </div>
       </div>
     <?php endforeach; ?>
+
   </div>
+
+
+     
+
+
+    </div>
+  </div>
+
+
+   
+
 
   <!-- Reviews section (separate, not inside tabs) -->
-  <div id="mz-reviews" class="mz-mt-10 mz-bg-white mz-border mz-border-gray-200 mz-rounded-2xl mz-p-6">
-    <div class="mz-flex mz-items-center mz-justify-between mz-gap-4 mz-mb-4">
-      <h2 class="mz-text-xl mz-font-semibold mz-text-gray-900">Customer Reviews</h2>
-      <a href="#review_form" class="mz-text-sm mz-font-semibold mz-text-gray-900 hover:mz-underline">
-        Write a review
-      </a>
+  <div id="mz-reviews" class="mz-mt-[100px]">
+  <!-- your top title row optional (remove if you want exact screenshot look) -->
+
+<?php
+global $product;
+
+if ( ! $product || ! is_a($product, 'WC_Product') ) {
+  $product = wc_get_product(get_the_ID());
+}
+
+$avg    = $product ? (float) $product->get_average_rating() : 0;
+$total  = $product ? (int) $product->get_review_count() : 0;
+$counts = $product ? (array) $product->get_rating_counts() : [];
+
+for ($i=1; $i<=5; $i++) {
+  if (!isset($counts[$i])) $counts[$i] = 0;
+}
+
+// build stars (filled/half/empty) similar to screenshot
+$filled = (int) floor($avg);
+$half   = ($avg - $filled) >= 0.5 ? 1 : 0;
+$empty  = 5 - $filled - $half;
+
+function mz_star_svg($type = 'full') {
+  // type: full | half | empty
+  $full = '<svg class="mz-w-5 mz-h-5" viewBox="0 0 20 20" fill="#fda256" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.156c.969 0 1.371 1.24.588 1.81l-3.363 2.443a1 1 0 00-.364 1.118l1.285 3.955c.3.921-.755 1.688-1.538 1.118l-3.363-2.443a1 1 0 00-1.176 0l-3.363 2.443c-.783.57-1.838-.197-1.538-1.118l1.285-3.955a1 1 0 00-.364-1.118L2.07 9.382c-.783-.57-.38-1.81.588-1.81h4.156a1 1 0 00.95-.69l1.286-3.955z"/></svg>';
+
+  $empty = '<svg class="mz-w-5 mz-h-5" viewBox="0 0 20 20" fill="none" stroke="#fda256" stroke-width="1.5" aria-hidden="true"><path d="M10 1.9l2.35 4.76 5.26.76-3.8 3.7.9 5.24L10 13.95 5.29 16.36l.9-5.24-3.8-3.7 5.26-.76L10 1.9z"/></svg>';
+
+  $half = '<svg class="mz-w-5 mz-h-5" viewBox="0 0 20 20" aria-hidden="true">
+    <defs>
+      <linearGradient id="mz-half-grad" x1="0" x2="1">
+        <stop offset="50%" stop-color="#fda256" />
+        <stop offset="50%" stop-color="transparent" />
+      </linearGradient>
+    </defs>
+    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.156c.969 0 1.371 1.24.588 1.81l-3.363 2.443a1 1 0 00-.364 1.118l1.285 3.955c.3.921-.755 1.688-1.538 1.118l-3.363-2.443a1 1 0 00-1.176 0l-3.363 2.443c-.783.57-1.838-.197-1.538-1.118l1.285-3.955a1 1 0 00-.364-1.118L2.07 9.382c-.783-.57-.38-1.81.588-1.81h4.156a1 1 0 00.95-.69l1.286-3.955z" fill="url(#mz-half-grad)" stroke="#fda256" stroke-width="1.2"/>
+  </svg>';
+
+  if ($type === 'full') return $full;
+  if ($type === 'half') return $half;
+  return $empty;
+}
+?>
+
+<!-- Screenshot-style summary -->
+<div class="mz-mb-6">
+  <div class="mz-text-center">
+    <h2 class="mz-text-3xl mz-font-semibold mz-text-gray-900">Customer Reviews</h2>
+
+    <div class="mz-flex mz-justify-center mz-items-center mz-gap-2 mz-mt-3 mz-text-gray-900">
+      <div class="mz-flex mz-items-center">
+        <?php
+          for ($i=0; $i<$filled; $i++) echo mz_star_svg('full');
+          if ($half) echo mz_star_svg('half');
+          for ($i=0; $i<$empty; $i++) echo mz_star_svg('empty');
+        ?>
+      </div>
+      <div class="mz-text-lg">
+        <span class="mz-font-semibold"><?php echo number_format($avg, 2); ?></span> out of 5
+      </div>
     </div>
 
-    <?php
-      // Woo reviews template loader works via comments_template
-      if (comments_open()) {
-        comments_template();
-      } else {
-        echo '<div class="mz-text-gray-600">Reviews are disabled for this product.</div>';
-      }
-    ?>
+    <div class="mz-text-base mz-text-gray-700 mz-mt-1">
+      Based on <?php echo (int) $total; ?> reviews
+    </div>
+
+    <!-- breakdown -->
+    <div class="mz-mt-7 mz-max-w-[520px] mz-mx-auto mz-space-y-3">
+      <?php for ($star=5; $star>=1; $star--):
+        $c = (int) $counts[$star];
+        $pct = $total > 0 ? ($c / $total) * 100 : 0;
+      ?>
+        <div class="mz-flex mz-items-center mz-gap-4">
+          <!-- left stars row -->
+          <div class="mz-w-[120px] mz-flex mz-justify-start mz-items-center mz-text-text-body">
+            <?php
+              for ($s=1; $s<=5; $s++) {
+                echo mz_star_svg($s <= $star ? 'full' : 'empty');
+              }
+            ?>
+          </div>
+
+          <!-- bar -->
+          <div class="mz-flex-1 mz-h-2 mz-bg-gray-200 mz-rounded-sm mz-overflow-hidden">
+            <div class="mz-h-full mz-bg-brand-primary" style="width: <?php echo $pct; ?>%"></div>
+          </div>
+
+          <!-- count right -->
+          <div class="mz-w-[44px] mz-text-right mz-text-sm mz-text-gray-500">
+            <?php echo $c; ?>
+          </div>
+        </div>
+      <?php endfor; ?>
+    </div>
   </div>
 
+  <!-- black bar button like screenshot -->
+   <div class="mz-text-center mz-mt-5">
+     <a href="#review_form"
+      class="mz-inline-block mz-bg-primary mz-bg-brand-accent mz-text-white mz-px-5 mz-py-3 mz-rounded-lg hover:mz-bg-opacity-90 mz-transition
+                  mz-text-sm mz-font-bold hover:mz-bg-brand-primary hover:mz-text-white
+                    md:mz-min-w-[140px] md:mz-py-4 md:mz-text-center xl:mz-min-w-[150px] xl:mz-py-[14px]  xl:mz-text-center xl:mz-text-[15px] xl:mz-rounded-xl
+                    ">
+      Write a review
+    </a>
+   </div>
+</div>
+
+
+  <?php
+    if (comments_open()) {
+      comments_template();
+    } else {
+      echo '<div class="mz-text-gray-600">Reviews are disabled for this product.</div>';
+    }
+  ?>
+</div>
+
+
   <!-- Related products -->
-  <div class="mz-mt-10">
+  <!-- <div class="mz-mt-10">
     <?php woocommerce_output_related_products(); ?>
-  </div>
+  </div> -->
 
 </div>
 

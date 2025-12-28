@@ -12,10 +12,10 @@ define('CHILD_THEME_ASTRA_CHILD_VERSION', '1.0.0');
  */
 add_action('wp_enqueue_scripts', function () {
   wp_enqueue_style(
-    'astra-child-theme-css',
-    get_stylesheet_directory_uri() . '/style.css',
+    'astra-child-theme-css', 
+    get_stylesheet_uri(),
     ['astra-theme-css'],
-    CHILD_THEME_ASTRA_CHILD_VERSION
+    filemtime(get_stylesheet_directory() . '/style.css')
   );
 }, 15);
 
@@ -106,10 +106,8 @@ add_action('astra_header_before', function () {
 
   if (!$text) return;
   ?>
-  <div
-    class="mz-w-full mz-text-center mz-text-sm md:mz-text-[14px] mz-font-body"
-    style="background: <?php echo esc_attr($bg); ?>; color: <?php echo esc_attr($textColor); ?>;"
-  >
+  <div class="mz-w-full mz-text-center mz-text-sm md:mz-text-[14px] mz-font-body"
+       style="background: <?php echo esc_attr($bg); ?>; color: <?php echo esc_attr($textColor); ?>;">
     <div class="mz-max-w-[1240px] mz-mx-auto mz-px-4 mz-py-2 mz-inline-block mz-items-center mz-justify-center mz-gap-2 mz-flex-wrap">
       <span class="mz-tracking-wide">
         <?php echo esc_html($text); ?>
@@ -119,10 +117,8 @@ add_action('astra_header_before', function () {
       </span>
 
       <?php if (!empty($linkUrl)): ?>
-        <a
-          href="<?php echo esc_url($linkUrl); ?>"
-          class="mz-font-semibold mz-underline-offset-4 hover:mz-opacity-90 mz-transition"
-        >
+        <a href="<?php echo esc_url($linkUrl); ?>"
+           class="mz-font-semibold mz-underline-offset-4 hover:mz-opacity-90 mz-transition">
           <?php echo esc_html($linkText); ?>
         </a>
       <?php endif; ?>
@@ -136,7 +132,6 @@ add_action('astra_header_before', function () {
  */
 add_action('astra_header_before', function () {
   if (is_admin()) return;
-
   $file = get_stylesheet_directory() . '/template-parts/meziva-header.php';
   if (file_exists($file)) include $file;
 }, 2);
@@ -145,26 +140,9 @@ add_action('astra_header_before', function () {
  * Customer Reviews include (Keen slider - your existing)
  */
 function mz_success_stories_assets() {
-  wp_enqueue_style(
-    'keen-slider',
-    'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css'
-  );
-
-  wp_enqueue_script(
-    'keen-slider',
-    'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js',
-    [],
-    null,
-    true
-  );
-
-  wp_enqueue_script(
-    'mz-success-stories',
-    get_stylesheet_directory_uri() . '/assets/js/success-stories.js',
-    ['keen-slider'],
-    null,
-    true
-  );
+  wp_enqueue_style('keen-slider', 'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css');
+  wp_enqueue_script('keen-slider', 'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js', [], null, true);
+  wp_enqueue_script('mz-success-stories', get_stylesheet_directory_uri() . '/assets/js/success-stories.js', ['keen-slider'], null, true);
 }
 add_action('wp_enqueue_scripts', 'mz_success_stories_assets');
 
@@ -189,38 +167,30 @@ add_action('after_setup_theme', function () {
   remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30);
   remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40);
 
-  // We'll not use default tabs
   remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10);
-
-  // We will call related manually in template
   remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20);
 }, 20);
-
 
 add_action('wp_enqueue_scripts', function () {
   if (!function_exists('is_product') || !is_product()) return;
 
-  // Fancybox v5
   wp_enqueue_style('mz-fancybox', 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css', [], null);
   wp_enqueue_script('mz-fancybox', 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js', [], null, true);
 
-  // Keen slider (thumbs)
   wp_enqueue_style('mz-keen', 'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css', [], null);
   wp_enqueue_script('mz-keen', 'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js', [], null, true);
 
-  // Our gallery js
   $gpath = get_stylesheet_directory() . '/assets/js/mz-gallery.js';
   if (file_exists($gpath)) {
     wp_enqueue_script('mz-gallery', get_stylesheet_directory_uri() . '/assets/js/mz-gallery.js', ['mz-keen','mz-fancybox'], filemtime($gpath), true);
   }
 
-  // Our accordion js (your working one)
   $apath = get_stylesheet_directory() . '/assets/js/mz-pdp.js';
   if (file_exists($apath)) {
     wp_enqueue_script('mz-pdp', get_stylesheet_directory_uri() . '/assets/js/mz-pdp.js', [], filemtime($apath), true);
   }
 }, 50);
-  
+
 
 /**
  * Helper: Parse "Label: Value" lines from a textarea
@@ -249,6 +219,85 @@ function mz_parse_label_value_lines($text) {
 }
 
 /**
+ * PDP page scripts
+ */
+add_action('wp_enqueue_scripts', function () {
+  if (is_product()) {
+    wp_enqueue_script('wc-add-to-cart-variation');
+
+    wp_enqueue_script(
+      'mz-variants',
+      get_stylesheet_directory_uri() . '/assets/js/mz-variants.js',
+      ['jquery', 'wc-add-to-cart-variation'],
+      '1.0.2',
+      true
+    );
+
+    wp_enqueue_script(
+      'mz-pdp',
+      get_stylesheet_directory_uri() . '/assets/js/mz-pdp.js',
+      [],
+      '1.0.2',
+      true
+    );
+  }
+}, 20);
+
+/***
+ * PDP add to cart qty buttons (your existing)
+ */
+add_action('wp_footer', function () {
+  if (!is_product()) return;
+  ?>
+  <script>
+    (function(){
+      function findQtyInput(scope){
+        return scope.querySelector('input.qty')
+          || scope.querySelector('input[name="quantity"]')
+          || scope.querySelector('input[type="number"]');
+      }
+
+      function triggerAll(input){
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        if (window.jQuery) {
+          window.jQuery(input).trigger('input').trigger('change');
+        }
+      }
+
+      document.addEventListener('click', function(e){
+        const btn = e.target.closest('.mz-qty-btn');
+        if(!btn) return;
+
+        const form = btn.closest('form.cart') || btn.closest('.cart');
+        if(!form) return;
+
+        const input = findQtyInput(form);
+        if(!input) return;
+
+        const type = btn.getAttribute('data-type');
+        const step = parseFloat(input.getAttribute('step')) || 1;
+        const min  = input.getAttribute('min') !== null ? parseFloat(input.getAttribute('min')) : 1;
+        const max  = input.getAttribute('max') !== null ? parseFloat(input.getAttribute('max')) : Infinity;
+
+        let val = parseFloat(input.value);
+        if (isNaN(val)) val = min;
+
+        if(type === 'plus') val += step;
+        if(type === 'minus') val -= step;
+
+        if(val < min) val = min;
+        if(val > max) val = max;
+
+        input.value = val;
+        triggerAll(input);
+      });
+    })();
+  </script>
+  <?php
+});
+
+/**
  * Safe ACF getter
  */
 function mz_get_acf($key, $post_id = null) {
@@ -257,149 +306,148 @@ function mz_get_acf($key, $post_id = null) {
   return get_post_meta($post_id, $key, true);
 }
 
-add_action('wp_head', function () {
-  if (!is_cart()) return;
-  echo '<style>button[name="update_cart"]{display:none!important;}</style>';
-});
-
 /**
- * AJAX: Update cart quantity (no reload)
+ * ===============================
+ * CART: AJAX qty + coupon (KEEP)
+ * ===============================
  */
-// ===============================
-// 1) Hide Update Cart button
-// ===============================
+
+/** Hide Update Cart button (only once) */
 add_action('wp_head', function () {
   if (!is_cart()) return;
   echo '<style>button[name="update_cart"]{display:none!important;}</style>';
 });
 
-// ===============================
-// 2) Helpers: render totals + notices
-// =============================== 
-function mz_cart_render_totals_html() {
-  ob_start();
-  wc_get_template('cart/cart-totals.php');
-  return ob_get_clean();
-}
-
-function mz_cart_render_notices_html() {
-  ob_start();
-  wc_print_notices();
-  return ob_get_clean();
-}
-
-// ===============================
-// 3) AJAX: Update qty
-// ===============================
-add_action('wp_ajax_mz_update_cart_qty', 'mz_update_cart_qty');
-add_action('wp_ajax_nopriv_mz_update_cart_qty', 'mz_update_cart_qty');
-
-function mz_update_cart_qty() {
-  check_ajax_referer('mz_cart_nonce', 'nonce');
-
-  if (!isset($_POST['cart_item_key'], $_POST['quantity'])) {
-    wp_send_json_error(['message' => 'Missing data']);
+/** Helpers */
+if ( ! function_exists('mz_cart_render_totals_html') ) {
+  function mz_cart_render_totals_html() {
+    ob_start();
+    wc_get_template('cart/cart-totals.php');
+    return ob_get_clean();
   }
-
-  $cart_item_key = wc_clean(wp_unslash($_POST['cart_item_key']));
-  $qty = max(0, intval($_POST['quantity']));
-
-  if (!WC()->cart) wc_load_cart();
-
-  WC()->cart->set_quantity($cart_item_key, $qty, true);
-  WC()->cart->calculate_totals();
-
-  $cart_item = WC()->cart->get_cart_item($cart_item_key);
-  $line_total_html = '';
-  if ($cart_item && isset($cart_item['data'])) {
-    $line_total_html = WC()->cart->get_product_subtotal($cart_item['data'], $cart_item['quantity']);
+}
+if ( ! function_exists('mz_cart_render_notices_html') ) {
+  function mz_cart_render_notices_html() {
+    ob_start();
+    wc_print_notices();
+    return ob_get_clean();
   }
-
-  wp_send_json_success([
-    'totals_html' => mz_cart_render_totals_html(),
-    'notices_html' => mz_cart_render_notices_html(),
-    'line_total_html' => $line_total_html,
-    'cart_count' => WC()->cart->get_cart_contents_count(),
-  ]);
 }
 
-// ===============================
-// 4) AJAX: Apply coupon
-// ===============================
-add_action('wp_ajax_mz_apply_coupon', 'mz_apply_coupon');
-add_action('wp_ajax_nopriv_mz_apply_coupon', 'mz_apply_coupon');
+/** AJAX: Update qty (SINGLE version only) */
+if ( ! function_exists('mz_update_cart_qty') ) {
 
-function mz_apply_coupon() {
-  check_ajax_referer('mz_cart_nonce', 'nonce');
+  add_action('wp_ajax_mz_update_cart_qty', 'mz_update_cart_qty');
+  add_action('wp_ajax_nopriv_mz_update_cart_qty', 'mz_update_cart_qty');
 
-  if (!WC()->cart) wc_load_cart();
+  function mz_update_cart_qty() {
+    check_ajax_referer('mz_cart_nonce', 'nonce');
 
-  $code = isset($_POST['coupon_code']) ? wc_format_coupon_code(wp_unslash($_POST['coupon_code'])) : '';
-  $code = trim($code);
+    $cart_item_key = isset($_POST['cart_item_key']) ? wc_clean(wp_unslash($_POST['cart_item_key'])) : '';
+    $qty           = isset($_POST['quantity']) ? (int) $_POST['quantity'] : null;
 
-  wc_clear_notices();
+    if (empty($cart_item_key) || $qty === null) {
+      wp_send_json_error(['message' => 'Missing data']);
+    }
 
-  if ($code === '') {
-    wc_add_notice(__('Please enter a coupon code.', 'woocommerce'), 'error');
+    if (!WC()->cart) {
+      wc_load_cart();
+    }
+
+    WC()->cart->set_quantity($cart_item_key, max(0, $qty), true);
+    WC()->cart->calculate_totals();
+
+    $cart_item = WC()->cart->get_cart_item($cart_item_key);
+    $line_total_html = '';
+    if ($cart_item && isset($cart_item['data'])) {
+      $line_total_html = WC()->cart->get_product_subtotal($cart_item['data'], $cart_item['quantity']);
+    }
+
     wp_send_json_success([
-      'totals_html' => mz_cart_render_totals_html(),
+      'totals_html'     => mz_cart_render_totals_html(),
+      'notices_html'    => mz_cart_render_notices_html(),
+      'line_total_html' => $line_total_html,
+      'cart_count'      => WC()->cart->get_cart_contents_count(),
+    ]);
+  }
+}
+
+/** AJAX: Apply coupon */
+if ( ! function_exists('mz_apply_coupon') ) {
+  add_action('wp_ajax_mz_apply_coupon', 'mz_apply_coupon');
+  add_action('wp_ajax_nopriv_mz_apply_coupon', 'mz_apply_coupon');
+
+  function mz_apply_coupon() {
+    check_ajax_referer('mz_cart_nonce', 'nonce');
+
+    if (!WC()->cart) wc_load_cart();
+
+    $code = isset($_POST['coupon_code']) ? wc_format_coupon_code(wp_unslash($_POST['coupon_code'])) : '';
+    $code = trim($code);
+
+    wc_clear_notices();
+
+    if ($code === '') {
+      wc_add_notice(__('Please enter a coupon code.', 'woocommerce'), 'error');
+      wp_send_json_success([
+        'totals_html'  => mz_cart_render_totals_html(),
+        'notices_html' => mz_cart_render_notices_html(),
+      ]);
+    }
+
+    $applied = WC()->cart->apply_coupon($code);
+    WC()->cart->calculate_totals();
+
+    if (!$applied) {
+      if (!wc_notice_count('error')) {
+        wc_add_notice(__('Coupon could not be applied.', 'woocommerce'), 'error');
+      }
+    } else {
+      if (!wc_notice_count('success')) {
+        wc_add_notice(__('Coupon applied successfully.', 'woocommerce'), 'success');
+      }
+    }
+
+    wp_send_json_success([
+      'totals_html'  => mz_cart_render_totals_html(),
       'notices_html' => mz_cart_render_notices_html(),
     ]);
   }
-
-  $applied = WC()->cart->apply_coupon($code);
-  WC()->cart->calculate_totals();
-
-  // apply_coupon already adds notices sometimes, but ensure some feedback
-  if (!$applied) {
-    if (!wc_notice_count('error')) {
-      wc_add_notice(__('Coupon could not be applied.', 'woocommerce'), 'error');
-    }
-  } else {
-    if (!wc_notice_count('success')) {
-      wc_add_notice(__('Coupon applied successfully.', 'woocommerce'), 'success');
-    }
-  }
-
-  wp_send_json_success([
-    'totals_html' => mz_cart_render_totals_html(),
-    'notices_html' => mz_cart_render_notices_html(),
-  ]);
 }
 
-// ===============================
-// 5) AJAX: Remove coupon
-// ===============================
-add_action('wp_ajax_mz_remove_coupon', 'mz_remove_coupon');
-add_action('wp_ajax_nopriv_mz_remove_coupon', 'mz_remove_coupon');
+/** AJAX: Remove coupon */
+if ( ! function_exists('mz_remove_coupon') ) {
+  add_action('wp_ajax_mz_remove_coupon', 'mz_remove_coupon');
+  add_action('wp_ajax_nopriv_mz_remove_coupon', 'mz_remove_coupon');
 
-function mz_remove_coupon() {
-  check_ajax_referer('mz_cart_nonce', 'nonce');
+  function mz_remove_coupon() {
+    check_ajax_referer('mz_cart_nonce', 'nonce');
 
-  if (!WC()->cart) wc_load_cart();
+    if (!WC()->cart) wc_load_cart();
 
-  $code = isset($_POST['coupon_code']) ? wc_format_coupon_code(wp_unslash($_POST['coupon_code'])) : '';
-  $code = trim($code);
+    $code = isset($_POST['coupon_code']) ? wc_format_coupon_code(wp_unslash($_POST['coupon_code'])) : '';
+    $code = trim($code);
 
-  wc_clear_notices();
+    wc_clear_notices();
 
-  if ($code === '') {
-    wc_add_notice(__('Invalid coupon.', 'woocommerce'), 'error');
-  } else {
-    WC()->cart->remove_coupon($code);
-    WC()->cart->calculate_totals();
-    wc_add_notice(__('Coupon removed.', 'woocommerce'), 'success');
+    if ($code === '') {
+      wc_add_notice(__('Invalid coupon.', 'woocommerce'), 'error');
+    } else {
+      WC()->cart->remove_coupon($code);
+      WC()->cart->calculate_totals();
+      wc_add_notice(__('Coupon removed.', 'woocommerce'), 'success');
+    }
+
+    wp_send_json_success([
+      'totals_html'  => mz_cart_render_totals_html(),
+      'notices_html' => mz_cart_render_notices_html(),
+    ]);
   }
-
-  wp_send_json_success([
-    'totals_html' => mz_cart_render_totals_html(),
-    'notices_html' => mz_cart_render_notices_html(),
-  ]);
 }
 
-// ===============================
-// 6) Cart page JS: qty + coupon apply/remove (AJAX)
-// ===============================
+/**
+ * Cart page inline JS (KEEP - your existing)
+ */
 add_action('wp_footer', function () {
   if (!is_cart()) return;
   ?>
@@ -417,17 +465,26 @@ add_action('wp_footer', function () {
       function updateUI(data){
         if(!data) return;
 
-        // totals
         const totalsWrap = document.querySelector('#mz-cart-totals');
         if (totalsWrap && data.totals_html) totalsWrap.innerHTML = data.totals_html;
 
-        // notices
         const noticesWrap = document.querySelector('#mz-cart-notices');
         if (noticesWrap && data.notices_html !== undefined) noticesWrap.innerHTML = data.notices_html;
 
-        // cart count (optional)
-        const badge = document.querySelector('[data-mz-cart-count]');
-        if (badge && data.cart_count !== undefined) badge.textContent = data.cart_count;
+       // cart count (show / hide + update)
+            const badge = document.querySelector('[data-mz-cart-count]');
+            if (badge && data.cart_count !== undefined) {
+              badge.textContent = data.cart_count;
+
+              if (parseInt(data.cart_count, 10) > 0) {
+                badge.classList.remove('mz-hidden');
+                badge.setAttribute('aria-hidden', 'false');
+              } else {
+                badge.classList.add('mz-hidden');
+                badge.setAttribute('aria-hidden', 'true');
+              }
+            }
+
       }
 
       function post(action, payload){
@@ -435,13 +492,9 @@ add_action('wp_footer', function () {
         fd.append('action', action);
         fd.append('nonce', nonce);
         Object.keys(payload || {}).forEach(k => fd.append(k, payload[k]));
-
         return fetch(ajaxUrl, { method:'POST', body: fd }).then(r => r.json());
       }
 
-      // ---------------------
-      // Qty AJAX
-      // ---------------------
       function postQty(cartItemKey, qty, rowEl){
         setLoading(rowEl, true);
 
@@ -451,7 +504,6 @@ add_action('wp_footer', function () {
 
             updateUI(res.data);
 
-            // line total
             const lineTotal = rowEl.querySelector('[data-mz-line-total]');
             if (lineTotal && res.data.line_total_html) lineTotal.innerHTML = res.data.line_total_html;
           })
@@ -490,9 +542,6 @@ add_action('wp_footer', function () {
         postQty(key, val, row);
       });
 
-      // ---------------------
-      // Coupon APPLY AJAX
-      // ---------------------
       document.addEventListener('click', function(e){
         const btn = e.target.closest('[data-mz-apply-coupon]');
         if(!btn) return;
@@ -506,18 +555,10 @@ add_action('wp_footer', function () {
           .then(res => {
             if(!res || !res.success) return;
             updateUI(res.data);
-
-            // clear input on success (optional)
-            // input.value = '';
           })
           .finally(() => setLoading(btn, false));
       });
 
-      // ---------------------
-      // Coupon REMOVE AJAX (from totals remove link)
-      // Woo outputs link like ?remove_coupon=welcome&_wpnonce=...
-      // We'll intercept click and call our AJAX.
-      // ---------------------
       document.addEventListener('click', function(e){
         const link = e.target.closest('#mz-cart-totals a.woocommerce-remove-coupon');
         if(!link) return;
@@ -542,7 +583,6 @@ add_action('wp_footer', function () {
   <?php
 });
 
-
 /**
  * checkout page
  */
@@ -552,7 +592,6 @@ add_filter('body_class', function($classes){
 });
 
 add_filter('woocommerce_checkout_fields', function($fields){
-  // optional: field classes for better spacing
   foreach ($fields as $section_key => $section) {
     foreach ($section as $key => $field) {
       $fields[$section_key][$key]['input_class'][] = 'mz-w-full';
@@ -561,7 +600,6 @@ add_filter('woocommerce_checkout_fields', function($fields){
   }
   return $fields;
 });
-
 
 /**
  * Customers pages
@@ -573,7 +611,6 @@ add_filter('body_class', function ($classes) {
   return $classes;
 });
 
-
 /**
  * Custom footer include
  */
@@ -584,8 +621,74 @@ add_action('astra_footer_before', function () {
   if (file_exists($file)) include $file;
 }, 1);
 
-// About Us 
+/**
+ * cache ISSUE fix
+ */
+add_action('send_headers', function() {
+  header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+  header("Pragma: no-cache");
+  header("Expires: 0");
+});
 
+/**
+ * Footer ACF (SAFE) - moved into hook to avoid running on every request
+ */
+add_action('wp', function () {
+  if (!function_exists('get_field')) return;
+
+  $home_id = (int) get_option('page_on_front'); // FIXED (your get_option('9') was wrong)
+  if (!$home_id) return;
+
+  // Just reading values (use them where you output footer)
+  $newsletter_text = get_field('ft_newsletter_text', $home_id) ?: 'Get the latest news, events & more delivered to your inbox.';
+  $placeholder     = get_field('ft_newsletter_placeholder', $home_id) ?: 'Email address...';
+
+  $bg         = get_field('ft_bg_color', $home_id) ?: '#FFFFFF';
+  $text_color = get_field('ft_text_color', $home_id) ?: '#6B7280';
+  $social_bg  = get_field('ft_social_bg', $home_id) ?: '#2E2E2E';
+  $social_col = get_field('ft_social_color', $home_id) ?: '#FFFFFF';
+
+  // If you need these variables globally, define constants or store in globals.
+  $GLOBALS['mz_footer_acf'] = compact('newsletter_text','placeholder','bg','text_color','social_bg','social_col');
+});
+
+
+
+add_action('wp_footer', function () { 
+  if (!function_exists('is_product') || !is_product()) return;
+  if (!function_exists('wc_get_checkout_url')) return;
+  $checkout = wc_get_checkout_url();
+  ?>
+  <script>
+    (function () {
+      const checkoutUrl = <?php echo json_encode($checkout); ?>;
+
+      // Woo notice "View cart" button usually has class: wc-forward
+      document.addEventListener('click', function(e){
+        const a = e.target.closest('a.wc-forward');
+        if(!a) return;
+
+        // only if it is view-cart link
+        const href = (a.getAttribute('href') || '').toLowerCase();
+        if (href.includes('/cart') || href.includes('cart=' ) || href.includes('cart')) {
+          e.preventDefault();
+          window.location.href = checkoutUrl;
+        }
+      }, true);
+
+      // also replace href immediately if present
+      document.querySelectorAll('a.wc-forward').forEach(function(a){
+        const href = (a.getAttribute('href') || '').toLowerCase();
+        if (href.includes('cart')) a.setAttribute('href', checkoutUrl);
+      });
+    })();
+  </script>
+  <?php
+}, 999);
+
+/****
+ * CMS pages
+ */
 add_action('acf/init', function () {
   error_log('ACF Loaded');
 });

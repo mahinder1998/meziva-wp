@@ -1,0 +1,87 @@
+jQuery(function ($) {
+  function updateCartRow($row, cartKey, qty) {
+    $row.addClass('mz-opacity-60 mz-pointer-events-none');
+
+    return $.post(mzCartAjax.ajaxUrl, {
+      action: 'mz_update_cart_qty',
+      cart_item_key: cartKey,
+      qty: qty
+    })
+      .done(function (res) {
+        if (!res || !res.success) return;
+
+        // notices
+        if (res.data.notices !== undefined) {
+          $('#mz-cart-notices').html(res.data.notices);
+        }
+
+        // totals area
+        if (res.data.totals !== undefined) {
+          $('#mz-cart-totals').html(res.data.totals);
+        }
+
+        // line subtotal
+        if (res.data.lineSubtotal !== undefined) {
+          $row.find('[data-mz-line-total]').html(res.data.lineSubtotal);
+        }
+
+        // fragments refresh (cart count / mini cart)
+        if (res.data.fragments) {
+          $.each(res.data.fragments, function (selector, html) {
+            $(selector).replaceWith(html);
+          });
+
+          // update wc fragment storage so header count updates reliably
+          if (res.data.cartHash) {
+            try {
+              sessionStorage.setItem('wc_cart_hash', res.data.cartHash);
+              localStorage.setItem('wc_cart_hash', res.data.cartHash);
+            } catch (e) {}
+          }
+
+          $(document.body).trigger('wc_fragment_refresh');
+        }
+      })
+      .always(function () {
+        $row.removeClass('mz-opacity-60 mz-pointer-events-none');
+      });
+  }
+
+  $(document).on('click', '[data-mz-qty-btn]', function () {
+    var $btn = $(this);
+    var $wrap = $btn.closest('.cart-form-qty');
+    var $input = $wrap.find('[data-mz-qty-input]');
+    var $row = $btn.closest('[data-mz-cart-row]');
+
+    var cartKey = $input.data('mz-cart-key');
+    var current = parseInt($input.val(), 10) || 0;
+    var min = parseInt($input.attr('min'), 10);
+    var max = parseInt($input.attr('max'), 10);
+
+    var type = $btn.data('mz-qty-btn');
+    var next = current;
+
+    if (type === 'plus') next = current + 1;
+    if (type === 'minus') next = current - 1;
+
+    if (!isNaN(min)) next = Math.max(min, next);
+    if (!isNaN(max) && max > 0) next = Math.min(max, next);
+
+    $input.val(next);
+
+    // update via AJAX
+    updateCartRow($row, cartKey, next);
+  });
+
+  // if user manually types quantity
+  $(document).on('change', '[data-mz-qty-input]', function () {
+    var $input = $(this);
+    var $row = $input.closest('[data-mz-cart-row]');
+    var cartKey = $input.data('mz-cart-key');
+
+    var val = parseInt($input.val(), 10);
+    if (isNaN(val) || val < 0) val = 0;
+
+    updateCartRow($row, cartKey, val);
+  });
+});
