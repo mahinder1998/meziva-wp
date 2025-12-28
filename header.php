@@ -58,7 +58,12 @@ $nav_hover_color = mz_get_acf('nav_hover_color', $front_id, '');
 if (!$nav_hover_color) $nav_hover_color = mz_get_acf('nav_link_hover_color', $front_id, '#9B4A6A');
 
 // Woo URLs
-$cart_url    = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart');
+$cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart');
+
+if (function_exists('is_product') && is_product() && function_exists('wc_get_checkout_url')) {
+  $cart_url = wc_get_checkout_url();
+}
+
 $account_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/my-account');
 
 $cart_count = 0;
@@ -167,17 +172,20 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
       header-right-col
       ">
         <a href="<?php echo esc_url($cart_url); ?>"
-           class="mz-relative mz-h-8 mz-w-8 mz-rounded-full mz-flex mz-items-center mz-justify-center  mz-transition"
-           aria-label="Cart">
+          class="mz-relative mz-h-8 mz-w-8 mz-rounded-full mz-flex mz-items-center mz-justify-center  mz-transition"
+          aria-label="Cart">
           <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7H7.312"/>
           </svg>
 
-          <?php if ( $cart_count > 0 ) : ?>
-            <span class="mz-absolute -mz-top-1 -mz-right-1 mz-min-w-[18px] mz-h-[18px] mz-rounded-full mz-bg-brand-accent mz-text-white mz-text-[11px] mz-leading-[18px] mz-text-center">
-              <?php echo esc_html($cart_count); ?>
-            </span>
-          <?php endif; ?>
+          <!-- IMPORTANT: always render badge so JS can update -->
+          <span
+            data-mz-cart-count
+            class="mz-absolute -mz-top-1 -mz-right-1 mz-min-w-[18px] mz-h-[18px] mz-rounded-full mz-bg-brand-accent mz-text-white mz-text-[11px] mz-leading-[18px] mz-text-center <?php echo ($cart_count > 0) ? '' : 'mz-hidden'; ?>"
+            aria-hidden="<?php echo ($cart_count > 0) ? 'false' : 'true'; ?>"
+          >
+            <?php echo esc_html($cart_count); ?>
+          </span>
         </a>
 
         <a href="<?php echo esc_url($account_url); ?>"

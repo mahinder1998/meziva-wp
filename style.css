@@ -9,8 +9,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: astra-child-staging
 Template: astra
 */  
-html{
-     overflow-x: hidden !important;
+
+ html{
+     overflow-x: hidden !important; 
 }
  .logo-cols svg{
      width: 110px !important;
@@ -114,45 +115,27 @@ html{
  .mz-acc-open [data-mz-acc-panel]{
      background: #fff;
 }
-[data-mz-thumbs] button,
-.mz-mz-pdp-cart button
-{
-  border-color: #F6EFEA;
-  padding: 0;
+ [data-mz-thumbs] button, .mz-mz-pdp-cart button {
+     border-color: #F6EFEA;
+     padding: 0;
 }
-[data-mz-thumbs] button:hover,
-[data-mz-thumbs] button:focus
-{
-  background: #F6EFEA;
-  border-color: #F6EFEA;
-} 
-
-.mz-mz-pdp-cart button:hover,
-.mz-mz-pdp-cart button:focus,
-.newsletter-form button:hover,
-.newsletter-form button:focus,
-[aria-label="Open menu"],
-[aria-label="Close menu"]
-{
-   background: transparent;
-  border-color: transparent;
-  color: #111;
+ [data-mz-thumbs] button:hover, [data-mz-thumbs] button:focus {
+     background: #F6EFEA;
+     border-color: #F6EFEA;
 }
-
-.mz-mz-pdp-cart button:hover svg,
-.mz-mz-pdp-cart button:focus svg{
- fill: #2B1C23 !important;
- color: #2B1C23 !important;
+ .mz-mz-pdp-cart button:hover, .mz-mz-pdp-cart button:focus, .newsletter-form button:hover, .newsletter-form button:focus, [aria-label="Open menu"], [aria-label="Close menu"] {
+     background: transparent;
+     border-color: transparent;
+     color: #111;
 }
-
-
-.mz-mz-pdp-cart button:hover svg path,
-.mz-mz-pdp-cart button:focus svg path{
- fill: #2B1C23 !important;
-  color: #2B1C23 !important;
+ .mz-mz-pdp-cart button:hover svg, .mz-mz-pdp-cart button:focus svg{
+     fill: #2B1C23 !important;
+     color: #2B1C23 !important;
 }
-
-
+ .mz-mz-pdp-cart button:hover svg path, .mz-mz-pdp-cart button:focus svg path{
+     fill: #2B1C23 !important;
+     color: #2B1C23 !important;
+}
  @media (min-width: 768px) {
      .meziva-header--shrink .meziva-header-inner {
          height: 64px !important;
@@ -238,11 +221,12 @@ html{
 }
 /* coupon notice top */
  .mz-checkout .woocommerce-form-coupon-toggle .woocommerce-info {
-     border: 1px solid rgba(0,0,0,.10);
-     border-radius: 12px;
+     border-top: 1px solid #9b4a6a;
+    ;
      padding: 14px 16px;
-     background: #fff;
+     background: #F6EFEA;
      margin-bottom: 18px;
+     padding-left: 50px;
 }
 /* order table typography */
  .mz-checkout table.shop_table {
@@ -306,6 +290,66 @@ html{
      .mz-account .woocommerce {
          padding-left: 0;
          padding-right: 0;
+    }
+}
+ @media (max-width: 420px) {
+     .woocommerce form.checkout_coupon .button[name="apply_coupon"] {
+         width: 100%;
+         padding: 14px 5px;
+    }
+}
+ .mz-checkout .woocommerce-billing-fields, .mz-checkout .woocommerce-shipping-fields, .mz-checkout .woocommerce-additional-fields {
+     border: none;
+     padding: 0;
+}
+ #customer_details h3:not(.elementor-widget-woocommerce-checkout-page h3) {
+     letter-spacing: 0px;
+     border-color: #dfdfdf;
+}
+ .woocommerce .select2-container .select2-selection--single, .woocommerce select, .woocommerce-page .select2-container .select2-selection--single, .woocommerce-page select {
+     height: 44px;
+     border-radius: 12px;
+     align-content: center;
+}
+ input:focus, input[type="text"]:focus, textarea:focus{
+     border-color: #C58BAA !important;
+     border-style: solid !important;
+     border-width: 1px !important;
+}
+ form #order_review_heading:not(.elementor-widget-woocommerce-checkout-page #order_review_heading) {
+     padding: 20px 0 14px;
+     margin: 0 0 20px;
+     border-bottom: 1px solid #dfdfdf;
+     border-right: none;
+     border-left: none;
+     border-top: none;
+     letter-spacing: 0;
+}
+ form #order_review:not(.elementor-widget-woocommerce-checkout-page #order_review) {
+     background: #F6EFEA ;
+     border: none;
+     padding: 20px 30px;
+}
+ .checkout-inline-error-message {
+     color: red;
+     font-size: 13px;
+     padding-top: 8px;
+}
+ .woocommerce #payment #place_order, .woocommerce-page #payment #place_order {
+     background: #9B4A6A;
+     border-color: #9B4A6A;
+     margin-top: 20px;
+     letter-spacing: 0px;
+     font-size: 15px;
+     font-weight: bold;
+}
+ .woocommerce form.checkout_coupon .button {
+     height: 44px;
+}
+ @media (min-width: 768px) {
+     .mz-checkout .woocommerce {
+         padding-left: 15px;
+         padding-right: 15px;
     }
 }
 /* LEFT SIDEBAR */
@@ -418,98 +462,140 @@ html{
  .woocommerce-js div.product form.cart .button {
      margin-bottom: 0;
 }
-
-.woocommerce-js div.product form.cart .button.single_add_to_cart_button {
-  padding: 14px 20px;
-  max-width: 100%;
-  width: 250px;
-  font-weight: 600;
-  font-size: 15px;
+ .woocommerce-js div.product form.cart .button.single_add_to_cart_button {
+     padding: 14px 20px;
+     max-width: 100%;
+     width: 250px;
+     font-weight: 600;
+     font-size: 15px;
 }
-
-.woocommerce-message .button {
-  padding: 5px !important;
-  font-size: 12px !important;
-  border-radius: 4px !important;
+ .woocommerce-message .button {
+     padding: 5px !important;
+     font-size: 12px !important;
+     border-radius: 4px !important;
 }
-.woocommerce-message {
-  font-size: 14px;
-  line-height: 18px;
-  background-color: #F6EFEA;
-  border-top-width: 1px;
+ .woocommerce-message {
+     font-size: 14px;
+     line-height: 18px;
+     background-color: #F6EFEA;
+     border-top-width: 1px;
 }
-
-.pdp-accordion button,
-.pdp-accordion button:hover
-{
-  background: transparent !important;
-  color: #2B1C23 !important;
-}  
-
-.mz-acc-open > [data-mz-acc-trigger] span {
-  color: #2B1C23 !important;
+ .pdp-accordion button, .pdp-accordion button:hover {
+     background: transparent !important;
+     color: #2B1C23 !important;
 }
-
-[data-mz-acc-item]:first-child{
-  border-top: 1px solid #dfdfdf;
+ .mz-acc-open > [data-mz-acc-trigger] span {
+     color: #2B1C23 !important;
 }
-.woocommerce-message:focus {
-  outline: none !important;
+ [data-mz-acc-item]:first-child{
+     border-top: 1px solid #dfdfdf;
 }
-
-@media(min-width:1024px){
-  .woocommerce-js div.product form.cart .button.single_add_to_cart_button {
-    width: 100%;
-    } 
-    .woocommerce-message .button {
-    padding: 8px !important;
-    font-size: 13px !important;
+ .woocommerce-message:focus {
+     outline: none !important;
+}
+ @media(min-width:1024px){
+     .woocommerce-js div.product form.cart .button.single_add_to_cart_button {
+         width: 100%;
+    }
+     .woocommerce-message .button {
+         padding: 8px !important;
+         font-size: 13px !important;
     }
 }
-
-
-.woocommerce-Reviews {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 100px 0 0;
+ .woocommerce-Reviews {
+     max-width: 1000px;
+     margin: 0 auto;
+     padding: 100px 0 0;
 }
-
-
-
-.woocommerce-js #reviews #review_form {
-  border: none;
-  padding: 0;
+ .woocommerce-js #reviews #review_form {
+     border: none;
+     padding: 0;
 }
-.woocommerce-js #reviews .comment-form-rating {
-  align-content: center;
+ .woocommerce-js #reviews .comment-form-rating {
+     align-content: center;
 }
-.woocommerce-js #reviews .comment-form-comment label, .woocommerce-js #reviews .comment-form-rating label {
-  font-size: 14px;
-  margin: 8px 0 0;
-  display: inline-block;
-  margin-bottom: 8px;
+ .woocommerce-js #reviews .comment-form-comment label, .woocommerce-js #reviews .comment-form-rating label {
+     font-size: 14px;
+     margin: 8px 0 0;
+     display: inline-block;
+     margin-bottom: 8px;
 }
-.woocommerce-js #reviews #review_form #respond #comment {
-  user-select: none;
-  resize: none;
-  padding: 15px;
+ .woocommerce-js #reviews #review_form #respond #comment {
+     user-select: none;
+     resize: none;
+     padding: 15px;
 }
-.required {
-  color: red;
+ .required {
+     color: red;
 }
-.woocommerce-js #reviews #review_form #respond p.comment-form-author label, .woocommerce-js #reviews #review_form #respond p.comment-form-email label {
-  display: inline-block;
-  font-size: 13px;
-  margin: 8px 0;
+ .woocommerce-js #reviews #review_form #respond p.comment-form-author label, .woocommerce-js #reviews #review_form #respond p.comment-form-email label {
+     display: inline-block;
+     font-size: 13px;
+     margin: 8px 0;
 }
-.woocommerce-js #review_form #respond .form-submit input {
-  min-width: 200px;
+ .woocommerce-js #review_form #respond .form-submit input {
+     min-width: 200px;
 }
-
-.woocommerce-js #review_form #respond {
-  background: #F6EFEA;
-  padding: 20px;
+ .woocommerce-js #review_form #respond {
+     background: #F6EFEA;
+     padding: 20px;
 }
-.woocommerce-review__author {
-  word-wrap: break-word;
+ .woocommerce-review__author {
+     word-wrap: break-word;
 }
+/* cart css start */
+ body.page-id-122 .wc-empty-cart-message {
+     max-width: 980px;
+     margin: 30px auto 0;
+}
+ body.page-id-122 .woocommerce-message, body.page-id-122 .woocommerce-info {
+     border-top-width: 1px;
+}
+ body.page-id-122 .wc-empty-cart-message {
+     display: none;
+}
+ .woocommerce-cart-form .woocommerce-Price-amount bdi {
+     color: #5A4A4F;
+}
+ .cart-form-qty button, .cart-form-qty input {
+     border: none;
+     outline: none;
+     box-shadow: none;
+}
+ .cart-form-qty input {
+     user-select: none;
+     pointer-events: none;
+     font-weight: 500;
+     font-size: 15px;
+}
+ .cart-form-qty button:hover, .cart-form-qty button:focus {
+     background: none;
+     border: none;
+     color:#2B1C23;
+     box-shadow: none;
+     border-style:none !important;
+}
+ .cart-form-qty button:hover svg, .cart-form-qty button:focus svg {
+     background: none;
+     border: none;
+     color:#2B1C23;
+     box-shadow: none;
+}
+ .cart-form-qty input {
+     height: 32px;
+}
+ body.page-id-122 .woocommerce-notices-wrapper {
+     display: none;
+}
+ .coupon-cols input {
+     height: 48px;
+     border-right: none;
+     border-right-color: currentcolor;
+     border-top-left-radius: 12px !important;
+     border-bottom-left-radius: 12px !important;
+}
+ .coupon-cols button {
+     border-top-left-radius: 0px !important;
+     border-bottom-left-radius: 0px !important;
+}
+/* cart css end */
