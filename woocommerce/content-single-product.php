@@ -150,7 +150,7 @@ $short = $product ? $product->get_short_description() : '';
         <div class="mz-flex  mz-gap-4 mz-flex-col">
           <?php if (wc_review_ratings_enabled()) : ?>
             <div class="mz-flex mz-gap-1 mz-flex-row-reverse mz-justify-center lg:mz-justify-end">
-              <a href="#mz-reviews" class="mz-text-sm mz-text-gray-900 mz-font-semibold hover:mz-underline">
+              <a href="#mz-reviews" class="mz-text-sm mz-text-gray-900 mz-font-semibold">
                 <?php echo $review_count ? ' (' . (int)$review_count . ')' : ''; ?>
               </a>
               <?php echo wc_get_rating_html($average); ?>
@@ -158,15 +158,24 @@ $short = $product ? $product->get_short_description() : '';
             </div>
           <?php endif; ?>
 
-          <div class="mz-text-xl md:mz-text-2xl mz-font-semibold mz-text-brand-accent">
-            <?php woocommerce_template_single_price(); ?>
+          <?php if ( ! $product->is_type('variable') ) : ?>
+          <div class="mz-text-xl md:mz-text-2xl mz-font-semibold mz-text-brand-accent mz-price-wrap" data-mz-top-price>
+              <?php echo $product->get_price_html(); ?>
           </div>
+          <?php endif; ?> 
 
         </div>
 
-        <div class="mz-text-gray-600 mz-leading-relaxed mz-px-4 lg:mz-px-0">
-          <?php woocommerce_template_single_excerpt(); ?>
-        </div>
+       <div class="mz-text-gray-600 mz-leading-relaxed mz-px-4 lg:mz-px-0">
+        <?php
+          $short_html = $product ? $product->get_short_description() : '';
+          if ($short_html) {
+            echo '<div class="mz-prose mz-max-w-none mz-text-text-body">';
+            echo wp_kses_post( wpautop( do_shortcode($short_html) ) );
+            echo '</div>';
+          }
+        ?>
+      </div> 
       </div>
 
       <!-- Add to cart -->
@@ -181,16 +190,22 @@ $short = $product ? $product->get_short_description() : '';
 
 
         <!-- Accordion Info -->
+         
   <div class="mz-mt-14 mz-text-left">
+    
     <?php
       $sections = [];
 
-      if (!empty($short)) {
+      $short = $product ? $product->get_short_description() : '';
+      $desc  = $product ? $product->get_description() : '';
+      
+      if (!empty($desc)) {
         $sections[] = [
           'title' => 'Features',
-          'content_html' => '<div class="mz-prose mz-max-w-none mz-text-text-body">' . wp_kses_post($short) . '</div>',
+          'content_html' => '<div class="mz-prose mz-max-w-none mz-text-text-body">' . wp_kses_post(wpautop($desc)) . '</div>',
         ];
       }
+
 
       if (!empty($mz_how_to_use)) {
         $sections[] = [

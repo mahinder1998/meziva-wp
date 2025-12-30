@@ -1319,6 +1319,11 @@ h1, h2, h3, h4, h5, h6 {
   border-color: rgb(90 74 79 / var(--tw-border-opacity, 1));
 }
 
+.mz-bg-\[\#9B4A6A\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(155 74 106 / var(--tw-bg-opacity, 1));
+}
+
 .mz-bg-\[\#D8D8D8\] {
   --tw-bg-opacity: 1;
   background-color: rgb(216 216 216 / var(--tw-bg-opacity, 1));
@@ -1440,6 +1445,11 @@ h1, h2, h3, h4, h5, h6 {
   padding-right: 1.25rem;
 }
 
+.mz-px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
 .mz-py-1\.5 {
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
@@ -1458,6 +1468,11 @@ h1, h2, h3, h4, h5, h6 {
 .mz-py-14 {
   padding-top: 3.5rem;
   padding-bottom: 3.5rem;
+}
+
+.mz-py-16 {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
 
 .mz-py-2 {
@@ -1621,10 +1636,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-font-medium {
   font-weight: 500;
-}
-
-.mz-font-normal {
-  font-weight: 400;
 }
 
 .mz-font-semibold {
@@ -2289,6 +2300,10 @@ h1, h2, h3, h4, h5, h6 {
 
   .lg\:mz-content-center {
     align-content: center;
+  }
+
+  .lg\:mz-justify-start {
+    justify-content: flex-start;
   }
 
   .lg\:mz-justify-end {

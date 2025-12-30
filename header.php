@@ -58,11 +58,12 @@ $nav_hover_color = mz_get_acf('nav_hover_color', $front_id, '');
 if (!$nav_hover_color) $nav_hover_color = mz_get_acf('nav_link_hover_color', $front_id, '#9B4A6A');
 
 // Woo URLs
-$cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart');
+$cart_url = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : home_url('/checkout');
 
-if (function_exists('is_product') && is_product() && function_exists('wc_get_checkout_url')) {
-  $cart_url = wc_get_checkout_url();
-}
+// if (function_exists('is_product') && is_product() && function_exists('wc_get_checkout_url')) {
+//   $cart_url = wc_get_checkout_url();
+// }
+
 
 $account_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/my-account');
 
