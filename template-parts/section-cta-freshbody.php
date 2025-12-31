@@ -1,7 +1,10 @@
+
 <?php
 /**
  * SECTION: CTA / Try freshbody today (ACF FREE) + Tailwind prefix mz-
  */
+
+if ( ! function_exists('get_field') ) return;
 
 $img        = get_field('cta_image');
 $heading    = get_field('cta_heading') ?: 'Try freshbody today';
@@ -18,14 +21,41 @@ $t_color    = get_field('cta_text_color') ?: '#111111';
 $btn_bg     = get_field('cta_btn_bg') ?: '#9FD3C6';
 $btn_tcolor = get_field('cta_btn_text_color') ?: '#FFFFFF';
 
-$img_url = !empty($img['url']) ? $img['url'] : '';
-$img_alt = !empty($img['alt']) ? $img['alt'] : 'Product';
+/**
+ * ✅ Image optimizer payload (ACF image array)
+ * Uses WP srcset + sizes for better LCP/CLS
+ */
+function mz_img_payload_cta($img, $size = 'large') {
+  if (empty($img) || !is_array($img)) return null;
+
+  $id = !empty($img['ID']) ? (int) $img['ID'] : 0;
+
+  // pick requested size if exists, else fallback url
+  $src = $img['sizes'][$size] ?? ($img['url'] ?? '');
+  if (!$src) return null;
+
+  $w = $img['sizes'][$size . '-width']  ?? '';
+  $h = $img['sizes'][$size . '-height'] ?? '';
+
+  $srcset = $id ? wp_get_attachment_image_srcset($id, $size) : '';
+  // your layout shows image ~250-300px, so tell browser correctly
+  $sizes  = '(max-width: 640px) 250px, (max-width: 1024px) 280px, 300px';
+
+  return [
+    'src'    => $src,
+    'srcset' => $srcset,
+    'sizes'  => $sizes,
+    'alt'    => $img['alt'] ?? '',
+    'w'      => $w,
+    'h'      => $h,
+  ];
+}
+
+$imgp = mz_img_payload_cta($img, 'large');
+$img_alt = ($imgp && !empty($imgp['alt'])) ? $imgp['alt'] : 'Product';
 ?>
 
-<section
-  class="mz-w-full"
-  style="background-color: <?php echo esc_attr($bg); ?>;"
->
+<section class="mz-w-full" style="background-color: <?php echo esc_attr($bg); ?>;">
   <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-14 md:mz-py-20">
 
     <div class="mz-grid mz-grid-cols-1 md:mz-grid-cols-12 md:mz-gap-10 mz-items-center">
@@ -33,13 +63,22 @@ $img_alt = !empty($img['alt']) ? $img['alt'] : 'Product';
       <!-- LEFT: Image -->
       <div class="md:mz-col-span-5">
         <div class="mz-flex mz-justify-center md:mz-justify-end">
-          <?php if ($img_url): ?>
+          <?php if ($imgp): ?>
             <img
-              src="<?php echo esc_url($img_url); ?>"
+              src="<?php echo esc_url($imgp['src']); ?>"
+              <?php if (!empty($imgp['srcset'])): ?>
+                srcset="<?php echo esc_attr($imgp['srcset']); ?>"
+              <?php endif; ?>
+              sizes="<?php echo esc_attr($imgp['sizes']); ?>"
               alt="<?php echo esc_attr($img_alt); ?>"
-              class="mz-w-[250px] sm:mz-w-[280px] md:mz-w-[280px] lg:mz-w-[300px]
-                     mz-h-auto"
+              <?php if (!empty($imgp['w']) && !empty($imgp['h'])): ?>
+                width="<?php echo esc_attr($imgp['w']); ?>"
+                height="<?php echo esc_attr($imgp['h']); ?>"
+              <?php endif; ?>
+              class="mz-w-[250px] sm:mz-w-[280px] md:mz-w-[280px] lg:mz-w-[300px] mz-h-auto"
               loading="lazy"
+              decoding="async"
+              fetchpriority="low"
             />
           <?php endif; ?>
         </div>
@@ -72,8 +111,7 @@ $img_alt = !empty($img['alt']) ? $img['alt'] : 'Product';
             <a   href="<?php echo esc_url($btn_link); ?>" class="
             mz-inline-block mz-bg-primary mz-bg-brand-accent mz-text-white mz-px-5 mz-py-3 mz-rounded-lg hover:mz-bg-opacity-90 mz-transition
                 mz-text-sm mz-font-bold hover:mz-bg-brand-primary hover:mz-text-white
-                  md:mz-min-w-[140px] md:mz-py-4 md:mz-text-center xl:mz-min-w-[150px] xl:mz-py-[18px]  xl:mz-text-center xl:mz-text-[15px] xl:mz-rounded-xl
-start
+                  md:mz-min-w-[140px] md:mz-py-4 md:mz-text-center xl:mz-min-w-[150px] xl:mz-py-[18px]  xl:mz-text-center xl:mz-text-[15px] xl:mz-rounded-xl start
                 ">
                   <?php echo esc_html($btn_text); ?>
             </a>
@@ -100,6 +138,5 @@ start
       </div> 
 
     </div>
-
   </div>
 </section>

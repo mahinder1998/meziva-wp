@@ -5,12 +5,15 @@
  * Tailwind Prefix: mz-
  */
 
-$section_bg        = get_field('section_bg');          // Color Picker
-$section_text_color = get_field('section_text_color'); // Color Picker
+if ( ! defined('ABSPATH') ) exit;
+if ( ! function_exists('get_field') ) return;
+
+$section_bg         = get_field('section_bg');          // Color Picker
+$section_text_color = get_field('section_text_color');  // Color Picker
 
 $heading     = get_field('heading');
 $sub_heading = get_field('sub_heading');
-$right_image = get_field('right_image');
+$right_image = get_field('right_image'); // ACF image array (recommended: return array)
 
 // Features
 $f1_icon  = get_field('feature_1_icon');
@@ -39,6 +42,27 @@ $features = [
 // Fallbacks
 $bg_color   = !empty($section_bg) ? $section_bg : '#2f6f44';
 $text_color = !empty($section_text_color) ? $section_text_color : '#ffffff';
+
+// ✅ Image optimization (no layout change)
+$ri_src    = '';
+$ri_srcset = '';
+$ri_sizes  = '(max-width: 767px) 90vw, 460px';
+$ri_alt    = '';
+$ri_w      = '';
+$ri_h      = '';
+
+if (!empty($right_image) && is_array($right_image)) {
+  // Use optimized size instead of full original url
+  $ri_src    = $right_image['sizes']['large'] ?? $right_image['url'];
+  $ri_alt    = $right_image['alt'] ?? '';
+  $ri_w      = $right_image['sizes']['large-width']  ?? '';
+  $ri_h      = $right_image['sizes']['large-height'] ?? '';
+
+  // Generate srcset for responsive loading
+  if (!empty($right_image['ID'])) {
+    $ri_srcset = wp_get_attachment_image_srcset((int)$right_image['ID'], 'large');
+  }
+}
 ?>
 
 <section
@@ -48,19 +72,17 @@ $text_color = !empty($section_text_color) ? $section_text_color : '#ffffff';
     color: <?php echo esc_attr($text_color); ?>;
   "
 >
-  <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-[60px] md:mz-py-20 xl:mz-px-0"> 
+  <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 md:mz-px-6 mz-py-[60px] md:mz-py-20 xl:mz-px-0">
 
-    <div class="mz-grid mz-grid-cols-1 lg:mz-grid-cols-2 mz-gap-12 lg:mz-gap-20 mz-items-start
-    
-    xl:mz-flex
-    ">
+    <div class="mz-grid mz-grid-cols-1 lg:mz-grid-cols-2 mz-gap-12 lg:mz-gap-20 mz-items-start xl:mz-flex">
 
       <!-- LEFT : FEATURES -->
       <div class="mz-order-2 lg:mz-order-2 lg:mz-col-span-2 xl:mz-order-1 xl:mz-w-[66%]">
-        <div class="mz-grid mz-grid-cols-1 sm:mz-grid-cols-2 mz-gap-10 md:mz-gap-12 xl::mz-gap-12">
+        <!-- ✅ small typo fix only -->
+        <div class="mz-grid mz-grid-cols-1 sm:mz-grid-cols-2 mz-gap-10 md:mz-gap-12 xl:mz-gap-12">
 
           <?php foreach ($features as $item): ?>
-            <?php 
+            <?php
               $title = trim((string)($item['title'] ?? ''));
               $desc  = $item['desc'] ?? '';
               $icon  = trim((string)($item['icon'] ?? ''));
@@ -68,14 +90,14 @@ $text_color = !empty($section_text_color) ? $section_text_color : '#ffffff';
               if ($title === '' && empty($desc) && $icon === '') continue;
             ?>
             <div class="mz-text-center mz-grid mz-gap-3 xl:mz-gap-3 md:mz-text-left">
- 
+
               <!-- ICON -->
               <?php if ($icon !== ''): ?>
-                <div class=" mz-w-[60px] mz-h-[60px] mz-mx-auto md:mz-ml-0">
+                <div class="mz-w-[60px] mz-h-[60px] mz-mx-auto md:mz-ml-0">
                   <?php echo $icon; ?>
                 </div>
               <?php else: ?>
-                <div class="mz-w-12 mz-h-12 mz-opacity-70 ">
+                <div class="mz-w-12 mz-h-12 mz-opacity-70">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" class="mz-w-full mz-h-full">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -87,9 +109,7 @@ $text_color = !empty($section_text_color) ? $section_text_color : '#ffffff';
               <!-- TITLE -->
               <?php if ($title !== ''): ?>
                 <h3 class="mz-text-2xl mz-font-heading md:mz-text-2xl mz-font-semibold mz-leading-snug xl:mz-pt-3"
-                style="
-                        color: <?php echo esc_attr($text_color); ?>;
-                    "
+                  style="color: <?php echo esc_attr($text_color); ?>;"
                 >
                   <?php echo esc_html($title); ?>
                 </h3>
@@ -109,56 +129,44 @@ $text_color = !empty($section_text_color) ? $section_text_color : '#ffffff';
       </div>
 
       <!-- RIGHT : CONTENT -->
-       <div class="section-header md:mz-col-span-2 mz-order-1 lg:mz-order-1 md:mz-text-center xl:md:mz-col-span-1 xl:mz-text-left 
-       xl:mz-w-1/3 xl:mz-mt-0
-       ">
-               <div class=" lg:mz-order-2 mz-text-center xl:mz-text-left mz-relative">
-        <?php if (!empty($heading)): ?>
-          <h2 class="mz-text-[36px] xl:mz-text-[50px] mz-leading-[1.05] mz-font-extrabold mz-tracking-tight
-                mz-mb-8 xl:mz-mb-5
-                "
-                 style="
-    color: <?php echo esc_attr($text_color); ?>;"
-                
-                >
-                        <?php
-                echo wp_kses(
-                $heading,
-                [
-                    'br' => []
-                ]
-                );
-                ?>
+      <div class="section-header md:mz-col-span-2 mz-order-1 lg:mz-order-1 md:mz-text-center xl:md:mz-col-span-1 xl:mz-text-left xl:mz-w-1/3 xl:mz-mt-0">
+        <div class="lg:mz-order-2 mz-text-center xl:mz-text-left mz-relative">
 
-          </h2>
-        <?php endif; ?>
+          <?php if (!empty($heading)): ?>
+            <h2 class="mz-text-[36px] xl:mz-text-[50px] mz-leading-[1.05] mz-font-extrabold mz-tracking-tight mz-mb-8 xl:mz-mb-5"
+              style="color: <?php echo esc_attr($text_color); ?>;"
+            >
+              <?php echo wp_kses($heading, ['br' => []]); ?>
+            </h2>
+          <?php endif; ?>
 
-        <?php if (!empty($sub_heading)): ?>
-          <p class="mz-mt-4 mz-text-[18px] md:mz-text-[18px] mz-font-semibold mz-text-text-heading"
-          style="
-    color: <?php echo esc_attr($text_color); ?>;"
-          >
-            <?php echo esc_html($sub_heading); ?>
-          </p>
-        <?php endif; ?>
+          <?php if (!empty($sub_heading)): ?>
+            <p class="mz-mt-4 mz-text-[18px] md:mz-text-[18px] mz-font-semibold mz-text-text-heading"
+              style="color: <?php echo esc_attr($text_color); ?>;"
+            >
+              <?php echo esc_html($sub_heading); ?>
+            </p>
+          <?php endif; ?>
 
-        <?php if (!empty($right_image) && is_array($right_image)): ?>
-          <div class="mz-relative mz-mt-4 mz-w-full mz-max-w-[420px] lg:mz-max-w-[460px]
-          md:mz-hidden xl:mz-block mz-mx-auto xl:mz-absolute  xl:mz-top-[180px]
-          "> 
-            <img
-              src="<?php echo esc_url($right_image['url']); ?>"
-              alt="<?php echo esc_attr($right_image['alt'] ?? ''); ?>"
-              class="mz-w-full mz-h-auto mz-rounded-xl mz-shadow-lg"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-        <?php endif; ?>
-      </div>
-
+          <?php if ($ri_src): ?>
+            <div class="mz-relative mz-mt-4 mz-w-full mz-max-w-[420px] lg:mz-max-w-[460px]
+              md:mz-hidden xl:mz-block mz-mx-auto xl:mz-absolute xl:mz-top-[180px]"
+            >
+              <img
+                src="<?php echo esc_url($ri_src); ?>"
+                <?php if (!empty($ri_srcset)): ?>srcset="<?php echo esc_attr($ri_srcset); ?>"<?php endif; ?>
+                sizes="<?php echo esc_attr($ri_sizes); ?>"
+                alt="<?php echo esc_attr($ri_alt); ?>"
+                <?php if ($ri_w && $ri_h): ?>width="<?php echo esc_attr($ri_w); ?>" height="<?php echo esc_attr($ri_h); ?>"<?php endif; ?>
+                class="mz-w-full mz-h-auto mz-rounded-xl mz-shadow-lg"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
-      
+          <?php endif; ?>
+
+        </div>
+      </div>
 
     </div>
   </div>
