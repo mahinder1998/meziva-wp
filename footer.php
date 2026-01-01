@@ -35,14 +35,12 @@ $c1 = [
   ['t'=>get_field('ft_c1_l1_text',$ctx) ?: 'Brands',         'u'=>get_field('ft_c1_l1_url',$ctx) ?: '#'],
   ['t'=>get_field('ft_c1_l2_text',$ctx) ?: 'Gift Vouchers',   'u'=>get_field('ft_c1_l2_url',$ctx) ?: '#'],
   ['t'=>get_field('ft_c1_l3_text',$ctx) ?: 'Affiliates',      'u'=>get_field('ft_c1_l3_url',$ctx) ?: '#'],
-  ['t'=>get_field('ft_c1_l4_text',$ctx) ?: 'Specials',        'u'=>get_field('ft_c1_l4_url',$ctx) ?: '#'],
 ];
 
 $c2 = [
   ['t'=>get_field('ft_c2_l1_text',$ctx) ?: 'About Us', 'u'=>get_field('ft_c2_l1_url',$ctx) ?: '#'],
   ['t'=>get_field('ft_c2_l2_text',$ctx) ?: 'FAQs',     'u'=>get_field('ft_c2_l2_url',$ctx) ?: '#'],
   ['t'=>get_field('ft_c2_l3_text',$ctx) ?: 'Blog',     'u'=>get_field('ft_c2_l3_url',$ctx) ?: '#'],
-  ['t'=>get_field('ft_c2_l4_text',$ctx) ?: 'Contact',  'u'=>get_field('ft_c2_l4_url',$ctx) ?: '#'],
 ];
 
 $bg          = get_field('ft_bg_color', $ctx) ?: '#FFFFFF';
