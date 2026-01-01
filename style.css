@@ -1029,3 +1029,45 @@ body .woocommerce-MyAccount-navigation-link {
 .contact_us_form textarea {
   resize: none;
 }
+
+
+
+/* ===== Default WordPress Pages Wrapper Fix ===== */
+.mz-wrapper-default {
+	padding: 20px 15px;
+}
+
+/* Headings spacing */
+.mz-wrapper-default h1,
+.mz-wrapper-default h2,
+.mz-wrapper-default h3,
+.mz-wrapper-default h4
+{
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2B1C23;
+  letter-spacing: 0px;
+}
+
+/* Paragraph spacing */
+.mz-wrapper-default p,
+.mz-wrapper-default ul li
+{
+  margin-bottom: 14px;
+  color: #5A4A4F;
+}
+
+.mz-wrapper-default ul {
+	padding-left: 40px;
+}
+
+.mz-wrapper-default ul li{
+	list-style-type: disc;
+}
+
+@media (min-width: 1024px) {
+    .mz-wrapper-default {
+		padding: 40px 15;
+	}
+}
