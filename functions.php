@@ -1021,9 +1021,108 @@ add_action('template_redirect', function () {
 }, 1);
 
 
+defined('ABSPATH') || exit;
+
 /**
- * CMS pages debug (keep; but avoid noisy logs on production if needed)
+ * CONTACT FORM: Turnstile verify + send email
  */
-add_action('acf/init', function () {
-  // error_log('ACF Loaded');
+
+/** 1) Turnstile verify */
+function mz_turnstile_verify($token) {
+  if (empty($token)) return false;
+  if (!defined('MZ_TURNSTILE_SECRET_KEY') || !MZ_TURNSTILE_SECRET_KEY) return false;
+
+  $resp = wp_remote_post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+    'timeout' => 15,
+    'body' => [
+      'secret'   => MZ_TURNSTILE_SECRET_KEY, // ✅ constant string from wp-config
+      'response' => $token,
+      'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+    ],
+  ]);
+
+  if (is_wp_error($resp)) return false;
+
+  $data = json_decode(wp_remote_retrieve_body($resp), true);
+  return (!empty($data['success']));
+}
+
+/** 2) Helper: safe redirect */
+function mz_redirect_back_with_status($status = 'fail') {
+  $ref = wp_get_referer();
+  $url = $ref ? $ref : home_url('/contact-us/');
+  $url = remove_query_arg(['mz_contact'], $url);
+  wp_safe_redirect(add_query_arg('mz_contact', $status, $url));
+  exit;
+}
+
+/** 3) Handle submit */
+function mz_handle_contact_form() {
+
+  // Nonce check
+  $nonce = $_POST['mz_contact_nonce'] ?? '';
+  if (!wp_verify_nonce($nonce, 'mz_contact_submit')) {
+    mz_redirect_back_with_status('fail');
+  }
+
+  // Basic sanitize
+  $full_name = sanitize_text_field($_POST['full_name'] ?? '');
+  $email     = sanitize_email($_POST['email'] ?? '');
+  $phone     = preg_replace('/\D+/', '', ($_POST['phone'] ?? ''));
+  $message   = sanitize_textarea_field($_POST['message'] ?? '');
+
+  // Validate required
+  if (!$full_name || !$email || !$phone || !$message) {
+    mz_redirect_back_with_status('fail');
+  }
+
+  // Turnstile token
+  $token = sanitize_text_field($_POST['cf-turnstile-response'] ?? '');
+  if (!mz_turnstile_verify($token)) {
+    mz_redirect_back_with_status('fail');
+  }
+
+  // Where to send email
+  $to = get_option('admin_email'); // fallback
+  if (function_exists('get_field')) {
+    $acf_to = get_field('mz_support_email', get_option('page_on_front')); // optional
+    if (!empty($acf_to) && is_email($acf_to)) $to = $acf_to;
+  }
+
+  // Email subject/body
+  $subject = 'New Contact Query - Meziva';
+  $body  = "You got a new message from Contact Us form:\n\n";
+  $body .= "Name: {$full_name}\n";
+  $body .= "Email: {$email}\n";
+  $body .= "Phone: {$phone}\n\n";
+  $body .= "Message:\n{$message}\n";
+
+  // Headers (Reply-To makes reply easy)
+  $headers = [];
+  $headers[] = 'Content-Type: text/plain; charset=UTF-8';
+  if (is_email($email)) {
+    $headers[] = 'Reply-To: ' . $full_name . ' <' . $email . '>';
+  }
+
+  $sent = wp_mail($to, $subject, $body, $headers);
+
+  mz_redirect_back_with_status($sent ? 'sent' : 'fail');
+}
+
+/** 4) Hooks for logged-in + guest users */
+add_action('admin_post_nopriv_mz_contact_submit', 'mz_handle_contact_form');
+add_action('admin_post_mz_contact_submit', 'mz_handle_contact_form');
+
+/** 5) Load Turnstile JS only on contact page */
+add_action('wp_enqueue_scripts', function () {
+  // slug change karo agar tumhare page ka slug different hai
+  if (is_page('contact-us')) {
+    wp_enqueue_script(
+      'cf-turnstile',
+      'https://challenges.cloudflare.com/turnstile/v0/api.js',
+      [],
+      null,
+      true
+    );
+  }
 });

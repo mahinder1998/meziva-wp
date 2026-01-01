@@ -1021,3 +1021,11 @@ body .woocommerce-MyAccount-navigation-link {
         justify-content: space-between;
     }
 }
+
+.contact_us_form input[type="email"] {
+  border-radius: 12px;
+  height: 45px;
+}
+.contact_us_form textarea {
+  resize: none;
+}
