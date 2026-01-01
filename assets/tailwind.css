@@ -719,10 +719,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 2.5rem;
 }
 
-.mz-mb-12 {
-  margin-bottom: 3rem;
-}
-
 .mz-mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -1037,10 +1033,6 @@ h1, h2, h3, h4, h5, h6 {
   min-width: 18px;
 }
 
-.mz-max-w-4xl {
-  max-width: 56rem;
-}
-
 .mz-max-w-5xl {
   max-width: 64rem;
 }
@@ -1249,12 +1241,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-gap-y-14 {
   row-gap: 3.5rem;
-}
-
-.mz-space-y-10 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(2.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(2.5rem * var(--tw-space-y-reverse));
 }
 
 .mz-space-y-2 > :not([hidden]) ~ :not([hidden]) {
@@ -1574,11 +1560,6 @@ h1, h2, h3, h4, h5, h6 {
 .mz-py-14 {
   padding-top: 3.5rem;
   padding-bottom: 3.5rem;
-}
-
-.mz-py-16 {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
 }
 
 .mz-py-2 {
@@ -2167,6 +2148,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (min-width: 768px) {
+  .md\:mz-absolute {
+    position: absolute;
+  }
+
+  .md\:mz-inset-0 {
+    inset: 0px;
+  }
+
   .md\:mz-order-1 {
     order: 1;
   }
@@ -2248,6 +2237,10 @@ h1, h2, h3, h4, h5, h6 {
     aspect-ratio: 1/1;
   }
 
+  .md\:mz-aspect-\[3\/1\] {
+    aspect-ratio: 3/1;
+  }
+
   .md\:mz-h-12 {
     height: 3rem;
   }
@@ -2260,12 +2253,20 @@ h1, h2, h3, h4, h5, h6 {
     height: 620px;
   }
 
+  .md\:mz-h-full {
+    height: 100%;
+  }
+
   .md\:mz-max-h-\[570px\] {
     max-height: 570px;
   }
 
   .md\:mz-w-\[280px\] {
     width: 280px;
+  }
+
+  .md\:mz-w-full {
+    width: 100%;
   }
 
   .md\:mz-min-w-\[140px\] {
@@ -2324,6 +2325,11 @@ h1, h2, h3, h4, h5, h6 {
     gap: 2rem;
   }
 
+  .md\:mz-object-contain {
+    -o-object-fit: contain;
+       object-fit: contain;
+  }
+
   .md\:mz-px-0 {
     padding-left: 0px;
     padding-right: 0px;
@@ -2339,6 +2345,11 @@ h1, h2, h3, h4, h5, h6 {
     padding-right: 1.5rem;
   }
 
+  .md\:mz-py-0 {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+
   .md\:mz-py-14 {
     padding-top: 3.5rem;
     padding-bottom: 3.5rem;
@@ -2347,11 +2358,6 @@ h1, h2, h3, h4, h5, h6 {
   .md\:mz-py-20 {
     padding-top: 5rem;
     padding-bottom: 5rem;
-  }
-
-  .md\:mz-py-24 {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
   }
 
   .md\:mz-py-4 {
@@ -2417,11 +2423,6 @@ h1, h2, h3, h4, h5, h6 {
 
   .md\:mz-text-\[60px\] {
     font-size: 60px;
-  }
-
-  .md\:mz-text-base {
-    font-size: 1rem;
-    line-height: 1.5rem;
   }
 }
 
@@ -2559,11 +2560,6 @@ h1, h2, h3, h4, h5, h6 {
   .lg\:mz-py-14 {
     padding-top: 3.5rem;
     padding-bottom: 3.5rem;
-  }
-
-  .lg\:mz-py-16 {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
   }
 
   .lg\:mz-py-\[3px\] {

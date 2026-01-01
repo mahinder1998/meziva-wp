@@ -149,7 +149,7 @@ if (!empty($right_image) && is_array($right_image)) {
           <?php endif; ?>
 
           <?php if ($ri_src): ?>
-            <div class="mz-relative mz-mt-4 mz-w-full mz-max-w-[420px] lg:mz-max-w-[460px]
+            <div class="mz-hidden mz-relative mz-mt-4 mz-w-full mz-max-w-[420px] lg:mz-max-w-[460px]
               md:mz-hidden xl:mz-block mz-mx-auto xl:mz-absolute xl:mz-top-[180px]"
             >
               <img

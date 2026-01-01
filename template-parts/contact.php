@@ -179,13 +179,14 @@ $site_key = defined('MZ_TURNSTILE_SITE_KEY') ? MZ_TURNSTILE_SITE_KEY : '';
             </div>
 
             <!-- Turnstile -->
-            <div class="mz-mt-2">
-              <?php if ($site_key): ?>
-                <div class="cf-turnstile" data-sitekey="<?php echo esc_attr($site_key); ?>"></div>
-              <?php else: ?>
-                <p class="mz-text-sm mz-text-red-600">Turnstile site key missing (define MZ_TURNSTILE_SITE_KEY).</p>
-              <?php endif; ?>
-            </div>
+           <div class="mz-mt-2">
+            <?php if ($site_key): ?>
+              <div class="cf-turnstile" data-sitekey="<?php echo esc_attr($site_key); ?>"></div>
+            <?php else: ?>
+              <p class="mz-text-sm mz-text-red-600">Turnstile site key missing (define MZ_TURNSTILE_SITE_KEY).</p>
+            <?php endif; ?>
+          </div>
+
 
             <p class="mz-text-[13px] mz-text-text-body">
               By submitting this form, you agree to our <a class="mz-underline" href="<?php echo esc_url(home_url('/privacy-policy/')); ?>">Privacy Policy</a>.

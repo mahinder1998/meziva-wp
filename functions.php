@@ -1027,96 +1027,9 @@ defined('ABSPATH') || exit;
  * CONTACT FORM: Turnstile verify + send email
  */
 
-/** 1) Turnstile verify */
-function mz_turnstile_verify($token) {
-  if (empty($token)) return false;
-  if (!defined('MZ_TURNSTILE_SECRET_KEY') || !MZ_TURNSTILE_SECRET_KEY) return false;
-
-  $resp = wp_remote_post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-    'timeout' => 15,
-    'body' => [
-      'secret'   => MZ_TURNSTILE_SECRET_KEY, // ✅ constant string from wp-config
-      'response' => $token,
-      'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
-    ],
-  ]);
-
-  if (is_wp_error($resp)) return false;
-
-  $data = json_decode(wp_remote_retrieve_body($resp), true);
-  return (!empty($data['success']));
-}
-
-/** 2) Helper: safe redirect */
-function mz_redirect_back_with_status($status = 'fail') {
-  $ref = wp_get_referer();
-  $url = $ref ? $ref : home_url('/contact-us/');
-  $url = remove_query_arg(['mz_contact'], $url);
-  wp_safe_redirect(add_query_arg('mz_contact', $status, $url));
-  exit;
-}
-
-/** 3) Handle submit */
-function mz_handle_contact_form() {
-
-  // Nonce check
-  $nonce = $_POST['mz_contact_nonce'] ?? '';
-  if (!wp_verify_nonce($nonce, 'mz_contact_submit')) {
-    mz_redirect_back_with_status('fail');
-  }
-
-  // Basic sanitize
-  $full_name = sanitize_text_field($_POST['full_name'] ?? '');
-  $email     = sanitize_email($_POST['email'] ?? '');
-  $phone     = preg_replace('/\D+/', '', ($_POST['phone'] ?? ''));
-  $message   = sanitize_textarea_field($_POST['message'] ?? '');
-
-  // Validate required
-  if (!$full_name || !$email || !$phone || !$message) {
-    mz_redirect_back_with_status('fail');
-  }
-
-  // Turnstile token
-  $token = sanitize_text_field($_POST['cf-turnstile-response'] ?? '');
-  if (!mz_turnstile_verify($token)) {
-    mz_redirect_back_with_status('fail');
-  }
-
-  // Where to send email
-  $to = get_option('admin_email'); // fallback
-  if (function_exists('get_field')) {
-    $acf_to = get_field('mz_support_email', get_option('page_on_front')); // optional
-    if (!empty($acf_to) && is_email($acf_to)) $to = $acf_to;
-  }
-
-  // Email subject/body
-  $subject = 'New Contact Query - Meziva';
-  $body  = "You got a new message from Contact Us form:\n\n";
-  $body .= "Name: {$full_name}\n";
-  $body .= "Email: {$email}\n";
-  $body .= "Phone: {$phone}\n\n";
-  $body .= "Message:\n{$message}\n";
-
-  // Headers (Reply-To makes reply easy)
-  $headers = [];
-  $headers[] = 'Content-Type: text/plain; charset=UTF-8';
-  if (is_email($email)) {
-    $headers[] = 'Reply-To: ' . $full_name . ' <' . $email . '>';
-  }
-
-  $sent = wp_mail($to, $subject, $body, $headers);
-
-  mz_redirect_back_with_status($sent ? 'sent' : 'fail');
-}
-
-/** 4) Hooks for logged-in + guest users */
-add_action('admin_post_nopriv_mz_contact_submit', 'mz_handle_contact_form');
-add_action('admin_post_mz_contact_submit', 'mz_handle_contact_form');
-
-/** 5) Load Turnstile JS only on contact page */
+// 1) Load Turnstile JS (only when keys exist)
 add_action('wp_enqueue_scripts', function () {
-  // slug change karo agar tumhare page ka slug different hai
-  if (is_page('contact-us')) {
+  if (defined('MZ_TURNSTILE_SITE_KEY') && MZ_TURNSTILE_SITE_KEY) {
     wp_enqueue_script(
       'cf-turnstile',
       'https://challenges.cloudflare.com/turnstile/v0/api.js',
@@ -1125,4 +1038,105 @@ add_action('wp_enqueue_scripts', function () {
       true
     );
   }
+}, 20);
+
+
+
+// 2) (Optional but recommended) Create CPT to store messages in WP Admin
+add_action('init', function () {
+  register_post_type('mz_contact_msg', [
+    'labels' => [
+      'name' => 'Contact Messages',
+      'singular_name' => 'Contact Message',
+    ],
+    'public' => false,
+    'show_ui' => true,
+    'menu_icon' => 'dashicons-email-alt2',
+    'supports' => ['title'],
+  ]);
 });
+
+
+// 3) Handle form submit
+add_action('admin_post_nopriv_mz_contact_submit', 'mz_handle_contact_submit');
+add_action('admin_post_mz_contact_submit', 'mz_handle_contact_submit');
+
+function mz_handle_contact_submit() {
+
+  // Where to redirect back
+  $redirect = wp_get_referer() ? wp_get_referer() : home_url('/contact/');
+
+  // Nonce check
+  if (!isset($_POST['mz_contact_nonce']) || !wp_verify_nonce($_POST['mz_contact_nonce'], 'mz_contact_submit')) {
+    wp_safe_redirect(add_query_arg('mz_contact', 'fail', $redirect));
+    exit;
+  }
+
+  // Basic sanitize
+  $name    = isset($_POST['full_name']) ? sanitize_text_field($_POST['full_name']) : '';
+  $email   = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+  $phone   = isset($_POST['phone']) ? preg_replace('/\D+/', '', $_POST['phone']) : '';
+  $message = isset($_POST['message']) ? wp_kses_post($_POST['message']) : '';
+
+  if (!$name || !$email || !$phone || !$message) {
+    wp_safe_redirect(add_query_arg('mz_contact', 'fail', $redirect));
+    exit;
+  }
+
+  // 4) Turnstile verify
+  if (!defined('MZ_TURNSTILE_SECRET_KEY') || !MZ_TURNSTILE_SECRET_KEY) {
+    wp_safe_redirect(add_query_arg('mz_contact', 'fail', $redirect));
+    exit;
+  }
+
+  $token = isset($_POST['cf-turnstile-response']) ? sanitize_text_field($_POST['cf-turnstile-response']) : '';
+  if (!$token) {
+    wp_safe_redirect(add_query_arg('mz_contact', 'fail', $redirect));
+    exit;
+  }
+
+  $verify = wp_remote_post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+    'timeout' => 15,
+    'body' => [
+      'secret'   => MZ_TURNSTILE_SECRET_KEY,
+      'response' => $token,
+      'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+    ],
+  ]);
+
+  $ok = false;
+  if (!is_wp_error($verify)) {
+    $body = json_decode(wp_remote_retrieve_body($verify), true);
+    $ok = !empty($body['success']);
+  }
+
+  if (!$ok) {
+    wp_safe_redirect(add_query_arg('mz_contact', 'fail', $redirect));
+    exit;
+  }
+
+  // 5) Store in DB (CPT)
+  $post_id = wp_insert_post([
+    'post_type'   => 'mz_contact_msg',
+    'post_status' => 'publish',
+    'post_title'  => 'Message from ' . $name . ' (' . current_time('Y-m-d H:i') . ')',
+  ]);
+
+  if ($post_id && !is_wp_error($post_id)) {
+    update_post_meta($post_id, 'mz_name', $name);
+    update_post_meta($post_id, 'mz_email', $email);
+    update_post_meta($post_id, 'mz_phone', $phone);
+    update_post_meta($post_id, 'mz_message', $message);
+  }
+
+  // 6) Send email
+  $to = get_option('admin_email'); // or set support email here
+  $subject = 'New Contact Query - Meziva';
+  $body_email = "Name: $name\nEmail: $email\nPhone: $phone\n\nMessage:\n$message\n";
+  $headers = ['Content-Type: text/plain; charset=UTF-8', 'Reply-To: ' . $name . ' <' . $email . '>'];
+
+  wp_mail($to, $subject, $body_email, $headers);
+
+  wp_safe_redirect(add_query_arg('mz_contact', 'sent', $redirect));
+  exit;
+}
