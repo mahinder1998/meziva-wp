@@ -34,7 +34,7 @@ $rr_desc_2    = get_field('returns_refunds_desc_2');
     <div class="mz-space-y-10">
 
       <!-- SECTION 1 -->
-      <?php if ($rr_heading_1 && $rr_desc_1): ?>
+      <?php if ($rr_heading_1 && $rr_desc_1): ?> 
         <div>
           <h2 class="mz-text-xl md:mz-text-2xl mz-font-semibold mz-text-gray-900 mz-mb-3">
             <?php echo esc_html($rr_heading_1); ?>

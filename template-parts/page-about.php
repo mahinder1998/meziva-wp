@@ -90,7 +90,7 @@ $section_image   = get_field('about_section_image');
     <div class="mz-grid mz-grid-cols-1 sm:mz-grid-cols-2 lg:mz-grid-cols-4 mz-gap-8">
 
       <?php
-      // ================= BOX 1 =================
+      // ================= BOX 1 ================= 
       $image1   = get_field('box1_image');
       $heading1 = get_field('box1_heading');
       $desc1    = get_field('box1_desc');

@@ -29,7 +29,7 @@ $desc_3    = get_field('tc_desc_3');
     <div class="mz-text-center mz-mb-12">
       <?php if ($main_heading): ?>
         <h1 class="mz-text-3xl md:mz-text-4xl mz-font-semibold mz-text-gray-900 mz-mb-4">
-          <?php echo esc_html($main_heading); ?>
+          <?php echo esc_html($main_heading); ?> 
         </h1>
       <?php endif; ?>
 
