@@ -61,7 +61,7 @@ $pp_desc_3    = get_field('privacy_policy_desc_3');
           <?php echo wp_kses_post($pp_desc_3); ?>
         </div>
       </div>
-    <?php endif; ?>
+    <?php endif; ?> 
 
   </div>
 </section>

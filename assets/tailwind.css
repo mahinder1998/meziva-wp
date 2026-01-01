@@ -711,8 +711,16 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 200px;
 }
 
+.mz-mb-1 {
+  margin-bottom: 0.25rem;
+}
+
 .mz-mb-10 {
   margin-bottom: 2.5rem;
+}
+
+.mz-mb-12 {
+  margin-bottom: 3rem;
 }
 
 .mz-mb-2 {
@@ -789,10 +797,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-mt-\[100px\] {
   margin-top: 100px;
-}
-
-.mz-mb-1 {
-  margin-bottom: 0.25rem;
 }
 
 .mz-block {
@@ -1020,6 +1024,11 @@ h1, h2, h3, h4, h5, h6 {
   width: auto;
 }
 
+.mz-w-fit {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .mz-w-full {
   width: 100%;
 }
@@ -1028,8 +1037,20 @@ h1, h2, h3, h4, h5, h6 {
   min-width: 18px;
 }
 
+.mz-max-w-4xl {
+  max-width: 56rem;
+}
+
+.mz-max-w-5xl {
+  max-width: 64rem;
+}
+
 .mz-max-w-6xl {
   max-width: 72rem;
+}
+
+.mz-max-w-7xl {
+  max-width: 80rem;
 }
 
 .mz-max-w-\[1240px\] {
@@ -1208,6 +1229,10 @@ h1, h2, h3, h4, h5, h6 {
   gap: 50px;
 }
 
+.mz-gap-\[5px\] {
+  gap: 5px;
+}
+
 .mz-gap-x-10 {
   -moz-column-gap: 2.5rem;
        column-gap: 2.5rem;
@@ -1224,6 +1249,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-gap-y-14 {
   row-gap: 3.5rem;
+}
+
+.mz-space-y-10 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(2.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(2.5rem * var(--tw-space-y-reverse));
 }
 
 .mz-space-y-2 > :not([hidden]) ~ :not([hidden]) {
@@ -1413,11 +1444,6 @@ h1, h2, h3, h4, h5, h6 {
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
 }
 
-.mz-bg-gray-900 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
-}
-
 .mz-bg-green-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1));
@@ -1486,8 +1512,8 @@ h1, h2, h3, h4, h5, h6 {
   padding: 1rem;
 }
 
-.mz-p-5 {
-  padding: 1.25rem;
+.mz-p-8 {
+  padding: 2rem;
 }
 
 .mz-px-0 {
@@ -1525,6 +1551,11 @@ h1, h2, h3, h4, h5, h6 {
   padding-right: 1.5rem;
 }
 
+.mz-px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .mz-py-1\.5 {
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
@@ -1553,6 +1584,11 @@ h1, h2, h3, h4, h5, h6 {
 .mz-py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+.mz-py-20 {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
 .mz-py-3 {
@@ -1634,6 +1670,11 @@ h1, h2, h3, h4, h5, h6 {
 .mz-text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem;
+}
+
+.mz-text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
 }
 
 .mz-text-\[11px\] {
@@ -1854,11 +1895,6 @@ h1, h2, h3, h4, h5, h6 {
   color: rgb(22 101 52 / var(--tw-text-opacity, 1));
 }
 
-.mz-text-pink-700 {
-  --tw-text-opacity: 1;
-  color: rgb(190 24 93 / var(--tw-text-opacity, 1));
-}
-
 .mz-text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity, 1));
@@ -1934,6 +1970,12 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.mz-shadow-xl {
+  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .mz-outline-none {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -1985,6 +2027,11 @@ h1, h2, h3, h4, h5, h6 {
 .hover\:mz-border-pink-300:hover {
   --tw-border-opacity: 1;
   border-color: rgb(249 168 212 / var(--tw-border-opacity, 1));
+}
+
+.hover\:mz-bg-\[\#7a3650\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(122 54 80 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:mz-bg-black\/5:hover {
@@ -2080,12 +2127,12 @@ h1, h2, h3, h4, h5, h6 {
     width: 280px;
   }
 
-  .sm\:mz-max-w-\[300px\] {
-    max-width: 300px;
-  }
-
   .sm\:mz-max-w-\[200px\] {
     max-width: 200px;
+  }
+
+  .sm\:mz-max-w-\[300px\] {
+    max-width: 300px;
   }
 
   .sm\:mz-grid-cols-2 {
@@ -2107,11 +2154,6 @@ h1, h2, h3, h4, h5, h6 {
   .sm\:mz-px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
-  }
-
-  .sm\:mz-text-4xl {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
   }
 
   .sm\:mz-text-\[30px\] {
@@ -2339,6 +2381,11 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 2.25rem;
   }
 
+  .md\:mz-text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+
   .md\:mz-text-5xl {
     font-size: 3rem;
     line-height: 1;
@@ -2371,6 +2418,11 @@ h1, h2, h3, h4, h5, h6 {
   .md\:mz-text-\[60px\] {
     font-size: 60px;
   }
+
+  .md\:mz-text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -2396,14 +2448,6 @@ h1, h2, h3, h4, h5, h6 {
 
   .lg\:mz-col-span-2 {
     grid-column: span 2 / span 2;
-  }
-
-  .lg\:mz-col-span-4 {
-    grid-column: span 4 / span 4;
-  }
-
-  .lg\:mz-col-span-8 {
-    grid-column: span 8 / span 8;
   }
 
   .lg\:mz-col-span-3 {
@@ -2462,6 +2506,10 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .lg\:mz-grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
   .lg\:mz-grid-cols-\[200px\2c 1fr\] {
     grid-template-columns: 200px 1fr;
   }
@@ -2513,6 +2561,11 @@ h1, h2, h3, h4, h5, h6 {
     padding-bottom: 3.5rem;
   }
 
+  .lg\:mz-py-16 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
   .lg\:mz-py-\[3px\] {
     padding-top: 3px;
     padding-bottom: 3px;
@@ -2520,6 +2573,11 @@ h1, h2, h3, h4, h5, h6 {
 
   .lg\:mz-text-left {
     text-align: left;
+  }
+
+  .lg\:mz-text-5xl {
+    font-size: 3rem;
+    line-height: 1;
   }
 
   .lg\:mz-text-\[14px\] {
