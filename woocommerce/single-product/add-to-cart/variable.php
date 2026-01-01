@@ -28,7 +28,7 @@ do_action('woocommerce_before_add_to_cart_form'); ?>
     </p>
   <?php else : ?>
 
-    <div class="mz-space-y-5 mz-mb-5" data-mz-variant-ui>
+    <div class="mz-space-y-5 mz-mb-5 mz-text-center" data-mz-variant-ui>
       <?php foreach ($attributes as $attribute_name => $options) : ?>
         <?php
           // Detect "color" attribute (taxonomy label/slug contains color/colour)
@@ -51,34 +51,39 @@ do_action('woocommerce_before_add_to_cart_form'); ?>
         ?>
 
         <div class="mz-variant-block" data-mz-attr="<?php echo esc_attr($attribute_name); ?>" data-mz-type="<?php echo $is_color ? 'color' : ($is_size ? 'size' : 'text'); ?>">
-          <div class="mz-flex mz-items-center mz-justify-between mz-mb-2">
-            <div class="mz-text-sm mz-font-semibold mz-text-gray-900">
+          <div class="mz-flex mz-items-center mz-justify-center mz-mb-2 lg:mz-justify-start">
+            <div class="mz-text-base mz-font-semibold mz-text-text-body">
               <?php echo esc_html($label); ?>
-              <span class="mz-text-gray-600 mz-font-normal" data-mz-selected-label></span>
+              <span class="mz-text-text-body" data-mz-selected-label></span> 
             </div>
 
             <?php if (end($attribute_keys) === $attribute_name) : ?>
               <a class="reset_variations mz-text-sm mz-font-semibold mz-text-gray-700 hover:mz-underline" href="#" style="visibility:hidden" data-mz-reset>
-                <?php esc_html_e('Clear', 'woocommerce'); ?>
+                <!-- <?php esc_html_e('Clear', 'woocommerce'); ?> -->
+                 <!-- <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                </svg> -->
+
               </a>
             <?php endif; ?>
           </div>
 
           <!-- Custom UI rendered by JS here -->
-          <div class="mz-flex mz-flex-wrap mz-gap-2" data-mz-options></div>
+          <div class="mz-flex mz-flex-wrap mz-gap-2 mz-justify-center lg:mz-justify-start" data-mz-options></div>
 
-          <!-- Keep Woo dropdown hidden for compatibility -->
-          <div class="mz-hidden">
-            <?php
-              wc_dropdown_variation_attribute_options([
-                'options'   => $options,
-                'attribute' => $attribute_name,
-                'product'   => $product,
-                'id'        => $select_id,
-                'class'     => 'mz-variation-select',
-              ]);
-            ?>
-          </div>
+          <!-- Keep Woo dropdown hidden but still detectable by Woo JS -->
+        <div class="variations mz-hidden" aria-hidden="true">
+          <?php
+            wc_dropdown_variation_attribute_options([
+              'options'   => $options,
+              'attribute' => $attribute_name,
+              'product'   => $product,
+              'id'        => $select_id,
+              'class'     => 'mz-variation-select',
+            ]);
+          ?>
+        </div>
+
         </div>
       <?php endforeach; ?>
     </div>

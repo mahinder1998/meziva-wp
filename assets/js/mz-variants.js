@@ -146,18 +146,22 @@
 
       if (type === "color") {
         const hex = inferColorHexFromName(text);
-        btn.className += " mz-w-10 mz-h-10 mz-rounded-full mz-border mz-border-gray-300 hover:mz-scale-105";
-        btn.innerHTML = `<span class="mz-sr-only">${text}</span>`;
+        btn.className += " mz-w-10 mz-h-10 mz-rounded-full";
+        //btn.innerHTML = `<span class="mz-sr-only">${text}</span>`;
+        btn.innerHTML = ``;
         btn.style.background = hex ? hex : "#f3f4f6";
         if (hex && hex.toLowerCase() === "#ffffff") btn.style.borderColor = "#d1d5db";
       } else {
-        btn.className += " mz-px-4 mz-py-2 mz-rounded-xl mz-border mz-border-gray-300 mz-bg-white mz-text-sm mz-font-semibold mz-text-gray-800 hover:mz-bg-gray-50";
+        btn.className += " mz-px-4 mz-py-4 mz-rounded-xl  mz-bg-white mz-text-sm mz-font-semibold mz-text-gray-800";
         btn.textContent = text;
       }
 
       btn.addEventListener("click", () => {
         selectEl.value = value;
+        // ✅ Trigger both native + jQuery change (Woo uses jQuery)
         selectEl.dispatchEvent(new Event("change", { bubbles: true }));
+        if (window.jQuery) window.jQuery(selectEl).trigger("change");
+
 
         qsa(".mz-variant-btn", optionsWrap).forEach(b => b.classList.remove("mz-ring-2", "mz-ring-gray-900"));
         btn.classList.add("mz-ring-2", "mz-ring-gray-900");
@@ -223,16 +227,24 @@
     // reset
     const reset = qs(".reset_variations", form);
     if (reset) {
-      reset.addEventListener("click", () => {
+     reset.addEventListener("click", () => {
         setTimeout(() => {
           reset.style.visibility = "hidden";
+
           blocks.forEach((b) => {
             const s = qs("select", b);
-            if (s) syncUIFromSelect(b, s);
+            if (s) {
+              syncUIFromSelect(b, s);
+              // ✅ ensure Woo receives reset/change properly
+              s.dispatchEvent(new Event("change", { bubbles: true }));
+              if (window.jQuery) window.jQuery(s).trigger("change");
+            }
           });
-          restoreInitialMainImage();
+
+          restoreInitialMainImage(); 
         }, 80);
       });
+
     }
 
     // ✅ MutationObserver: if Woo updates variations internally, we still sync image
@@ -255,3 +267,93 @@
   }
 })();
   
+
+
+(function(){
+  if (!window.jQuery) return;
+
+  jQuery(function($){
+    const $form = $('form.variations_form');
+    if (!$form.length) return;
+
+    const $top = $('[data-mz-top-price]');
+    if (!$top.length) return;
+
+    const initial = $top.html();
+
+    $form.on('found_variation', function(e, variation){
+      if (variation && variation.price_html) {
+        $top.html(variation.price_html);
+      }
+    });
+
+    $form.on('reset_data', function(){
+      $top.html(initial);
+    });
+  });
+})();
+
+
+
+(function () {
+  function initMezivaVariantActive() {
+    const forms = document.querySelectorAll("form.variations_form");
+    if (!forms.length) return;
+
+    forms.forEach((form) => {
+      // your color buttons wrapper
+      const optionWrap = form.querySelector("[data-mz-options]");
+      if (!optionWrap) return;
+
+      const buttons = optionWrap.querySelectorAll("[data-mz-value]");
+      if (!buttons.length) return;
+
+      // Try detect attribute name from hidden select: pa_color / attribute_pa_color / etc.
+      // Prefer the first select inside variations.
+      const select = form.querySelector(".variations select");
+      if (!select) return;
+
+      const setActive = (value) => {
+        buttons.forEach((btn) => {
+          const v = (btn.getAttribute("data-mz-value") || "").toLowerCase().trim();
+          const isOn = v && value && v === value.toLowerCase().trim();
+          btn.classList.toggle("is-active", !!isOn);
+          btn.setAttribute("aria-pressed", isOn ? "true" : "false");
+        });
+      };
+
+      // On button click -> set select value + trigger Woo change
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const value = btn.getAttribute("data-mz-value");
+          if (!value) return;
+
+          // set value in select
+          select.value = value;
+
+          // trigger woo handlers
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+
+          // update active UI immediately
+          setActive(value);
+        });
+      });
+
+      // When Woo updates variation selection (auto-select, page reload, etc.)
+      select.addEventListener("change", () => setActive(select.value));
+
+      // When variation found / reset / etc.
+      form.addEventListener("reset_data", () => setActive(""));
+
+      // Initial state (preselected / default)
+      setActive(select.value);
+    });
+  }
+
+  // DOM ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initMezivaVariantActive);
+  } else {
+    initMezivaVariantActive();
+  }
+})();
