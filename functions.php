@@ -1140,3 +1140,34 @@ function mz_handle_contact_submit() {
   wp_safe_redirect(add_query_arg('mz_contact', 'sent', $redirect));
   exit;
 }
+
+
+// Show columns in Contact Messages admin list
+add_filter('manage_mz_contact_msg_posts_columns', function ($columns) {
+  $new = [];
+  $new['cb'] = $columns['cb'];
+  $new['title'] = 'Title';
+  $new['mz_name'] = 'Name';
+  $new['mz_email'] = 'Email';
+  $new['mz_phone'] = 'Phone';
+  $new['mz_message'] = 'Message';
+  $new['date'] = 'Date';
+  return $new;
+});
+
+add_action('manage_mz_contact_msg_posts_custom_column', function ($column, $post_id) {
+  if ($column === 'mz_name') {
+    echo esc_html(get_post_meta($post_id, 'mz_name', true));
+  }
+  if ($column === 'mz_email') {
+    $email = get_post_meta($post_id, 'mz_email', true);
+    echo $email ? '<a href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a>' : '';
+  }
+  if ($column === 'mz_phone') {
+    echo esc_html(get_post_meta($post_id, 'mz_phone', true));
+  }
+  if ($column === 'mz_message') {
+    $msg = wp_strip_all_tags(get_post_meta($post_id, 'mz_message', true));
+    echo esc_html(mb_strimwidth($msg, 0, 60, '...'));
+  }
+}, 10, 2);
