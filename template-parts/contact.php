@@ -38,7 +38,7 @@ $posted  = isset($_GET['mz_contact']) ? sanitize_text_field($_GET['mz_contact'])
 $ok_msg  = ($posted === 'sent') ? 'Thanks! We received your message. We’ll get back within 24 hours on business days.' : '';
 $er_msg  = ($posted === 'fail') ? 'Something went wrong. Please try again or email us directly.' : '';
 
-$site_key = defined('MZ_TURNSTILE_SITE_KEY') ? MZ_TURNSTILE_SITE_KEY : '';
+$site_key = (defined('MZ_TURNSTILE_SITE_KEY') && MZ_TURNSTILE_SITE_KEY) ? MZ_TURNSTILE_SITE_KEY : '';
 ?>
 
 <section class="mz-w-full mz-bg-white">
