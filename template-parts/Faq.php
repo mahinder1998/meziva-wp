@@ -3,221 +3,137 @@
  * Template Name: FAQ Page
  */
 get_header();
+
+function mz_render_faq_section($title_field, $icon_field, $q_prefix, $a_prefix, $max = 10) {
+  $title = get_field($title_field);
+  $icon  = get_field($icon_field);
+  if (!$title) return;
+  ?>
+  <div class="mz-mb-14">
+
+    
+      
+    </div>
+
+    <div class="mz-border-t mz-border-gray-200 mz-accordion">
+      <?php for ($i=1; $i <= $max; $i++): ?>
+        <?php
+          $q = get_field($q_prefix . $i);
+          $a = get_field($a_prefix . $i);
+          if (!$q || !$a) continue;
+        ?>
+        <div class="mz-acc-item mz-border-b mz-border-gray-200">
+          <button type="button"
+            class="mz-acc-btn mz-w-full mz-border-none mz-flex mz-items-center mz-justify-between mz-gap-6 mz-py-5 md:mz-py-6 mz-text-left"
+            aria-expanded="false">
+            <span class="mz-text-base md:mz-text-lg mz-font-medium mz-text-gray-900">
+              <?php echo esc_html($q); ?>
+            </span>
+            <span class="mz-acc-icon mz-text-2xl mz-leading-none mz-text-gray-500">+</span>
+          </button>
+
+          <div class="mz-acc-panel" style="max-height:0;overflow:hidden;transition:max-height 320ms ease;">
+            <div class="mz-pb-6">
+              <div class="mz-text-sm md:mz-text-[15px] mz-leading-relaxed mz-text-gray-600">
+                <?php echo wp_kses_post($a); ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endfor; ?>
+    </div>
+
+  </div>
+  <?php
+}
 ?>
 
-<section class="mz-bg-white mz-py-20">
-  <div class="mz-max-w-5xl mz-mx-auto mz-px-4">
+<style>
+.mz-acc-btn:hover{background:none;}
+.mz-acc-btn:focus{background:none !important;
+  box-shadow:none !important;
+}
 
-    <!-- ===== SECTION HEADING ===== -->
-    <?php if (get_field('section_heading')): ?>
-      <h2 class="mz-text-4xl mz-font-bold mz-text-center mz-mb-2">
-        <?php echo esc_html(get_field('section_heading')); ?>
-      </h2>
-    <?php endif; ?>
+.mz-acc-icon{transition:transform .22s ease;}
+.mz-acc-item.is-open .mz-acc-icon{transform:rotate(45deg);} /* + rotates like Sugar style */
+</style>
 
-    <?php if (get_field('sub_heading')): ?>
-      <p class="mz-text-center mz-text-gray-500 mz-mb-2">
+<section class="mz-bg-white mz-max-w-6xl mz-mx-auto mz-px-4 sm:mz-px-6 lg:mz-px-8 mz-py-10 lg:mz-py-14">
+  <div class="mz-max-w-3xl mz-mx-auto mz-px-4">
+
+    <!-- <?php if (get_field('sub_heading')): ?>
+      <p class="mz-text-center mz-text-xs mz-tracking-[0.25em] mz-uppercase mz-text-gray-500 mz-mb-3">
         <?php echo esc_html(get_field('sub_heading')); ?>
       </p>
+    <?php endif; ?> -->
+
+    <?php if (get_field('section_heading')): ?>
+      <h1 class="mz-text-[36px] xl:mz-text-[50px] mz-text-center mz-leading-[1.05] mz-font-extrabold mz-tracking-tight mz-text-brand-accent mz-mb-8 xl:mz-mb-5">
+         <?php echo esc_html(get_field('section_heading')); ?>
+      </h1>
     <?php endif; ?>
 
-    <?php if (get_field('frequently_asked_questions')): ?>
-      <h3 class="mz-text-center mz-text-lg mz-font-medium mz-mb-10">
-        <?php echo esc_html(get_field('frequently_asked_questions')); ?>
-      </h3>
-    <?php endif; ?>
+    <?php
+      // GENERAL
+      mz_render_faq_section(
+        'general_title',
+        'general_icon',
+        'general_q_',
+        'general_a_',
+        10
+      );
 
-    <!-- ===== FAQ TABS ===== -->
-    <div class="faq-wrapper mz-flex mz-flex-col mz-gap-[5px]">
+      // SHIPPING
+      mz_render_faq_section(
+        'shipping_title',
+        'shipping_icon',
+        'shipping_q_',
+        'shipping_a_',
+        10
+      );
+    ?>
 
-      <?php
-      for ($i = 1; $i <= 4; $i++):
-        $heading = get_field("heading_tab_{$i}") ?: get_field("tab_heading_{$i}");
-        $desc    = get_field("description_tab_{$i}") ?: get_field("tab_description_{$i}");
-        if (!$heading || !$desc) continue;
-      ?>
-
-      <div class="faq-item mz-border mz-rounded-lg mz-overflow-hidden">
-
-        <button type="button"
-          class="faq-btn mz-w-full mz-flex mz-justify-between mz-items-center 
-                 mz-px-6 mz-py-4 mz-bg-transparent mz-transition">
-
-          <span class="faq-title mz-text-lg mz-font-medium mz-text-gray-900">
-            <?php echo esc_html($heading); ?>
-          </span>
-
-          <span class="faq-icon mz-text-2xl mz-font-bold mz-text-gray-900">+</span>
-        </button>
-
-        <div class="faq-content mz-hidden mz-px-6 mz-py-4 mz-text-gray-700">
-          <?php echo wp_kses_post($desc); ?>
-        </div>
-
-      </div>
-
-      <?php endfor; ?>
-
-    </div>
   </div>
 </section>
 
-<!-- =========================
-     SHIPPING TABS SECTION
-========================= -->
-<section class="mz-bg-white mz-py-20">
-  <div class="mz-max-w-5xl mz-mx-auto mz-px-4">
-
-    <!-- ===== SECTION HEADING ===== -->
-    <?php if (get_field('shipping_section_heading')): ?>
-      <h2 class="mz-text-3xl md:mz-text-4xl mz-font-bold mz-text-center mz-mb-10">
-        <?php echo esc_html(get_field('shipping_section_heading')); ?>
-      </h2>
-    <?php endif; ?>
-
-    <!-- ===== SHIPPING TABS ===== -->
-    <div class="shipping-wrapper mz-flex mz-flex-col mz-gap-[5px]">
-
-      <!-- ===== TAB 1 ===== -->
-      <?php if (get_field('shipping__tab_heading_1') && get_field('shipping__tab_description_1')): ?>
-      <div class="shipping-item mz-border mz-rounded-lg mz-overflow-hidden">
-        <button type="button"
-          class="shipping-btn mz-w-full mz-flex mz-justify-between mz-items-center mz-px-6 mz-py-4 mz-bg-transparent mz-transition">
-
-          <span class="shipping-title mz-text-lg mz-font-medium mz-text-gray-900">
-            <?php echo esc_html(get_field('shipping__tab_heading_1')); ?>
-          </span>
-
-          <span class="shipping-icon mz-text-2xl mz-font-bold mz-text-gray-900">+</span>
-        </button>
-
-        <div class="shipping-content mz-hidden mz-px-6 mz-py-4 mz-text-gray-700">
-          <?php echo wp_kses_post(get_field('shipping__tab_description_1')); ?>
-        </div>
-      </div>
-      <?php endif; ?>
-
-      <!-- ===== TAB 2 ===== -->
-      <?php if (get_field('shipping__tab_heading_2') && get_field('shipping_tab_description_2')): ?>
-      <div class="shipping-item mz-border mz-rounded-lg mz-overflow-hidden">
-        <button type="button"
-          class="shipping-btn mz-w-full mz-flex mz-justify-between mz-items-center mz-px-6 mz-py-4 mz-bg-transparent mz-transition">
-
-          <span class="shipping-title mz-text-lg mz-font-medium mz-text-gray-900">
-            <?php echo esc_html(get_field('shipping__tab_heading_2')); ?>
-          </span>
-
-          <span class="shipping-icon mz-text-2xl mz-font-bold mz-text-gray-900">+</span>
-        </button>
-
-        <div class="shipping-content mz-hidden mz-px-6 mz-py-4 mz-text-gray-700">
-          <?php echo wp_kses_post(get_field('shipping_tab_description_2')); ?>
-        </div>
-      </div>
-      <?php endif; ?>
-
-      <!-- ===== TAB 3 ===== -->
-      <?php if (get_field('shipping__tab_heading_3') && get_field('shipping__tab_description_3')): ?>
-      <div class="shipping-item mz-border mz-rounded-lg mz-overflow-hidden">
-        <button type="button"
-          class="shipping-btn mz-w-full mz-flex mz-justify-between mz-items-center mz-px-6 mz-py-4 mz-bg-transparent mz-transition">
-
-          <span class="shipping-title mz-text-lg mz-font-medium mz-text-gray-900">
-            <?php echo esc_html(get_field('shipping__tab_heading_3')); ?>
-          </span>
-
-          <span class="shipping-icon mz-text-2xl mz-font-bold mz-text-gray-900">+</span>
-        </button>
-
-        <div class="shipping-content mz-hidden mz-px-6 mz-py-4 mz-text-gray-700">
-          <?php echo wp_kses_post(get_field('shipping__tab_description_3')); ?>
-        </div>
-      </div>
-      <?php endif; ?>
-
-    </div>
-  </div>
-</section>
-
-<!-- ===== SHIPPING TAB SCRIPT ===== -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".mz-accordion").forEach((accordion) => {
+    const items = accordion.querySelectorAll(".mz-acc-item");
 
-  document.querySelectorAll(".shipping-btn").forEach(btn => {
+    function closeAll() {
+      items.forEach((item) => {
+        item.classList.remove("is-open");
+        const btn = item.querySelector(".mz-acc-btn");
+        const panel = item.querySelector(".mz-acc-panel");
+        const icon = item.querySelector(".mz-acc-icon");
 
-    btn.addEventListener("click", function () {
-
-      const item    = this.closest(".shipping-item");
-      const content = item.querySelector(".shipping-content");
-      const icon    = item.querySelector(".shipping-icon");
-      const title   = item.querySelector(".shipping-title");
-
-      const isOpen = !content.classList.contains("mz-hidden");
-
-      // close all tabs
-      document.querySelectorAll(".shipping-item").forEach(other => {
-        other.querySelector(".shipping-content").classList.add("mz-hidden");
-        other.querySelector(".shipping-icon").innerHTML = "+";
-        other.querySelector(".shipping-btn").style.backgroundColor = "";
-        other.querySelector(".shipping-title").classList.remove("mz-text-white");
-        other.querySelector(".shipping-icon").classList.remove("mz-text-white");
+        btn.setAttribute("aria-expanded", "false");
+        panel.style.maxHeight = "0px";
+        icon.textContent = "+";
       });
+    }
 
-      // toggle same tab
-      if (!isOpen) {
-        content.classList.remove("mz-hidden");
-        icon.innerHTML = "−";
-        this.style.backgroundColor = "#9b4a6a";
-        title.classList.add("mz-text-white");
-        icon.classList.add("mz-text-white");
-      }
+    items.forEach((item) => {
+      const btn = item.querySelector(".mz-acc-btn");
+      const panel = item.querySelector(".mz-acc-panel");
+      const icon = item.querySelector(".mz-acc-icon");
+
+      btn.addEventListener("click", () => {
+        const isOpen = item.classList.contains("is-open");
+        closeAll();
+
+        if (!isOpen) {
+          item.classList.add("is-open");
+          btn.setAttribute("aria-expanded", "true");
+          icon.textContent = "+";
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        }
+      });
     });
-
   });
-
 });
 </script>
-
-
-
-
-<!-- ===== FAQ SCRIPT (FINAL FIXED) ===== -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-  document.querySelectorAll(".faq-btn").forEach(btn => {
-
-    btn.addEventListener("click", function () {
-
-      const item    = this.closest(".faq-item");
-      const content = item.querySelector(".faq-content");
-      const icon    = item.querySelector(".faq-icon");
-      const title   = item.querySelector(".faq-title");
-
-      const isOpen = !content.classList.contains("mz-hidden");
-
-      // CLOSE ALL FIRST
-      document.querySelectorAll(".faq-item").forEach(other => {
-        other.querySelector(".faq-content").classList.add("mz-hidden");
-        other.querySelector(".faq-icon").innerHTML = "+";
-        other.querySelector(".faq-btn").style.backgroundColor = "";
-        other.querySelector(".faq-title").classList.remove("mz-text-white");
-        other.querySelector(".faq-icon").classList.remove("mz-text-white");
-      });
-
-      // TOGGLE SAME TAB
-      if (!isOpen) {
-        content.classList.remove("mz-hidden");
-        icon.innerHTML = "−";
-        this.style.backgroundColor = "#9b4a6a";
-        title.classList.add("mz-text-white");
-        icon.classList.add("mz-text-white");
-      }
-    });
-
-  });
-
-});
-</script>
-
+ 
 <?php get_footer(); ?>
+ 

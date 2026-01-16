@@ -719,6 +719,10 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 2.5rem;
 }
 
+.mz-mb-14 {
+  margin-bottom: 3.5rem;
+}
+
 .mz-mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -851,6 +855,10 @@ h1, h2, h3, h4, h5, h6 {
   height: 1.25rem;
 }
 
+.mz-h-7 {
+  height: 1.75rem;
+}
+
 .mz-h-8 {
   height: 2rem;
 }
@@ -956,6 +964,10 @@ h1, h2, h3, h4, h5, h6 {
   width: 1.25rem;
 }
 
+.mz-w-7 {
+  width: 1.75rem;
+}
+
 .mz-w-8 {
   width: 2rem;
 }
@@ -1033,8 +1045,8 @@ h1, h2, h3, h4, h5, h6 {
   min-width: 18px;
 }
 
-.mz-max-w-5xl {
-  max-width: 64rem;
+.mz-max-w-3xl {
+  max-width: 48rem;
 }
 
 .mz-max-w-6xl {
@@ -1219,10 +1231,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-gap-\[50px\] {
   gap: 50px;
-}
-
-.mz-gap-\[5px\] {
-  gap: 5px;
 }
 
 .mz-gap-x-10 {
@@ -1562,6 +1570,11 @@ h1, h2, h3, h4, h5, h6 {
   padding-bottom: 3.5rem;
 }
 
+.mz-py-16 {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
 .mz-py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -1609,6 +1622,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-pb-0 {
   padding-bottom: 0px;
+}
+
+.mz-pb-6 {
+  padding-bottom: 1.5rem;
 }
 
 .mz-pr-12 {
@@ -1785,6 +1802,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-tracking-\[0\.14em\] {
   letter-spacing: 0.14em;
+}
+
+.mz-tracking-\[0\.25em\] {
+  letter-spacing: 0.25em;
+}
+
+.mz-tracking-\[0\.2em\] {
+  letter-spacing: 0.2em;
 }
 
 .mz-tracking-normal {
@@ -2040,6 +2065,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .hover\:mz-bg-opacity-90:hover {
   --tw-bg-opacity: 0.9;
+}
+
+.hover\:mz-bg-none:hover {
+  background-image: none;
 }
 
 .hover\:mz-text-black:hover {
@@ -2360,9 +2389,19 @@ h1, h2, h3, h4, h5, h6 {
     padding-bottom: 5rem;
   }
 
+  .md\:mz-py-24 {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
   .md\:mz-py-4 {
     padding-top: 1rem;
     padding-bottom: 1rem;
+  }
+
+  .md\:mz-py-6 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
   }
 
   .md\:mz-pb-0 {
@@ -2423,6 +2462,16 @@ h1, h2, h3, h4, h5, h6 {
 
   .md\:mz-text-\[60px\] {
     font-size: 60px;
+  }
+
+  .md\:mz-text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .md\:mz-text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 }
 
