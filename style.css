@@ -12,9 +12,9 @@ Template: astra
 
 
 
-/* html {
+html {
 	overflow-x: hidden !important;
-} */
+}
 
 .logo-cols svg {
 	width: 110px !important;
