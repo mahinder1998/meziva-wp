@@ -61,7 +61,10 @@ if (!$heading && !$subheading && empty($reviews) && !$before['url'] && !$after['
 $dots_count = max(1, count($reviews));
 ?>
 
-<section style="background-color: <?php echo esc_attr($bg_color); ?>; color: <?php echo esc_attr($text_color); ?>;">
+<section style="background-color: <?php echo esc_attr($bg_color); ?>; color: <?php echo esc_attr($text_color); ?>;"
+id="testimonial"
+
+>
   <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 mz-py-10 md:mz-py-20 xl:mz-px-0">
 
     <div class="mz-grid mz-grid-cols-1 md:mz-grid-cols-12 mz-gap-10 xl:mz-gap-[100px]">

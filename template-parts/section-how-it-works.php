@@ -77,7 +77,7 @@ function mz_img_payload($img, $size = 'large') {
   }
 </style>
 
-<section class="mz-w-full">
+<section class="mz-w-full" id="how-it-works">
   <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 mz-py-10 md:mz-py-20 xl:mz-px-0">
 
     <?php if ($heading): ?>

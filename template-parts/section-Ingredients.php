@@ -66,6 +66,7 @@ if (!empty($right_image) && is_array($right_image)) {
 ?>
 
 <section
+  id="ingredients"
   class="mz-w-full mz-relative"
   style="
     background-color: <?php echo esc_attr($bg_color); ?>;
