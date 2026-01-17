@@ -14,7 +14,9 @@ Template: astra
 
 html {
 	overflow-x: hidden !important;
+	  scroll-behavior: smooth;
 }
+
 
 .logo-cols svg {
 	width: 110px !important;

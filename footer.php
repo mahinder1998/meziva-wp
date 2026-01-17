@@ -18,19 +18,21 @@ if ( function_exists('acf_add_options_page') ) {
   }
 }
 
-$newsletter_text = get_field('ft_newsletter_text', $ctx) ?: 'Get the latest news, events & more delivered to your inbox.';
-$placeholder     = get_field('ft_newsletter_placeholder', $ctx) ?: 'Email address...';
-$btn_label       = get_field('ft_newsletter_btn_label', $ctx) ?: '→';
+/** Brand block (replaces newsletter) */
+$brand_desc = get_field('ft_brand_desc', $ctx) ?: "Meziva is a modern beauty brand focused on clean, effective and thoughtfully crafted products.\nDesigned for everyday self-care with a premium touch.";
 
+/** Socials */
 $fb = get_field('ft_fb_url', $ctx) ?: '#';
 $yt = get_field('ft_yt_url', $ctx) ?: '#';
 $tw = get_field('ft_tw_url', $ctx) ?: '#';
 $ig = get_field('ft_ig_url', $ctx) ?: '#';
 
+/** Copyright */
 $copy_text   = get_field('ft_copyright_text', $ctx) ?: 'Copyright © ' . date('Y');
-$copy_brand  = get_field('ft_copyright_brand', $ctx) ?: 'Smartic.';
+$copy_brand  = get_field('ft_copyright_brand', $ctx) ?: 'Meziva.';
 $copy_line2  = get_field('ft_copyright_line2', $ctx) ?: 'All Rights Reserved.';
 
+/** Footer menus */
 $c1 = [
   ['t'=>get_field('ft_c1_l1_text',$ctx) ?: 'Brands',         'u'=>get_field('ft_c1_l1_url',$ctx) ?: '#'],
   ['t'=>get_field('ft_c1_l2_text',$ctx) ?: 'Gift Vouchers',   'u'=>get_field('ft_c1_l2_url',$ctx) ?: '#'],
@@ -43,10 +45,11 @@ $c2 = [
   ['t'=>get_field('ft_c2_l3_text',$ctx) ?: 'Blog',     'u'=>get_field('ft_c2_l3_url',$ctx) ?: '#'],
 ];
 
-$bg          = get_field('ft_bg_color', $ctx) ?: '#FFFFFF';
-$text_color  = get_field('ft_text_color', $ctx) ?: '#6B7280'; // gray-ish
-$social_bg   = get_field('ft_social_bg', $ctx) ?: '#2E2E2E';
-$social_col  = get_field('ft_social_color', $ctx) ?: '#FFFFFF';
+/** Colors */
+$bg          = get_field('ft_bg_color', $ctx) ?: '#9B4A6A';
+$text_color  = get_field('ft_text_color', $ctx) ?: '#F6EFEA';
+$social_bg   = get_field('ft_social_bg', $ctx) ?: '#FFFFFF';
+$social_col  = get_field('ft_social_color', $ctx) ?: '#9B4A6A';
 
 function mz_footer_link($item) {
   $t = trim($item['t'] ?? '');
@@ -57,16 +60,21 @@ function mz_footer_link($item) {
 ?>
 
 <style>
-  .newsletter-form button:hover{
-    background-color:transparent;
+  footer ul > li > a:hover { color: #F6EFEA; }
+
+  /* Heading style for footer menus */
+  .mz-ft-heading{
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:10px;
+    color:#fff;
+    letter-spacing:.3px;
   }
-  .newsletter-form button:hover svg,
-  .newsletter-form button:hover svg path
-  {
-    fill:#9B4A6A;
-  }
-  footer ul > li > a:hover {
-    color: #F6EFEA;
+
+  /* Make WP custom logo fit nicely */
+  footer .custom-logo-link img{
+    max-height: 44px;
+    width: auto;
   }
 </style>
 
@@ -79,43 +87,24 @@ function mz_footer_link($item) {
     <!-- Layout: mobile stacked / desktop 4 columns -->
     <div class="mz-grid mz-grid-cols-1 md:mz-grid-cols-12 mz-gap-10 md:mz-gap-8 mz-items-start">
 
-      <!-- 1) Newsletter -->
-      <div class="md:mz-col-span-4">
-        <p class="mz-text-center md:mz-text-left mz-text-[15px] mz-font-medium mz-leading-[1.6]">
-          <?php echo esc_html($newsletter_text); ?>
-        </p>
+      <!-- 1) Brand (replaces Newsletter) -->
+      <div class="md:mz-col-span-4 mz-text-center md:mz-text-left">
+        <div class="mz-mb-4 mz-flex mz-justify-center md:mz-justify-start">
+          <?php
+            if ( has_custom_logo() ) {
+              the_custom_logo();
+            } else {
+              echo '<span class="mz-text-[22px] mz-font-semibold mz-text-white">MEZIVA</span>';
+            }
+          ?>
+        </div>
 
-        <form class="newsletter-form mz-mt-5 mz-max-w-[360px] md:mz-max-w-[420px] mz-mx-auto md:mz-mx-0">
-          <div class="mz-relative">
-            <input
-              type="email"
-              name="email"
-              placeholder="<?php echo esc_attr($placeholder); ?>"
-              class="mz-w-full mz-h-[60px] mz-rounded-xl mz-border mz-border-black/10
-                     mz-bg-white mz-px-4 mz-pr-12 mz-text-[14px] mz-text-black
-                     focus:mz-outline-none focus:mz-ring-2 focus:mz-ring-black/10
-                     "
-            />
-            <button
-              type="submit"
-              class="mz-absolute mz-right-2 mz-top-1/2 -mz-translate-y-1/2
-                     mz-w-[36px] mz-h-[36px] mz-rounded-[4px]
-                     mz-flex mz-items-center mz-justify-center
-                     hover:mz-opacity-80 mz-transition mz-text-text-heading mz-border-none hover:mz-bg-transparent
-                     "
-              aria-label="Subscribe"
-            >
-              <span class="mz-text-[18px]">
-                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4"/>
-                </svg>
-              </span>
-            </button>
-          </div>
-        </form>
+        <p class="mz-text-[14px] mz-leading-[1.7] mz-max-w-[360px] mz-mx-auto md:mz-mx-0">
+          <?php echo nl2br(esc_html($brand_desc)); ?>
+        </p>
       </div>
 
-      <!-- 2) Socials + Copyright -->
+      <!-- 2) Socials + Copyright (UNCHANGED SVGs) -->
       <div class="md:mz-col-span-4">
         <div class="mz-flex mz-justify-center md:mz-justify-center mz-gap-3">
           <!-- Facebook -->
@@ -170,7 +159,7 @@ function mz_footer_link($item) {
         <div class="mz-mt-6 mz-text-center mz-text-[14px] mz-leading-[1.6]">
           <div>
             <?php echo esc_html($copy_text); ?>
-            <span class="mz-font-semibold "><?php echo esc_html($copy_brand); ?></span>
+            <span class="mz-font-semibold"><?php echo esc_html($copy_brand); ?></span>
           </div>
           <div><?php echo esc_html($copy_line2); ?></div>
         </div>
@@ -178,6 +167,7 @@ function mz_footer_link($item) {
 
       <!-- 3) Links Column 1 -->
       <div class="md:mz-col-span-2">
+        <div class=" mz-text-center md:mz-text-[16px] mz-font-semibold mz-mb-3  md:mz-text-left">Explore</div>
         <ul class="mz-space-y-2 mz-text-center md:mz-text-left">
           <?php foreach ($c1 as $it) { mz_footer_link($it); } ?>
         </ul>
@@ -185,6 +175,7 @@ function mz_footer_link($item) {
 
       <!-- 4) Links Column 2 -->
       <div class="md:mz-col-span-2">
+        <div class="mz-text-center md:mz-text-[16px] mz-font-semibold mz-mb-3  md:mz-text-left" >Company</div>
         <ul class="mz-space-y-2 mz-text-center md:mz-text-left">
           <?php foreach ($c2 as $it) { mz_footer_link($it); } ?>
         </ul>

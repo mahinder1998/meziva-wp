@@ -148,7 +148,7 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
               alt="<?php echo esc_attr($logo_alt); ?>"
               width="160"
               height="48"
-              class="mz-h-10 md:mz-h-12 mz-w-auto"
+              class=""
               loading="eager"
               decoding="async"
               fetchpriority="high"
