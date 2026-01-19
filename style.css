@@ -194,7 +194,7 @@ html {
 
 	.woocommerce header img,
 	.woocommerce-page header img {
-		height: 3rem;
+		height: auto !important;
 	}
 
 	.logo-cols svg {
