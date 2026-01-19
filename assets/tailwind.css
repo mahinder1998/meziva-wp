@@ -620,16 +620,8 @@ h1, h2, h3, h4, h5, h6 {
   left: 210px;
 }
 
-.mz-left-auto {
-  left: auto;
-}
-
 .mz-right-0 {
   right: 0px;
-}
-
-.mz-right-1 {
-  right: 0.25rem;
 }
 
 .mz-right-4 {
@@ -642,10 +634,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-top-1\/2 {
   top: 50%;
-}
-
-.mz-top-3 {
-  top: 0.75rem;
 }
 
 .mz-top-4 {
@@ -795,10 +783,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 100px;
 }
 
-.mz-mt-\[2px\] {
-  margin-top: 2px;
-}
-
 .mz-block {
   display: block;
 }
@@ -827,16 +811,16 @@ h1, h2, h3, h4, h5, h6 {
   aspect-ratio: 1/1;
 }
 
-.mz-aspect-square {
-  aspect-ratio: 1 / 1;
-}
-
 .mz-h-10 {
   height: 2.5rem;
 }
 
 .mz-h-12 {
   height: 3rem;
+}
+
+.mz-h-14 {
+  height: 3.5rem;
 }
 
 .mz-h-16 {
@@ -851,16 +835,16 @@ h1, h2, h3, h4, h5, h6 {
   height: 5rem;
 }
 
-.mz-h-4 {
-  height: 1rem;
-}
-
 .mz-h-5 {
   height: 1.25rem;
 }
 
 .mz-h-8 {
   height: 2rem;
+}
+
+.mz-h-9 {
+  height: 2.25rem;
 }
 
 .mz-h-\[18px\] {
@@ -873,6 +857,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-h-\[220px\] {
   height: 220px;
+}
+
+.mz-h-\[34px\] {
+  height: 34px;
 }
 
 .mz-h-\[40px\] {
@@ -905,6 +893,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-h-\[8px\] {
   height: 8px;
+}
+
+.mz-h-\[calc\(100vh-56px\)\] {
+  height: calc(100vh - 56px);
 }
 
 .mz-h-auto {
@@ -962,6 +954,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-w-8 {
   width: 2rem;
+}
+
+.mz-w-9 {
+  width: 2.25rem;
 }
 
 .mz-w-\[120px\] {
@@ -2004,6 +2000,12 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.mz-shadow-\[0_10px_30px_rgba\(0\,0\,0\,0\.08\)\] {
+  --tw-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  --tw-shadow-colored: 0 10px 30px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .mz-outline-none {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -2026,6 +2028,12 @@ h1, h2, h3, h4, h5, h6 {
   transition-duration: 150ms;
 }
 
+.mz-transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
 .mz-transition-colors {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -2034,6 +2042,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-transition-transform {
   transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.mz-transition-shadow {
+  transition-property: box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
@@ -2306,6 +2320,10 @@ h1, h2, h3, h4, h5, h6 {
 
   .md\:mz-h-20 {
     height: 5rem;
+  }
+
+  .md\:mz-h-\[40px\] {
+    height: 40px;
   }
 
   .md\:mz-h-\[620px\] {
@@ -2622,11 +2640,6 @@ h1, h2, h3, h4, h5, h6 {
     padding-bottom: 3.5rem;
   }
 
-  .lg\:mz-py-\[3px\] {
-    padding-top: 3px;
-    padding-bottom: 3px;
-  }
-
   .lg\:mz-text-left {
     text-align: left;
   }
@@ -2667,10 +2680,6 @@ h1, h2, h3, h4, h5, h6 {
 
   .xl\:mz-order-1 {
     order: 1;
-  }
-
-  .xl\:mz-mb-2 {
-    margin-bottom: 0.5rem;
   }
 
   .xl\:mz-mb-5 {
@@ -2749,10 +2758,6 @@ h1, h2, h3, h4, h5, h6 {
     gap: 0.75rem;
   }
 
-  .xl\:mz-gap-4 {
-    gap: 1rem;
-  }
-
   .xl\:mz-gap-\[100px\] {
     gap: 100px;
   }
@@ -2763,6 +2768,10 @@ h1, h2, h3, h4, h5, h6 {
 
   .xl\:mz-gap-\[80px\] {
     gap: 80px;
+  }
+
+  .xl\:mz-gap-4 {
+    gap: 1rem;
   }
 
   .xl\:mz-rounded-xl {

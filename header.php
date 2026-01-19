@@ -46,23 +46,37 @@ if ( $ann_text_col ) $ann_style .= 'color:' . esc_attr($ann_text_col) . ';';
 // =========================
 // HEADER COLORS (ACF on Home)
 // =========================
-$header_bg       = mz_get_acf('header_bg_color', $front_id, '');
+$header_bg = mz_get_acf('header_bg_color', $front_id, '');
 if (!$header_bg) $header_bg = mz_get_acf('header_bg', $front_id, '#ffffff');
 
-$nav_color       = mz_get_acf('nav_link_color', $front_id, '');
+$nav_color = mz_get_acf('nav_link_color', $front_id, '');
 if (!$nav_color) $nav_color = mz_get_acf('nav_color', $front_id, '#2B1C23');
 
 $nav_hover_color = mz_get_acf('nav_hover_color', $front_id, '');
 if (!$nav_hover_color) $nav_hover_color = mz_get_acf('nav_link_hover_color', $front_id, '#9B4A6A');
 
 // Woo URLs
-$cart_url = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : home_url('/checkout');
+$cart_url    = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart');
 $account_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/my-account');
 
 $cart_count = 0;
 if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
   $cart_count = (int) WC()->cart->get_cart_contents_count();
 }
+
+/**
+ * ✅ IMPORTANT: Force "menu-link" class on ALL WP menu anchors
+ * (So your CSS selectors work, and active class works cleanly)
+ */
+$mz_menu_link_filter = function($atts, $item, $args, $depth){
+  $cls = isset($atts['class']) ? $atts['class'] : '';
+  if (strpos(' '.$cls.' ', ' menu-link ') === false) {
+    $cls = trim($cls . ' menu-link');
+  }
+  $atts['class'] = $cls;
+  return $atts;
+};
+add_filter('nav_menu_link_attributes', $mz_menu_link_filter, 10, 4);
 ?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
@@ -76,35 +90,81 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
       --mz-header-bg: <?php echo esc_attr($header_bg); ?>;
       --mz-nav-color: <?php echo esc_attr($nav_color); ?>;
       --mz-nav-hover: <?php echo esc_attr($nav_hover_color); ?>;
+
+      /* ✅ Dynamic scroll offset variable (JS updates it) */
+      --mz-scroll-offset: 96px;
     }
 
-    /* Force header background from ACF */
-    [data-meziva-header] { background-color: var(--mz-header-bg); }
+    /* ✅ Fix #2: section cut issue (apply on HTML not BODY) */
+    html{
+      scroll-behavior: smooth;
+      scroll-padding-top: var(--mz-scroll-offset);
+    }
 
-    /* Desktop + Mobile nav links (force because Tailwind classes can override) */
+    /* Header base */
+    [data-meziva-header]{
+      background-color: var(--mz-header-bg);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      will-change: transform;
+      transition: box-shadow .25s ease, background-color .25s ease, transform .25s ease;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+
+    /* Smooth sticky on scroll */
+    [data-meziva-header].is-scrolled{
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      background-color: var(--mz-header-bg);
+    }
+
+    /* Optional mini shrink feel (premium) */
+    [data-meziva-header].is-scrolled .mz-h-16{ height: 56px; }
+    @media (min-width: 768px){
+      [data-meziva-header].is-scrolled .md\:mz-h-20{ height: 68px; }
+    }
+
+    /* Desktop + Mobile nav links */
     .meziva-desktop-menu a.menu-link,
     .meziva-mobile-menu a.menu-link {
       color: var(--mz-nav-color) !important;
       transition: color .25s ease;
-      font-size:14px;
+      font-size: 14px;
     }
-
     .meziva-desktop-menu a.menu-link:hover,
     .meziva-mobile-menu a.menu-link:hover {
       color: var(--mz-nav-hover) !important;
     }
 
-    .header-right-col a:hover {
+    /* ✅ Fix #3: Active nav (scroll spy) */
+    .meziva-desktop-menu a.menu-link.is-active,
+    .meziva-mobile-menu a.menu-link.is-active{
       color: var(--mz-nav-hover) !important;
+    }
+
+    /* Right icons */
+    .header-right-col a,
+    .header-right-col button {
+      color: var(--mz-nav-color);
+      transition: color .25s ease, background-color .25s ease;
+    }
+    .header-right-col a:hover,
+    .header-right-col button:hover {
+      color: var(--mz-nav-hover);
     }
 
     @media (min-width: 768px) {
       .meziva-desktop-menu a.menu-link,
       .meziva-mobile-menu a.menu-link {
-        font-size:16px;
-        font-weight:normal;
+        font-size: 16px;
+        font-weight: normal;
       }
     }
+
+    /* Drawer open state */
+    body.mz-menu-open { overflow: hidden; touch-action: none; }
+    [data-meziva-overlay].is-open { display: block !important; }
+    [data-meziva-drawer].is-open { transform: translateX(0) !important; }
   </style>
 </head>
 
@@ -112,11 +172,8 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
 <?php wp_body_open(); ?>
 
 <?php if ( $ann_enabled && ( $ann_text || $ann_code || ($ann_link_text && $ann_link_url) ) ) : ?>
-  <div
-    class="mz-w-full mz-text-center mz-text-sm mz-font-medium mz-py-2"
-    style="<?php echo esc_attr($ann_style); ?> min-height:32px;"
-  >
-    <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 xl:mz-px-0 mz-flex mz-flex-wrap mz-items-center mz-justify-center mz-gap-x-2 mz-gap-y-1 lg:mz-py-[3px]">
+  <div data-meziva-announcement class="mz-w-full mz-text-center mz-text-sm mz-font-medium mz-py-2" style="<?php echo esc_attr($ann_style); ?> min-height:28px;">
+    <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 xl:mz-px-0 mz-flex mz-flex-wrap mz-items-center mz-justify-center mz-gap-x-2 mz-gap-y-1">
       <?php if ( $ann_text ) : ?><span><?php echo esc_html($ann_text); ?></span><?php endif; ?>
       <?php if ( $ann_code ) : ?><span class="mz-font-semibold"><?php echo esc_html($ann_code); ?></span><?php endif; ?>
       <?php if ( $ann_link_text && $ann_link_url ) : ?>
@@ -130,37 +187,37 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
 
 <header
   data-meziva-header
-  class="mz-sticky mz-top-0 mz-z-[999] mz-backdrop-blur mz-border-b mz-border-black/5"
+  class="mz-backdrop-blur"
 >
   <div class="mz-max-w-[1290px] mz-mx-auto mz-px-4 xl:mz-px-0">
-    <div class="mz-h-16 md:mz-h-20 mz-grid mz-grid-cols-12 mz-items-center">
+    <div class="mz-h-16 md:mz-h-20 mz-grid mz-grid-cols-12 mz-items-center mz-transition-all mz-duration-300">
 
       <!-- LOGO -->
-      <div class="mz-col-span-6 md:mz-col-span-3 mz-flex mz-items-center logo-cols">
-        <a href="<?php echo esc_url($home); ?>" class="mz-flex mz-items-center mz-gap-2">
+      <div class="mz-col-span-6 md:mz-col-span-3 mz-flex mz-items-center">
+        <a href="<?php echo esc_url($home); ?>" class="mz-flex mz-items-center mz-gap-2" aria-label="Meziva Home">
           <?php if ( $logo_url ) : ?>
             <img
               src="<?php echo esc_url($logo_url); ?>"
-              <?php if ($logo_srcset): ?>
-                srcset="<?php echo esc_attr($logo_srcset); ?>"
-              <?php endif; ?>
+              <?php if ($logo_srcset): ?> srcset="<?php echo esc_attr($logo_srcset); ?>" <?php endif; ?>
               sizes="<?php echo esc_attr($logo_sizes); ?>"
               alt="<?php echo esc_attr($logo_alt); ?>"
               width="160"
               height="48"
-              class=""
+              class="mz-h-[34px] md:mz-h-[40px] mz-w-auto"
               loading="eager"
               decoding="async"
               fetchpriority="high"
             />
           <?php else : ?>
-            <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="713" zoomAndPan="magnify" viewBox="2.850001096725464 17.849998474121094 106.94999432563782 28.950000762939453" height="193" preserveAspectRatio="xMidYMid meet" version="1.0" style=""><defs><g></g><clipPath id="c25e23f134"><path d="M 0.164062 0 L 111.839844 0 L 111.839844 67.003906 L 0.164062 67.003906 Z M 0.164062 0 " clip-rule="nonzero"></path></clipPath><clipPath id="0c6afc8512"><path d="M 0.261719 1 L 27 1 L 27 27 L 0.261719 27 Z M 0.261719 1 " clip-rule="nonzero"></path></clipPath><clipPath id="e451b9eda5"><rect x="0" width="92" y="0" height="33"></rect></clipPath><clipPath id="0848eca801"><path d="M 1 6 L 23.515625 6 L 23.515625 31 L 1 31 Z M 1 6 " clip-rule="nonzero"></path></clipPath><clipPath id="53e929f4c1"><rect x="0" width="24" y="0" height="33"></rect></clipPath></defs><g clip-path="url(#c25e23f134)"><path fill="#ffffff" d="M 0.164062 0 L 111.839844 0 L 111.839844 67.003906 L 0.164062 67.003906 Z M 0.164062 0 " fill-opacity="1" fill-rule="nonzero"></path><path fill="#ffffff" d="M 0.164062 0 L 111.839844 0 L 111.839844 67.003906 L 0.164062 67.003906 Z M 0.164062 0 " fill-opacity="1" fill-rule="nonzero"></path></g><g transform="matrix(1, 0, 0, 1, 3, 18)"><g clip-path="url(#e451b9eda5)"><g clip-path="url(#0c6afc8512)"><g fill="#9b4a6a" fill-opacity="1"><g transform="translate(0.310776, 26.073352)"><g><path d="M 7.78125 -24.875 L 13.75 -8.90625 L 19.484375 -24.875 L 22.890625 -24.875 L 26.515625 0 L 21.765625 0 L 19.828125 -15.046875 L 19.765625 -15.046875 L 14.265625 0.328125 L 12.625 0.328125 L 7.328125 -15.046875 L 7.265625 -15.046875 L 5.109375 0 L 0.359375 0 L 4.4375 -24.875 Z M 7.78125 -24.875 "></path></g></g></g></g><g fill="#9b4a6a" fill-opacity="1"><g transform="translate(27.174684, 26.073352)"><g><path d="M 14.265625 -24.234375 L 14.265625 -20.125 L 6.453125 -20.125 L 6.453125 -14.78125 L 13.984375 -14.78125 L 13.984375 -10.671875 L 6.453125 -10.671875 L 6.453125 -4.109375 L 14.265625 -4.109375 L 14.265625 0 L 1.734375 0 L 1.734375 -24.234375 Z M 14.265625 -24.234375 "></path></g></g></g><g fill="#9b4a6a" fill-opacity="1"><g transform="translate(42.856004, 26.073352)"><g><path d="M 18.3125 -24.234375 L 7.6875 -4.109375 L 17.734375 -4.109375 L 17.734375 0 L 0.15625 0 L 10.828125 -20.125 L 1.796875 -20.125 L 1.796875 -24.234375 Z M 18.3125 -24.234375 "></path></g></g></g><g fill="#9b4a6a" fill-opacity="1"><g transform="translate(61.33297, 26.073352)"><g><path d="M 6.453125 -24.234375 L 6.453125 0 L 1.734375 0 L 1.734375 -24.234375 Z M 6.453125 -24.234375 "></path></g></g></g><g fill="#9b4a6a" fill-opacity="1"><g transform="translate(69.494977, 26.073352)"><g><path d="M 4.625 -24.234375 L 10.453125 -7.90625 L 10.515625 -7.90625 L 15.90625 -24.234375 L 20.984375 -24.234375 L 11.578125 0.640625 L 8.8125 0.640625 L -0.453125 -24.234375 Z M 4.625 -24.234375 "></path></g></g></g></g></g><g transform="matrix(1, 0, 0, 1, 86, 14)"><g clip-path="url(#53e929f4c1)"><g clip-path="url(#0848eca801)"><g fill="#9b4a6a" fill-opacity="1"><g transform="translate(22.68412, 6.692118)"><g><path d="M -4.625 24.234375 L -10.453125 7.90625 L -10.515625 7.90625 L -15.90625 24.234375 L -20.984375 24.234375 L -11.578125 -0.640625 L -8.8125 -0.640625 L 0.453125 24.234375 Z M -4.625 24.234375 "></path></g></g></g></g></g></g></svg>
+            <span class="mz-font-bold mz-tracking-wide">
+              <svg id="Layer_1" data-name="Layer 1" width="140px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 308.66 63.4"> <defs> <style> .cls-1 { fill: #9c4a64; } .cls-2 { fill: #c9a26b; } </style> </defs> <g id="Layer_1-2" data-name="Layer 1"> <path class="cls-1" d="M11.79.05h8.94l16.8,40.29L55.1.05h8.94l10.63,63.35h-12.53l-5.7-39.04-17.01,39.04h-4.19L19,24.36l-6.47,39.04H0L11.79.05Z"/> <path class="cls-1" d="M117.03,10.71h-22.8v14.16h21.85v10.63h-21.85v17.28h22.8v10.63h-35.15V.05h35.15v10.66Z"/> <path class="cls-2" d="M144.93,52.77h29.24v10.63h-49.79l30.79-52.72h-25.95V.05h46.46l-30.79,52.72h.03Z"/> <path class="cls-2" d="M195.28.05v63.35h-12.35V.05h12.35Z"/> <path class="cls-2" d="M216.18.05l16.92,42.54L250.02.05h13.48l-26.78,63.35h-7.42L202.7.05s13.48,0,13.48,0Z"/> <path class="cls-2" d="M295.18,63.35l-16.92-42.54-16.92,42.54h-13.48L274.64,0h7.42l26.6,63.35h-13.48Z"/> </g> </svg>
+            </span>
           <?php endif; ?>
         </a>
       </div>
 
       <!-- DESKTOP MENU -->
-      <nav class="mz-hidden md:mz-flex md:mz-col-span-6 mz-justify-center">
+      <nav class="mz-hidden md:mz-flex md:mz-col-span-6 mz-justify-center" aria-label="Primary navigation">
         <?php
           wp_nav_menu([
             'theme_location' => 'meziva_primary',
@@ -173,11 +230,12 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
       </nav>
 
       <!-- RIGHT -->
-      <div class="mz-col-span-6 md:mz-col-span-3 mz-flex mz-items-center mz-justify-end mz-gap-3 xl:mz-gap-4 header-right-col">
+      <div class="mz-col-span-6 md:mz-col-span-3 mz-flex mz-items-center mz-justify-end mz-gap-2 xl:mz-gap-3 header-right-col">
+        <!-- Cart -->
         <a href="<?php echo esc_url($cart_url); ?>"
-          class="mz-relative mz-h-8 mz-w-8 mz-rounded-full mz-flex mz-items-center mz-justify-center mz-transition"
+          class="mz-relative mz-h-9 mz-w-9 mz-rounded-full mz-flex mz-items-center mz-justify-center hover:mz-bg-black/5 mz-transition"
           aria-label="Cart">
-          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7H7.312"/>
           </svg>
 
@@ -185,24 +243,28 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
             data-mz-cart-count
             class="mz-absolute -mz-top-1 -mz-right-1 mz-min-w-[18px] mz-h-[18px] mz-rounded-full mz-bg-brand-accent mz-text-white mz-text-[11px] mz-leading-[18px] mz-text-center <?php echo ($cart_count > 0) ? '' : 'mz-hidden'; ?>"
             aria-hidden="<?php echo ($cart_count > 0) ? 'false' : 'true'; ?>"
-          >
-            <?php echo esc_html($cart_count); ?>
-          </span>
+          ><?php echo esc_html($cart_count); ?></span>
         </a>
 
+        <!-- Account -->
         <a href="<?php echo esc_url($account_url); ?>"
-          class="mz-relative mz-h-8 mz-w-8 mz-rounded-full mz-flex mz-items-center mz-justify-center mz-transition"
-          aria-label="login">
-          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          class="mz-h-9 mz-w-9 mz-rounded-full mz-flex mz-items-center mz-justify-center hover:mz-bg-black/5 mz-transition"
+          aria-label="Account">
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
           </svg>
         </a>
 
         <!-- MOBILE OPEN -->
-        <button type="button" data-meziva-menu-open
-          class="md:mz-hidden mz-h-8 mz-w-8 mz-rounded-full mz-flex mz-items-center mz-justify-center mz-transition"
-          aria-label="Open menu">
-          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <button
+          type="button"
+          data-meziva-menu-open
+          class="md:mz-hidden mz-h-9 mz-w-9 mz-rounded-full mz-flex mz-items-center mz-justify-center hover:mz-bg-black/5 mz-transition"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="meziva-mobile-drawer"
+        >
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/>
           </svg>
         </button>
@@ -212,26 +274,32 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
   </div>
 
   <!-- Overlay -->
-  <div data-meziva-overlay class="mz-hidden mz-fixed mz-h-screen mz-inset-0 mz-bg-black/60 mz-z-[998]"></div>
+  <div data-meziva-overlay class="mz-hidden mz-fixed mz-inset-0 mz-bg-black/60 mz-z-[998]"></div>
 
   <!-- Drawer -->
-  <aside data-meziva-drawer
+  <aside
+    id="meziva-mobile-drawer"
+    data-meziva-drawer
     class="mz-fixed mz-top-0 mz-right-0 mz-h-screen mz-w-[88%] mz-max-w-[360px]
            mz-bg-white mz-text-text-heading mz-z-[999]
            mz-translate-x-full mz-transition-transform mz-duration-300 mz-ease-out"
-    aria-hidden="true">
-    <div class="mz-h-4 mz-px-4 mz-flex mz-items-center mz-absolute mz-top-3 mz-right-1 mz-left-auto mz-justify-between">
-      <button type="button" data-meziva-menu-close
-        class="mz-h-8 mz-w-8 mz-rounded-full hover:mz-bg-black/5 mz-transition mz-flex mz-items-center mz-justify-center"
-        aria-label="Close menu">
-        <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+    aria-hidden="true"
+  >
+    <div class="mz-h-14 mz-px-4 mz-flex mz-items-center mz-justify-end mz-border-b mz-border-black/5">
+      <button
+        type="button"
+        data-meziva-menu-close
+        class="mz-h-9 mz-w-9 mz-rounded-full hover:mz-bg-black/5 mz-transition mz-flex mz-items-center mz-justify-center"
+        aria-label="Close menu"
+      >
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M18 18 6 6"/>
         </svg>
       </button>
     </div>
 
-    <div class="mz-px-5 mz-py-4 mz-overflow-y-auto mz-h-screen">
-      <nav class="mz-font-body">
+    <div class="mz-px-5 mz-py-4 mz-overflow-y-auto mz-h-[calc(100vh-56px)]">
+      <nav class="mz-font-body" aria-label="Mobile navigation">
         <?php
           wp_nav_menu([
             'theme_location' => 'meziva_primary',
@@ -245,3 +313,171 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
     </div>
   </aside>
 </header>
+
+<script>
+  (function(){
+    const header  = document.querySelector('[data-meziva-header]');
+    const annBar  = document.querySelector('[data-meziva-announcement]');
+    const openBtn = document.querySelector('[data-meziva-menu-open]');
+    const closeBtn= document.querySelector('[data-meziva-menu-close]');
+    const overlay = document.querySelector('[data-meziva-overlay]');
+    const drawer  = document.querySelector('[data-meziva-drawer]');
+
+    // ✅ Fix #2: Dynamic offset so section never cuts (header + announcement)
+    function updateScrollOffset(){
+      const h = header ? header.getBoundingClientRect().height : 0;
+      const a = annBar ? annBar.getBoundingClientRect().height : 0;
+      const offset = Math.ceil(h + a + 12); // +12px extra breathing space
+      document.documentElement.style.setProperty('--mz-scroll-offset', offset + 'px');
+    }
+
+    // Sticky smooth shadow on scroll
+    function onScroll(){
+      if(!header) return;
+      if(window.scrollY > 10) header.classList.add('is-scrolled');
+      else header.classList.remove('is-scrolled');
+      updateScrollOffset(); // because header shrinks
+    }
+
+    updateScrollOffset();
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', updateScrollOffset);
+
+    // Drawer open/close
+    if(!openBtn || !closeBtn || !overlay || !drawer) return;
+
+    function openMenu(){
+      document.body.classList.add('mz-menu-open');
+      overlay.classList.remove('mz-hidden');
+      overlay.classList.add('is-open');
+      drawer.classList.add('is-open');
+      drawer.setAttribute('aria-hidden','false');
+      openBtn.setAttribute('aria-expanded','true');
+    }
+
+    function closeMenu(){
+      document.body.classList.remove('mz-menu-open');
+      overlay.classList.remove('is-open');
+      overlay.classList.add('mz-hidden');
+      drawer.classList.remove('is-open');
+      drawer.setAttribute('aria-hidden','true');
+      openBtn.setAttribute('aria-expanded','false');
+    }
+
+    openBtn.addEventListener('click', openMenu);
+    closeBtn.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', closeMenu);
+
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && drawer.classList.contains('is-open')) closeMenu();
+    });
+
+    // ✅ Fix #1: Mobile menu link click => close drawer
+    drawer.addEventListener('click', function(e){
+      const a = e.target.closest('a');
+      if(!a) return;
+      const href = (a.getAttribute('href') || '').trim();
+      if(!href || href === '#') return;
+      closeMenu();
+    });
+
+    // ✅ Fix #3: Scroll spy active nav (works with full URLs + hash)
+    const navLinks = document.querySelectorAll('.meziva-desktop-menu a.menu-link, .meziva-mobile-menu a.menu-link');
+    if(!navLinks.length) return;
+
+    // map: sectionId -> [links]
+    const map = {};
+    const sections = [];
+
+    navLinks.forEach(link=>{
+      const href = link.getAttribute('href') || '';
+      let hash = '';
+
+      // supports "#id" AND "https://site/#id"
+      try{
+        const u = new URL(href, window.location.href);
+        hash = u.hash || '';
+      } catch(err){
+        // fallback
+        if(href.indexOf('#') !== -1) hash = '#' + href.split('#').pop();
+      }
+
+      if(!hash || hash === '#') return;
+
+      const id = hash.replace('#','').trim();
+      if(!id) return;
+
+      const section = document.getElementById(id);
+      if(!section) return;
+
+      if(!map[id]) map[id] = [];
+      map[id].push(link);
+
+      if(!sections.includes(section)) sections.push(section);
+    });
+
+    if(!sections.length) return;
+
+    function setActive(id){
+      // remove all
+      navLinks.forEach(l => l.classList.remove('is-active'));
+      // add only current
+      if(map[id]){
+        map[id].forEach(l => l.classList.add('is-active'));
+      }
+    }
+
+    // set active on load if hash exists
+    if(window.location.hash){
+      const id = window.location.hash.replace('#','');
+      if(id) setActive(id);
+    }
+
+    const io = new IntersectionObserver((entries)=>{
+      // pick most visible intersecting section
+      let best = null;
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          if(!best || entry.intersectionRatio > best.intersectionRatio) best = entry;
+        }
+      });
+      if(best && best.target && best.target.id){
+        setActive(best.target.id);
+      }
+    },{
+      root: null,
+      // center zone detection (best for long sections)
+      rootMargin: '-45% 0px -45% 0px',
+      threshold: [0, 0.2, 0.35, 0.5, 0.65, 0.8, 1]
+    });
+
+    sections.forEach(sec => io.observe(sec));
+
+    // if user clicks a nav link, highlight immediately
+    navLinks.forEach(link=>{
+      link.addEventListener('click', ()=>{
+        const href = link.getAttribute('href') || '';
+        try{
+          const u = new URL(href, window.location.href);
+          if(u.hash){
+            const id = u.hash.replace('#','');
+            if(id) setActive(id);
+          }
+        } catch(err){}
+      });
+    });
+
+    window.addEventListener('hashchange', ()=>{
+      const id = (window.location.hash || '').replace('#','');
+      if(id) setActive(id);
+    });
+
+  })();
+</script>
+
+<?php
+// ✅ Clean up filter so it won't affect other templates unexpectedly
+remove_filter('nav_menu_link_attributes', $mz_menu_link_filter, 10);
+?>
+      

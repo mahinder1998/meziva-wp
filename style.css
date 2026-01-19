@@ -34,6 +34,12 @@ html {
 .meziva-mobile-menu li a {
 	color: #000;
 }
+[data-meziva-header].is-scrolled {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
 
 /* Desktop hover underline animation */
 .meziva-navlink {
