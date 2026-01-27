@@ -727,10 +727,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 2rem;
 }
 
-.mz-ml-\[-20px\] {
-  margin-left: -20px;
-}
-
 .mz-ml-\[90px\] {
   margin-left: 90px;
 }
@@ -2912,6 +2908,10 @@ h1, h2, h3, h4, h5, h6 {
 
   .xl\:mz-mt-8 {
     margin-top: 2rem;
+  }
+
+  .xl\:mz-mt-\[70px\] {
+    margin-top: 70px;
   }
 
   .xl\:mz-block {
