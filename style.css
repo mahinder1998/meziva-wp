@@ -1081,6 +1081,11 @@ body .woocommerce-MyAccount-navigation-link {
 }
 
 /* comming soon */
-header, section, footer {
+section, footer {
     display: none;
+}
+header[data-meziva-header]{
+	visibility: hidden;
+	opacity: 0;
+	height: 0;
 }
