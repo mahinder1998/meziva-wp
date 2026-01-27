@@ -1079,3 +1079,8 @@ body .woocommerce-MyAccount-navigation-link {
 		padding: 40px 15;
 	}
 }
+
+/* comming soon */
+header, section, footer {
+    display: none;
+}
