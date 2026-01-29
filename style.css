@@ -1079,13 +1079,3 @@ body .woocommerce-MyAccount-navigation-link {
 		padding: 40px 15;
 	}
 }
-
-/* comming soon */
-section, footer {
-    display: none;
-}
-header[data-meziva-header]{
-	visibility: hidden;
-	opacity: 0;
-	height: 0;
-}
