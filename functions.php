@@ -73,6 +73,246 @@ add_action('after_setup_theme', function () {
   ]);
 });
 
+
+
+/**
+ * =========================
+ * Meziva Mega Menu Helpers
+ * =========================
+ */
+
+if (!function_exists('mz_get_menu_tree')) {
+  function mz_get_menu_tree($location = 'meziva_primary') {
+    $locations = get_nav_menu_locations();
+    if (empty($locations[$location])) return [];
+
+    $menu_id = (int) $locations[$location];
+    $items = wp_get_nav_menu_items($menu_id);
+    if (empty($items)) return [];
+
+    // Normalize
+    $map = [];
+    foreach ($items as $it) {
+      $id = (int) $it->ID;
+      $map[$id] = [
+        'ID' => $id,
+        'title' => $it->title,
+        'url' => $it->url,
+        'type' => $it->type,
+        'object' => $it->object,
+        'object_id' => (int) $it->object_id,
+        'menu_item_parent' => (int) $it->menu_item_parent,
+        'classes' => is_array($it->classes) ? $it->classes : [],
+        'children' => [],
+      ];
+    }
+
+    // Build tree
+    $tree = [];
+    foreach ($map as $id => &$node) {
+      $parent = $node['menu_item_parent'];
+      if ($parent && isset($map[$parent])) {
+        $map[$parent]['children'][] = &$node;
+      } else {
+        $tree[] = &$node;
+      }
+    }
+    unset($node);
+
+    return $tree;
+  }
+}
+
+if (!function_exists('mz_menu_item_image_url')) {
+  /**
+   * Returns menu item image url:
+   * 1) ACF field on menu item: menu_thumb (Image field)
+   * 2) If object is product: featured image
+   */
+  function mz_menu_item_image_url($menuItemNode) {
+    $menu_item_id = (int) ($menuItemNode['ID'] ?? 0);
+
+    // 1) ACF menu_thumb on menu item
+    if ($menu_item_id && function_exists('get_field')) {
+      $img = get_field('menu_thumb', $menu_item_id);
+      if (is_array($img) && !empty($img['url'])) return $img['url'];
+      if (is_numeric($img)) {
+        $u = wp_get_attachment_image_url((int)$img, 'medium');
+        if ($u) return $u;
+      }
+    }
+
+    // 2) Product featured image
+    $object = $menuItemNode['object'] ?? '';
+    $object_id = (int) ($menuItemNode['object_id'] ?? 0);
+
+    if ($object === 'product' && $object_id) {
+      $thumb_id = get_post_thumbnail_id($object_id);
+      if ($thumb_id) {
+        $u = wp_get_attachment_image_url($thumb_id, 'woocommerce_thumbnail');
+        if ($u) return $u;
+      }
+    }
+
+    return '';
+  }
+}
+
+if (!function_exists('mz_render_primary_menu_html')) {
+  function mz_render_primary_menu_html($location = 'meziva_primary', $is_mobile = false) {
+    $tree = mz_get_menu_tree($location);
+    if (empty($tree)) return;
+
+    $ulClass = $is_mobile
+      ? 'meziva-mobile-menu mz-flex mz-flex-col mz-gap-3 mz-text-[16px] mz-font-medium'
+      : 'meziva-desktop-menu mz-flex mz-items-center mz-gap-6 xl:mz-gap-10 mz-text-[15px] mz-font-medium';
+
+    echo '<ul class="' . esc_attr($ulClass) . '">';
+
+    foreach ($tree as $top) {
+      $has_children = !empty($top['children']);
+      $title = $top['title'];
+      $url   = $top['url'];
+
+      // mark shop (mega)
+      $is_shop = (strtolower(trim($title)) === 'shop');
+
+      $li_classes = [];
+      if ($has_children) $li_classes[] = 'menu-item-has-children';
+      if ($is_shop) $li_classes[] = 'mz-has-mega';
+
+      echo '<li class="mz-relative ' . esc_attr(implode(' ', $li_classes)) . '" data-mz-menu-item="' . esc_attr($top['ID']) . '">';
+
+      // Top link
+      echo '<a href="' . esc_url($url) . '" class="menu-link mz-inline-flex mz-items-center mz-gap-2">';
+      echo esc_html($title);
+      if (!$is_mobile && $has_children) {
+        echo '<span class="mz-text-[12px] mz-opacity-70">▾</span>';
+      }
+      echo '</a>';
+
+      // Desktop dropdown
+      if (!$is_mobile && $has_children) {
+        if ($is_shop) {
+          // Mega menu for SHOP
+          echo '<div class="mz-mega-panel" data-mz-mega-panel>';
+          echo '  <div class="mz-grid mz-grid-cols-12 mz-gap-6">';
+
+          // Left: Categories (level 1)
+          echo '    <div class="mz-col-span-4">';
+          echo '      <div class="mz-text-xs mz-uppercase mz-tracking-wider mz-opacity-60 mz-mb-3">Category</div>';
+          echo '      <ul class="mz-flex mz-flex-col mz-gap-1">';
+
+          $firstCatId = 0;
+          foreach ($top['children'] as $cat) {
+            if (!$firstCatId) $firstCatId = (int)$cat['ID'];
+            echo '<li>';
+            echo '  <button type="button" class="mz-mega-cat-btn mz-w-full mz-text-left mz-px-3 mz-py-2 mz-rounded-lg hover:mz-bg-black/5 mz-transition" data-mz-cat="' . esc_attr($cat['ID']) . '">';
+            echo    esc_html($cat['title']);
+            echo '  </button>';
+            echo '</li>';
+          }
+          echo '      </ul>';
+          echo '    </div>';
+
+          // Right: Products (level 2)
+          echo '    <div class="mz-col-span-8">';
+          echo '      <div class="mz-text-xs mz-uppercase mz-tracking-wider mz-opacity-60 mz-mb-3">Products</div>';
+
+          // Panels per category
+          foreach ($top['children'] as $cat) {
+            $catId = (int)$cat['ID'];
+            $activeClass = ($catId === $firstCatId) ? '' : 'mz-hidden';
+
+            echo '<div class="mz-mega-products-panel ' . esc_attr($activeClass) . '" data-mz-products="' . esc_attr($catId) . '">';
+            if (!empty($cat['children'])) {
+              echo '<div class="mz-grid mz-grid-cols-2 lg:mz-grid-cols-3 mz-gap-3">';
+              foreach ($cat['children'] as $prod) {
+                $img = mz_menu_item_image_url($prod);
+                $purl = $prod['url'];
+                $ptitle = $prod['title'];
+
+                echo '<a href="' . esc_url($purl) . '" class="mz-group mz-flex mz-items-center mz-gap-3 mz-rounded-xl mz-border mz-border-black/5 mz-bg-white hover:mz-shadow-lg mz-transition mz-p-3">';
+                if ($img) {
+                  echo '<img src="' . esc_url($img) . '" alt="' . esc_attr($ptitle) . '" class="mz-w-12 mz-h-12 mz-rounded-lg mz-object-cover mz-bg-black/5" loading="lazy" decoding="async" />';
+                } else {
+                  echo '<div class="mz-w-12 mz-h-12 mz-rounded-lg mz-bg-black/5 mz-flex mz-items-center mz-justify-center mz-text-[10px] mz-opacity-60">No image</div>';
+                }
+                echo '<div class="mz-min-w-0">';
+                echo '  <div class="mz-text-sm mz-font-medium mz-truncate group-hover:mz-text-[var(--mz-nav-hover)] mz-transition">' . esc_html($ptitle) . '</div>';
+                echo '  <div class="mz-text-xs mz-opacity-60">View</div>';
+                echo '</div>';
+                echo '</a>';
+              }
+              echo '</div>';
+            } else {
+              echo '<div class="mz-text-sm mz-opacity-70">No products added under this category.</div>';
+            }
+            echo '</div>';
+          }
+
+          echo '    </div>'; // right col
+          echo '  </div>'; // grid
+          echo '</div>'; // mega panel
+        } else {
+          // Normal dropdown (non-shop)
+          echo '<ul class="mz-dropdown-panel">';
+          foreach ($top['children'] as $child) {
+            echo '<li><a class="menu-link" href="' . esc_url($child['url']) . '">' . esc_html($child['title']) . '</a></li>';
+          }
+          echo '</ul>';
+        }
+      }
+
+      // Mobile submenu
+      if ($is_mobile && $has_children) {
+        echo '<div class="mz-mobile-subwrap" data-mz-subwrap>';
+        echo '<ul class="mz-mobile-submenu">';
+        foreach ($top['children'] as $child) {
+          $child_has = !empty($child['children']);
+          $child_li_cls = $child_has ? 'menu-item-has-children' : '';
+          echo '<li class="' . esc_attr($child_li_cls) . '">';
+
+          // category link
+          echo '<a href="' . esc_url($child['url']) . '" class="menu-link mz-flex mz-items-center mz-justify-between">';
+          echo esc_html($child['title']);
+          if ($child_has) echo '<span class="mz-text-xl mz-font-light" data-mz-plus>+</span>';
+          echo '</a>';
+
+          if ($child_has) {
+            echo '<div class="mz-mobile-subwrap" data-mz-subwrap>';
+            echo '<ul class="mz-mobile-submenu">';
+            foreach ($child['children'] as $grand) {
+              $img = mz_menu_item_image_url($grand);
+              echo '<li>';
+              echo '<a href="' . esc_url($grand['url']) . '" class="menu-link mz-flex mz-items-center mz-gap-3 mz-py-2">';
+              if ($img) {
+                echo '<img src="' . esc_url($img) . '" alt="' . esc_attr($grand['title']) . '" class="mz-w-10 mz-h-10 mz-rounded-lg mz-object-cover mz-bg-black/5" loading="lazy" decoding="async" />';
+              } else {
+                echo '<div class="mz-w-10 mz-h-10 mz-rounded-lg mz-bg-black/5 mz-flex mz-items-center mz-justify-center mz-text-[10px] mz-opacity-60">No</div>';
+              }
+              echo '<span class="mz-text-sm mz-font-medium">' . esc_html($grand['title']) . '</span>';
+              echo '</a>';
+              echo '</li>';
+            }
+            echo '</ul>';
+            echo '</div>';
+          }
+
+          echo '</li>';
+        }
+        echo '</ul>';
+        echo '</div>';
+      }
+
+      echo '</li>';
+    }
+
+    echo '</ul>';
+  }
+}
+
+
 /**
  * Add class to menu links (for underline animation)
  */
