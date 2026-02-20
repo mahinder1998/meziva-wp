@@ -108,9 +108,9 @@ function mz_footer_link($item) {
       <div class="md:mz-col-span-4">
         <div class="mz-flex mz-justify-center md:mz-justify-center mz-gap-3">
           <!-- Facebook -->
-          <a href="<?php echo esc_url($fb); ?>"
+          <a target="_blank" href="<?php echo esc_url($fb); ?>"
              class="mz-w-[44px] mz-h-[44px] mz-rounded-full mz-flex mz-items-center mz-justify-center
-                    hover:mz-opacity-80 mz-transition"
+                    hover:mz-opacity-80 mz-transition" 
              style="background-color: <?php echo esc_attr($social_bg); ?>; color: <?php echo esc_attr($social_col); ?>;"
              aria-label="Facebook"
           >
@@ -119,8 +119,20 @@ function mz_footer_link($item) {
             </svg>
           </a>
 
+           <!-- Instagram -->
+          <a target="_blank" href="<?php echo esc_url($ig); ?>"
+             class="mz-w-[44px] mz-h-[44px] mz-rounded-full mz-flex mz-items-center mz-justify-center
+                    hover:mz-opacity-80 mz-transition"
+             style="background-color: <?php echo esc_attr($social_bg); ?>; color: <?php echo esc_attr($social_col); ?>;"
+             aria-label="Instagram"
+          >
+            <svg class="mz-w-[18px] mz-h-[18px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4.5A3.5 3.5 0 1 1 8.5 12 3.5 3.5 0 0 1 12 8.5zm0 2A1.5 1.5 0 1 0 13.5 12 1.5 1.5 0 0 0 12 10.5zM18 6.2a.8.8 0 1 1-.8.8.8.8 0 0 1 .8-.8z"/>
+            </svg>
+          </a>
+
           <!-- YouTube -->
-          <a href="<?php echo esc_url($yt); ?>"
+          <a target="_blank" href="<?php echo esc_url($yt); ?>"
              class="mz-w-[44px] mz-h-[44px] mz-rounded-full mz-flex mz-items-center mz-justify-center
                     hover:mz-opacity-80 mz-transition"
              style="background-color: <?php echo esc_attr($social_bg); ?>; color: <?php echo esc_attr($social_col); ?>;"
@@ -131,29 +143,21 @@ function mz_footer_link($item) {
             </svg>
           </a>
 
-          <!-- Twitter/X -->
-          <a href="<?php echo esc_url($tw); ?>"
+          <!-- linkedin -->
+          <a target="_blank"  href="<?php echo esc_url($tw); ?>"
              class="mz-w-[44px] mz-h-[44px] mz-rounded-full mz-flex mz-items-center mz-justify-center
                     hover:mz-opacity-80 mz-transition"
              style="background-color: <?php echo esc_attr($social_bg); ?>; color: <?php echo esc_attr($social_col); ?>;"
              aria-label="Twitter"
           >
-            <svg class="mz-w-[18px] mz-h-[18px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M18.9 2H22l-6.8 7.8L23 22h-6.8l-5.3-6.8L4.7 22H2l7.3-8.4L1 2h6.9l4.8 6.1L18.9 2zm-1.2 18h1.9L7.1 3.9H5.1L17.7 20z"/>
+            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" d="M12.51 8.796v1.697a3.738 3.738 0 0 1 3.288-1.684c3.455 0 4.202 2.16 4.202 4.97V19.5h-3.2v-5.072c0-1.21-.244-2.766-2.128-2.766-1.827 0-2.139 1.317-2.139 2.676V19.5h-3.19V8.796h3.168ZM7.2 6.106a1.61 1.61 0 0 1-.988 1.483 1.595 1.595 0 0 1-1.743-.348A1.607 1.607 0 0 1 5.6 4.5a1.601 1.601 0 0 1 1.6 1.606Z" clip-rule="evenodd"/>
+              <path d="M7.2 8.809H4V19.5h3.2V8.809Z"/>
             </svg>
+
           </a>
 
-          <!-- Instagram -->
-          <a href="<?php echo esc_url($ig); ?>"
-             class="mz-w-[44px] mz-h-[44px] mz-rounded-full mz-flex mz-items-center mz-justify-center
-                    hover:mz-opacity-80 mz-transition"
-             style="background-color: <?php echo esc_attr($social_bg); ?>; color: <?php echo esc_attr($social_col); ?>;"
-             aria-label="Instagram"
-          >
-            <svg class="mz-w-[18px] mz-h-[18px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4.5A3.5 3.5 0 1 1 8.5 12 3.5 3.5 0 0 1 12 8.5zm0 2A1.5 1.5 0 1 0 13.5 12 1.5 1.5 0 0 0 12 10.5zM18 6.2a.8.8 0 1 1-.8.8.8.8 0 0 1 .8-.8z"/>
-            </svg>
-          </a>
+         
         </div>
 
         <div class="mz-mt-6 mz-text-center mz-text-[14px] mz-leading-[1.6]">

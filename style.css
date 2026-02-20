@@ -57,13 +57,13 @@ html {
 }
 
 /* Desktop: show "+" only if submenu */
-.meziva-desktop-menu>li.menu-item-has-children>a::before {
+/* .meziva-desktop-menu>li.menu-item-has-children>a::before {
 	content: "+";
 	font-weight: 600;
 	opacity: 0.8;
 	transform: translateY(-1px);
 	font-size: 13px;
-}
+} */
 
 /* Sticky header shrink */
 .meziva-header--shrink .meziva-header-inner {
@@ -1073,6 +1073,11 @@ body .woocommerce-MyAccount-navigation-link {
 .mz-wrapper-default ul li{
 	list-style-type: disc;
 }
+
+
+[data-mz-mega-panel] .mz-col-span-4 {
+    display: none;
+} 
 
 @media (min-width: 1024px) {
     .mz-wrapper-default {
