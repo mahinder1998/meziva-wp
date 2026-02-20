@@ -158,6 +158,10 @@ if (!function_exists('mz_menu_item_image_url')) {
   }
 }
 
+
+/** 
+ *  Mobile menu & desktop menu
+ * **/
 if (!function_exists('mz_render_primary_menu_html')) {
   function mz_render_primary_menu_html($location = 'meziva_primary', $is_mobile = false) {
     $tree = mz_get_menu_tree($location);
@@ -174,7 +178,6 @@ if (!function_exists('mz_render_primary_menu_html')) {
       $title = $top['title'];
       $url   = $top['url'];
 
-      // mark shop (mega)
       $is_shop = (strtolower(trim($title)) === 'shop');
 
       $li_classes = [];
@@ -183,22 +186,34 @@ if (!function_exists('mz_render_primary_menu_html')) {
 
       echo '<li class="mz-relative ' . esc_attr(implode(' ', $li_classes)) . '" data-mz-menu-item="' . esc_attr($top['ID']) . '">';
 
-      // Top link
-      echo '<a href="' . esc_url($url) . '" class="menu-link mz-inline-flex mz-items-center mz-gap-2">';
-      echo esc_html($title);
-      if (!$is_mobile && $has_children) {
-        echo '<span class="mz-text-[12px] mz-opacity-70">▾</span>';
+      // =========================
+      // TOP LINK
+      // =========================
+      if ($is_mobile) {
+        // ✅ Mobile: show + icon on top level if it has children
+        echo '<a href="' . esc_url($url) . '" class="menu-link mz-flex mz-items-center mz-justify-between mz-w-full">';
+        echo '<span>' . esc_html($title) . '</span>';
+        if ($has_children) echo '<span class="mz-text-xl mz-font-light" data-mz-plus>+</span>';
+        echo '</a>';
+      } else {
+        // Desktop
+        echo '<a href="' . esc_url($url) . '" class="menu-link mz-inline-flex mz-items-center mz-gap-2">';
+        echo esc_html($title);
+        if ($has_children) echo '<span class="mz-text-[12px] mz-opacity-70">
+          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24"> <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/> </svg>
+        </span>';
+        echo '</a>';
       }
-      echo '</a>';
 
-      // Desktop dropdown
+      // =========================
+      // DESKTOP dropdown / mega
+      // =========================
       if (!$is_mobile && $has_children) {
         if ($is_shop) {
-          // Mega menu for SHOP
           echo '<div class="mz-mega-panel" data-mz-mega-panel>';
           echo '  <div class="mz-grid mz-grid-cols-12 mz-gap-6">';
 
-          // Left: Categories (level 1)
+          // Left: categories
           echo '    <div class="mz-col-span-4">';
           echo '      <div class="mz-text-xs mz-uppercase mz-tracking-wider mz-opacity-60 mz-mb-3">Category</div>';
           echo '      <ul class="mz-flex mz-flex-col mz-gap-1">';
@@ -207,7 +222,7 @@ if (!function_exists('mz_render_primary_menu_html')) {
           foreach ($top['children'] as $cat) {
             if (!$firstCatId) $firstCatId = (int)$cat['ID'];
             echo '<li>';
-            echo '  <button type="button" class="mz-mega-cat-btn mz-w-full mz-text-left mz-px-3 mz-py-2 mz-rounded-lg hover:mz-bg-black/5 mz-transition" data-mz-cat="' . esc_attr($cat['ID']) . '">';
+            echo '  <button type="button" class="mz-mega-cat-btn mz-w-full mz-border-0  mz-text-left  mz-py-2 mz-rounded-lg" data-mz-cat="' . esc_attr($cat['ID']) . '">';
             echo    esc_html($cat['title']);
             echo '  </button>';
             echo '</li>';
@@ -215,32 +230,32 @@ if (!function_exists('mz_render_primary_menu_html')) {
           echo '      </ul>';
           echo '    </div>';
 
-          // Right: Products (level 2)
-          echo '    <div class="mz-col-span-8">';
+          // Right: products
+          echo '    <div class="mz-col-span-12">';
           echo '      <div class="mz-text-xs mz-uppercase mz-tracking-wider mz-opacity-60 mz-mb-3">Products</div>';
 
-          // Panels per category
           foreach ($top['children'] as $cat) {
             $catId = (int)$cat['ID'];
             $activeClass = ($catId === $firstCatId) ? '' : 'mz-hidden';
 
             echo '<div class="mz-mega-products-panel ' . esc_attr($activeClass) . '" data-mz-products="' . esc_attr($catId) . '">';
+
             if (!empty($cat['children'])) {
-              echo '<div class="mz-grid mz-grid-cols-2 lg:mz-grid-cols-3 mz-gap-3">';
+              echo '<div class="mz-grid mz-grid-cols-2 lg:mz-grid-cols-2 mz-gap-3">';
               foreach ($cat['children'] as $prod) {
                 $img = mz_menu_item_image_url($prod);
                 $purl = $prod['url'];
                 $ptitle = $prod['title'];
 
-                echo '<a href="' . esc_url($purl) . '" class="mz-group mz-flex mz-items-center mz-gap-3 mz-rounded-xl mz-border mz-border-black/5 mz-bg-white hover:mz-shadow-lg mz-transition mz-p-3">';
+                echo '<a href="' . esc_url($purl) . '" class="mz-group mz-grid  mz-gap-3 mz-rounded-xl mz-border mz-border-black/5 mz-bg-white hover:mz-shadow-lg mz-transition mz-p-3">';
                 if ($img) {
-                  echo '<img src="' . esc_url($img) . '" alt="' . esc_attr($ptitle) . '" class="mz-w-12 mz-h-12 mz-rounded-lg mz-object-cover mz-bg-black/5" loading="lazy" decoding="async" />';
+                  echo '<img src="' . esc_url($img) . '" alt="' . esc_attr($ptitle) . '" class="mz-w-full mz-h-auto mz-rounded-lg mz-object-cover mz-bg-black/5" loading="lazy" decoding="async" />';
                 } else {
                   echo '<div class="mz-w-12 mz-h-12 mz-rounded-lg mz-bg-black/5 mz-flex mz-items-center mz-justify-center mz-text-[10px] mz-opacity-60">No image</div>';
                 }
                 echo '<div class="mz-min-w-0">';
                 echo '  <div class="mz-text-sm mz-font-medium mz-truncate group-hover:mz-text-[var(--mz-nav-hover)] mz-transition">' . esc_html($ptitle) . '</div>';
-                echo '  <div class="mz-text-xs mz-opacity-60">View</div>';
+                echo '  ';
                 echo '</div>';
                 echo '</a>';
               }
@@ -248,14 +263,14 @@ if (!function_exists('mz_render_primary_menu_html')) {
             } else {
               echo '<div class="mz-text-sm mz-opacity-70">No products added under this category.</div>';
             }
+
             echo '</div>';
           }
 
-          echo '    </div>'; // right col
-          echo '  </div>'; // grid
-          echo '</div>'; // mega panel
+          echo '    </div>';
+          echo '  </div>';
+          echo '</div>';
         } else {
-          // Normal dropdown (non-shop)
           echo '<ul class="mz-dropdown-panel">';
           foreach ($top['children'] as $child) {
             echo '<li><a class="menu-link" href="' . esc_url($child['url']) . '">' . esc_html($child['title']) . '</a></li>';
@@ -264,43 +279,53 @@ if (!function_exists('mz_render_primary_menu_html')) {
         }
       }
 
-      // Mobile submenu
+      // =========================
+      // MOBILE submenu (level 2 + 3)
+      // =========================
       if ($is_mobile && $has_children) {
         echo '<div class="mz-mobile-subwrap" data-mz-subwrap>';
         echo '<ul class="mz-mobile-submenu">';
+
         foreach ($top['children'] as $child) {
           $child_has = !empty($child['children']);
           $child_li_cls = $child_has ? 'menu-item-has-children' : '';
           echo '<li class="' . esc_attr($child_li_cls) . '">';
 
-          // category link
-          echo '<a href="' . esc_url($child['url']) . '" class="menu-link mz-flex mz-items-center mz-justify-between">';
-          echo esc_html($child['title']);
+          // level 2 link
+          echo '<a href="' . esc_url($child['url']) . '" class="menu-link mz-flex mz-items-center mz-justify-between mz-w-full">';
+          echo '<span>' . esc_html($child['title']) . '</span>';
           if ($child_has) echo '<span class="mz-text-xl mz-font-light" data-mz-plus>+</span>';
           echo '</a>';
 
+          // level 3
           if ($child_has) {
             echo '<div class="mz-mobile-subwrap" data-mz-subwrap>';
             echo '<ul class="mz-mobile-submenu">';
+
             foreach ($child['children'] as $grand) {
               $img = mz_menu_item_image_url($grand);
+
               echo '<li>';
               echo '<a href="' . esc_url($grand['url']) . '" class="menu-link mz-flex mz-items-center mz-gap-3 mz-py-2">';
+
               if ($img) {
                 echo '<img src="' . esc_url($img) . '" alt="' . esc_attr($grand['title']) . '" class="mz-w-10 mz-h-10 mz-rounded-lg mz-object-cover mz-bg-black/5" loading="lazy" decoding="async" />';
               } else {
                 echo '<div class="mz-w-10 mz-h-10 mz-rounded-lg mz-bg-black/5 mz-flex mz-items-center mz-justify-center mz-text-[10px] mz-opacity-60">No</div>';
               }
+
               echo '<span class="mz-text-sm mz-font-medium">' . esc_html($grand['title']) . '</span>';
               echo '</a>';
               echo '</li>';
             }
+
             echo '</ul>';
             echo '</div>';
           }
 
           echo '</li>';
         }
+
         echo '</ul>';
         echo '</div>';
       }
@@ -310,7 +335,7 @@ if (!function_exists('mz_render_primary_menu_html')) {
 
     echo '</ul>';
   }
-}
+} 
 
 
 /**
