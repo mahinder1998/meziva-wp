@@ -156,7 +156,7 @@ function mz_render_feature_icon($acf_icon, $classes = 'mz-w-full mz-h-full', $si
               <?php else: ?>
                 <!-- Optional fallback (remove if you want blank) -->
                 <div class="mz-w-[100px] mz-h-[100px] mz-mx-auto md:mz-ml-0 mz-opacity-50">
-                  <div class="mz-w-full mz-h-full mz-rounded-full mz-bg-white/20"></div>
+                  <div class="mz-w-full mz-h-full mz-rounded-full mz-bg-white/20"></div> 
                 </div>
               <?php endif; ?>
 
