@@ -1437,3 +1437,4 @@ add_action('manage_mz_contact_msg_posts_custom_column', function ($column, $post
   }
 }, 10, 2);
 
+
