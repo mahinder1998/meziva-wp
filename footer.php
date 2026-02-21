@@ -19,7 +19,8 @@ if ( function_exists('acf_add_options_page') ) {
 }
 
 /** Brand block (replaces newsletter) */
-$brand_desc = get_field('ft_brand_desc', $ctx) ?: "Meziva is a modern beauty brand focused on clean, effective and thoughtfully crafted products.\nDesigned for everyday self-care with a premium touch.";
+$brand_desc = get_field('ft_brand_desc', $ctx) ?: "Meziva is a modern lip care brand crafted for everyday glow.
+We blend nourishing ingredients with soft tints and SPF protection — giving your lips comfort, care and confidence in every swipe.";
 
 /** Socials */
 $fb = get_field('ft_fb_url', $ctx) ?: '#';
@@ -189,6 +190,27 @@ function mz_footer_link($item) {
   </div>
 </footer>
 
+
+
 <?php wp_footer(); ?>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    var scrollBtn = document.getElementById("ast-scroll-top");
+    if (!scrollBtn) return;
+
+    window.addEventListener("scroll", function () {
+        scrollBtn.style.display = window.scrollY > 300 ? "flex" : "none";
+    });
+
+    scrollBtn.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+});
+</script>
 </body>
 </html>

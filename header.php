@@ -168,8 +168,13 @@ if ( function_exists('WC') && WC() && isset(WC()->cart) && WC()->cart ) {
       opacity:1;
       visibility:visible;
       pointer-events:auto;
+    }    
+
+    div#ast-scroll-top svg {
+        top: 15px;
     }
 
+  
     /* =========================
        ✅ MOBILE ONLY styles (SCOPED)
        ========================= */
