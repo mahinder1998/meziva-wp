@@ -196,21 +196,6 @@ function mz_footer_link($item) {
 
 
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
 
-    var scrollBtn = document.getElementById("ast-scroll-top");
-    if (!scrollBtn) return;
-
-    window.addEventListener("scroll", function () {
-        scrollBtn.style.display = window.scrollY > 300 ? "flex" : "none";
-    });
-
-    scrollBtn.addEventListener("click", function () {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-});
-</script>
 </body>
 </html>

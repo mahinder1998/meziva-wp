@@ -833,7 +833,7 @@ add_filter('woocommerce_cart_item_name', function ($name, $cart_item, $cart_item
   if (!is_checkout() || is_order_received_page()) return $name;
 
   $remove_btn = sprintf(
-    '<button type="button" class="mz-ck-remove" data-mz-ck-remove="%s" aria-label="Remove item">&times;</button>',
+    '<button type="button" class="mz-ck-remove mz-bg-white mz-w-2 mz-h-2" data-mz-ck-remove="%s" aria-label="Remove item">&times;</button>',
     esc_attr($cart_item_key)
   );
 
@@ -1148,7 +1148,7 @@ add_filter('woocommerce_notice_types', function ($types) {
  * Checkout page JS (qty + remove) - KEEP
  */
 add_action('wp_footer', function () {
-  if (!is_checkout() || is_order_received_page()) return;
+  if (!function_exists('is_checkout') || !is_checkout() || is_order_received_page()) return;
   ?>
   <style>
     .mz-ck-line{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -1160,6 +1160,10 @@ add_action('wp_footer', function () {
 
   <script>
     (function(){
+      // ✅ IMPORTANT: bind only once (fix +2/-2 issue)
+      if (window.__mzCheckoutQtyBound) return;
+      window.__mzCheckoutQtyBound = true;
+
       const ajaxUrl = "<?php echo esc_js(admin_url('admin-ajax.php')); ?>";
       const nonce   = "<?php echo esc_js(wp_create_nonce('mz_cart_nonce')); ?>";
 
@@ -1188,9 +1192,14 @@ add_action('wp_footer', function () {
         }
       }
 
+      // ✅ Click (Plus/Minus)
       document.addEventListener('click', function(e){
         const btn = e.target.closest('[data-mz-ck-qty]');
         if(!btn) return;
+
+        // stop any other duplicate handlers
+        e.preventDefault();
+        e.stopPropagation();
 
         const wrap = btn.closest('[data-mz-ck-qty-wrap]');
         if(!wrap) return;
@@ -1212,8 +1221,9 @@ add_action('wp_footer', function () {
             updateBadge(res.data && res.data.cart_count);
             refreshCheckout();
           });
-      });
+      }, true); // capture=true helps prevent double bubbling issues
 
+      // ✅ Manual input change
       document.addEventListener('change', function(e){
         const input = e.target.closest('.mz-ck-qty-input');
         if(!input) return;
@@ -1231,11 +1241,15 @@ add_action('wp_footer', function () {
             updateBadge(res.data && res.data.cart_count);
             refreshCheckout();
           });
-      });
+      }, true);
 
+      // ✅ Remove item
       document.addEventListener('click', function(e){
         const btn = e.target.closest('[data-mz-ck-remove]');
         if(!btn) return;
+
+        e.preventDefault();
+        e.stopPropagation();
 
         const key = btn.getAttribute('data-mz-ck-remove');
 
@@ -1245,11 +1259,11 @@ add_action('wp_footer', function () {
             updateBadge(res.data && res.data.cart_count);
             refreshCheckout();
           });
-      });
+      }, true);
     })();
   </script>
   <?php
-}, 999);
+}, 999); 
 
 
 /**
