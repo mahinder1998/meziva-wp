@@ -75,7 +75,7 @@ $img_alt = ($imgp && !empty($imgp['alt'])) ? $imgp['alt'] : 'Product';
                 width="<?php echo esc_attr($imgp['w']); ?>"
                 height="<?php echo esc_attr($imgp['h']); ?>"
               <?php endif; ?>
-              class="mz-w-[250px] sm:mz-w-[280px] md:mz-w-[280px] lg:mz-w-[300px] mz-h-auto"
+              class="mz-w-[250px] sm:mz-w-[280px] md:mz-w-[280px] lg:mz-w-[350px] mz-h-auto"
               loading="lazy"
               decoding="async"
               fetchpriority="low"
