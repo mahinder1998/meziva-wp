@@ -84,7 +84,7 @@ for ($i=1; $i<=4; $i++){
         <?php endif; ?>
 
         <?php if ($section_heading): ?>
-          <h1 class="mz-text-[34px] md:mz-text-[48px] xl:mz-text-[56px] mz-leading-[1.05] mz-font-extrabold mz-tracking-tight mz-text-text-heading">
+          <h1 class="mz-text-[22px] sm:mz-text-[24px] md:mz-text-[30px] xl:mz-text-[30px] mz-leading-[1.08] mz-font-extrabold mz-tracking-tight">
             <?php echo esc_html($section_heading); ?>
           </h1>
         <?php endif; ?>
@@ -160,7 +160,7 @@ for ($i=1; $i<=4; $i++){
 
     <div class="mz-flex mz-items-end mz-justify-between mz-gap-6 mz-flex-wrap">
       <div>
-        <h2 class="mz-text-[22px] md:mz-text-[28px] mz-font-extrabold mz-text-text-heading">Why people choose Meziva</h2>
+        <h2 class="mz-text-[22px] sm:mz-text-[24px] md:mz-text-[30px] xl:mz-text-[30px] mz-leading-[1.08] mz-font-extrabold mz-tracking-tight">Why people choose Meziva</h2>
         <p class="mz-mt-2 mz-text-[14px] md:mz-text-[16px] mz-text-text-body mz-opacity-80">Simple, honest, and effective beauty essentials.</p>
       </div>
     </div>

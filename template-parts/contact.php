@@ -44,7 +44,7 @@ $site_key = (defined('MZ_TURNSTILE_SITE_KEY') && MZ_TURNSTILE_SITE_KEY) ? MZ_TUR
 <section class="mz-w-full mz-bg-white">
   <div class="mz-max-w-6xl mz-mx-auto mz-px-4 sm:mz-px-6 lg:mz-px-8 mz-py-10 lg:mz-py-14">
 
-    <h1 class="mz-text-[36px] xl:mz-text-[50px] mz-text-center mz-leading-[1.05] mz-font-extrabold mz-tracking-tight mz-text-brand-accent mz-mb-8 xl:mz-mb-5"><?php echo esc_html($heading); ?></h1>
+    <h1 class="mz-text-[22px] sm:mz-text-[24px] md:mz-text-[30px] xl:mz-text-[30px] mz-leading-[1.08] mz-font-extrabold mz-tracking-tight mz-text-center"><?php echo esc_html($heading); ?></h1>
 
     <!-- Top -->
     <div class="mz-mt-6 mz-grid mz-grid-cols-1 lg:mz-grid-cols-12 mz-gap-6 lg:mz-gap-10 mz-items-center">

@@ -3,13 +3,16 @@ if ( ! defined('ABSPATH') ) exit;
 
 get_header();
 get_template_part('template-parts/section-hero-banner');
-get_template_part('template-parts/section-trust_icons_section');
+get_template_part('template-parts/section-trust-bar');
+// get_template_part('template-parts/section-trust_icons_section');
 get_template_part('template-parts/section-choose-shade');
-get_template_part('template-parts/section-about-product');
-get_template_part('template-parts/section-Ingredients');
-get_template_part('template-parts/section-how-it-works');
-get_template_part('template-parts/section-success-stories');
-get_template_part('template-parts/section-cta-freshbody');
+get_template_part('template-parts/section-reviews');
+get_template_part('template-parts/section-stock');
+// get_template_part('template-parts/section-about-product');
+// get_template_part('template-parts/section-Ingredients');
+// get_template_part('template-parts/section-how-it-works');
+// get_template_part('template-parts/section-success-stories');
+// get_template_part('template-parts/section-cta-freshbody');
 
 if ( have_posts() ) {
   while ( have_posts() ) {
