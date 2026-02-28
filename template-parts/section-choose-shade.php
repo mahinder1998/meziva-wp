@@ -129,7 +129,7 @@ $cards = [$p1, $p2];
 
           <!-- Media (reduced height on desktop) -->
           <div class="mz-relative">
-            <div class="mz-aspect-[4/5] sm:mz-aspect-[5/4] md:mz-aspect-[16/10] xl:mz-aspect-[16/9] mz-bg-[#F7F2F4] mz-overflow-hidden">
+            <div class="mz-aspect-[4/5] sm:mz-aspect-[5/4] md:mz-aspect-auto  mz-bg-[#F7F2F4] mz-overflow-hidden">
               <?php
                 $img = mz_render_img($p['img'], $p['title']);
                 echo $img ? $img : '<div class="mz-text-[12px] mz-opacity-70 mz-text-[#9B4A6A] mz-h-full mz-flex mz-items-center mz-justify-center">Add image in ACF</div>';
@@ -137,9 +137,12 @@ $cards = [$p1, $p2];
             </div>
 
             <!-- Pills -->
-            <div class="mz-absolute mz-left-3 mz-top-3 mz-flex mz-gap-2">
+            <div class="mz-absolute mz-left-3 mz-bottom-0 mz-flex mz-gap-2">
               <?php if (!empty($p['tag'])): ?>
-                <span class="mz-text-[10px] sm:mz-text-[11px] mz-font-bold mz-uppercase mz-tracking-wide mz-px-2.5 mz-py-1 mz-rounded-full mz-bg-[#EAF7F2] mz-text-[#0F6A4F]">
+                <span class="mz-text-[10px] sm:mz-text-[11px] mz-font-bold mz-uppercase mz-tracking-wide mz-px-2.5 mz-py-1 mz-rounded-full mz-bg-[#EAF7F2] mz-text-[#0F6A4F]
+                mz-opacity-90
+                
+                ">
                   <?php echo esc_html($p['tag']); ?>
                 </span>
               <?php endif; ?>
