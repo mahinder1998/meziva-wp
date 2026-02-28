@@ -5,6 +5,7 @@
  * ✅ Desktop cards smaller (reduced media height + container width)
  * ✅ CTA color kept as before (uses theme classes mz-bg-brand-accent / hover mz-bg-brand-primary)
  * ✅ Mobile 2 columns in 1 row
+ * ✅ NEW: Image + Title (heading) are clickable (same URL as button)
  */
 
 /** Context */
@@ -87,7 +88,7 @@ $p1 = [
   'off'   => $p1_off,
   'btn_l' => get_field('choose_shade_p1_btn_label', $ctx) ?: 'Shop Berry',
   'btn_u' => get_field('choose_shade_p1_btn_url',   $ctx) ?: '#',
-  'tag'   => get_field('choose_shade_p1_tag', $ctx) ?: 'Best Seller', // optional
+  'tag'   => get_field('choose_shade_p1_tag', $ctx) ?: 'Best Seller',
 ];
 
 $p2 = [
@@ -115,7 +116,7 @@ $cards = [$p1, $p2];
         <?php echo esc_html($heading); ?>
       </h2>
 
-      <p class="mz-mt-3 mz-text-[14px] sm:mz-text-[16px]  mz-font-semibold mz-opacity-90"
+      <p class="mz-mt-3 mz-text-[14px] sm:mz-text-[16px] mz-font-semibold mz-opacity-90"
          style="color: <?php echo esc_attr($text_color); ?>;">
         <?php echo esc_html($subhead); ?>
       </p>
@@ -124,25 +125,27 @@ $cards = [$p1, $p2];
     <!-- Cards -->
     <div class="mz-mt-8 md:mz-mt-9 mz-grid mz-grid-cols-2 md:mz-grid-cols-2 mz-gap-3 sm:mz-gap-4 md:mz-gap-6">
 
-      <?php foreach ($cards as $p): ?>
+      <?php foreach ($cards as $p): 
+        $card_url = !empty($p['btn_u']) ? $p['btn_u'] : '#';
+      ?>
         <article class="mz-group mz-rounded-2xl mz-bg-white mz-border mz-border-black/5 mz-overflow-hidden mz-shadow-sm hover:mz-shadow-md mz-transition mz-duration-200">
 
-          <!-- Media (reduced height on desktop) -->
+          <!-- Media -->
           <div class="mz-relative">
-            <div class="mz-aspect-[4/5] sm:mz-aspect-[5/4] md:mz-aspect-auto  mz-bg-[#F7F2F4] mz-overflow-hidden">
-              <?php
-                $img = mz_render_img($p['img'], $p['title']);
-                echo $img ? $img : '<div class="mz-text-[12px] mz-opacity-70 mz-text-[#9B4A6A] mz-h-full mz-flex mz-items-center mz-justify-center">Add image in ACF</div>';
-              ?>
-            </div>
+            <!-- ✅ IMAGE CLICKABLE -->
+            <a href="<?php echo esc_url($card_url); ?>" class="mz-block mz-focus:outline-none" aria-label="<?php echo esc_attr($p['title']); ?>">
+              <div class="mz-aspect-[4/5] sm:mz-aspect-[5/4] md:mz-aspect-auto mz-bg-[#F7F2F4] mz-overflow-hidden">
+                <?php
+                  $img = mz_render_img($p['img'], $p['title']);
+                  echo $img ? $img : '<div class="mz-text-[12px] mz-opacity-70 mz-text-[#9B4A6A] mz-h-full mz-flex mz-items-center mz-justify-center">Add image in ACF</div>';
+                ?>
+              </div>
+            </a>
 
             <!-- Pills -->
             <div class="mz-absolute mz-left-3 mz-bottom-0 mz-flex mz-gap-2">
               <?php if (!empty($p['tag'])): ?>
-                <span class="mz-text-[10px] sm:mz-text-[11px] mz-font-bold mz-uppercase mz-tracking-wide mz-px-2.5 mz-py-1 mz-rounded-full mz-bg-[#EAF7F2] mz-text-[#0F6A4F]
-                mz-opacity-90
-                
-                ">
+                <span class="mz-text-[10px] sm:mz-text-[11px] mz-font-bold mz-uppercase mz-tracking-wide mz-px-2.5 mz-py-1 mz-rounded-full mz-bg-[#EAF7F2] mz-text-[#0F6A4F] mz-opacity-90">
                   <?php echo esc_html($p['tag']); ?>
                 </span>
               <?php endif; ?>
@@ -158,11 +161,14 @@ $cards = [$p1, $p2];
           <!-- Content -->
           <div class="mz-p-3 sm:mz-p-4 md:mz-p-4 xl:mz-p-5 mz-text-center">
 
+            <!-- ✅ TITLE CLICKABLE -->
             <h3 class="mz-text-[15px] sm:mz-text-[18px] md:mz-text-[19px] mz-font-extrabold mz-leading-tight mz-text-[#111827]">
-              <?php echo esc_html($p['title']); ?>
+              <a href="<?php echo esc_url($card_url); ?>" class="mz-inline-block hover:mz-opacity-80 mz-transition">
+                <?php echo esc_html($p['title']); ?>
+              </a>
             </h3>
 
-            <!-- Rating row (optional look) -->
+            <!-- Rating row -->
             <div class="mz-mt-2 mz-flex mz-items-center mz-gap-2 mz-text-[12px] mz-text-text-body mz-justify-center">
               <span class="mz-inline-flex mz-items-center mz-gap-1">
                 <span class="mz-text-[#F59E0B]">★</span><span>4.7</span>
@@ -170,9 +176,7 @@ $cards = [$p1, $p2];
               <span class="mz-inline-flex mz-items-center mz-gap-1">
                 <span>Reviews</span>
               </span>
-            
             </div>
-          
 
             <!-- Price row -->
             <div class="mz-mt-2 mz-flex mz-items-baseline mz-gap-2 mz-flex-wrap mz-justify-center">
@@ -189,17 +193,13 @@ $cards = [$p1, $p2];
               <?php endif; ?>
             </div>
 
-            <p class="mz-mt-2 mz-text-[12px] sm:mz-text-[13px] md:mz-text-[14px] mz-leading-5 md:mz-leading-6 mz-text-[#6B7280] 
-            mz-px-4 lg:mz-px-8
-            ">
+            <p class="mz-mt-2 mz-text-[12px] sm:mz-text-[13px] md:mz-text-[14px] mz-leading-5 md:mz-leading-6 mz-text-[#6B7280] mz-px-4 lg:mz-px-8">
               <?php echo esc_html($p['desc']); ?>
             </p>
 
-            <!-- ✅ LIST HIDDEN (removed) -->
-
-            <!-- CTA (keep your original theme colors) -->
+            <!-- CTA -->
             <div class="mz-mt-4">
-              <a href="<?php echo esc_url($p['btn_u']); ?>"
+              <a href="<?php echo esc_url($card_url); ?>"
                  class="mz-w-full mz-inline-flex mz-items-center mz-justify-center mz-gap-2
                         mz-bg-brand-accent mz-text-white mz-font-extrabold
                         mz-rounded-xl mz-px-4 mz-py-3 md:mz-py-3.5
@@ -219,4 +219,4 @@ $cards = [$p1, $p2];
 
     </div>
   </div>
-</section> 
+</section>  
