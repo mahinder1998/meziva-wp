@@ -142,7 +142,7 @@ $short = $product ? $product->get_short_description() : '';
     <!-- RIGHT: Summary -->
     <div class="mz-text-center lg:mz-text-left xl:mz-ml-12">
       <div class="mz-flex mz-flex-col mz-gap-3">
-        <h1 class="mz-text-3xl md:mz-text-3xl mz-text-text-heading mz-font-semibold mz-leading-tight">
+        <h1 class="mz-text-[22px] sm:mz-text-[24px] md:mz-text-[30px] xl:mz-text-[30px] mz-leading-[1.08] mz-font-extrabold mz-tracking-tight">
           <?php the_title(); ?>
         </h1>
 
@@ -345,7 +345,7 @@ function mz_star_svg($type = 'full') {
 <!-- Screenshot-style summary -->
 <div class="mz-mb-6">
   <div class="mz-text-center">
-    <h2 class="mz-text-3xl mz-font-semibold mz-text-gray-900">Customer Reviews</h2>
+    <h2 class="mz-text-[22px] sm:mz-text-[24px] md:mz-text-[30px] xl:mz-text-[30px] mz-leading-[1.08] mz-font-extrabold mz-tracking-tight">Customer Reviews</h2>
 
     <div class="mz-flex mz-justify-center mz-items-center mz-gap-2 mz-mt-3 mz-text-gray-900">
       <div class="mz-flex mz-items-center">

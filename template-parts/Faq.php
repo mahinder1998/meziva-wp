@@ -68,7 +68,9 @@ function mz_render_faq_section($title_field, $icon_field, $q_prefix, $a_prefix, 
     <?php endif; ?> -->
 
     <?php if (get_field('section_heading')): ?>
-      <h1 class="mz-text-[36px] xl:mz-text-[50px] mz-text-center mz-leading-[1.05] mz-font-extrabold mz-tracking-tight mz-text-brand-accent mz-mb-8 xl:mz-mb-5">
+      <h1 class="mz-text-[22px] sm:mz-text-[24px] md:mz-text-[30px]  xl:mz-text-[30px] mz-leading-[1.08] mz-font-extrabold mz-tracking-tight
+      mz-text-center
+      ">
          <?php echo esc_html(get_field('section_heading')); ?>
       </h1>
     <?php endif; ?>

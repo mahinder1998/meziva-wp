@@ -1089,3 +1089,47 @@ body .woocommerce-MyAccount-navigation-link {
 		padding: 40px 15;
 	}
 }
+
+
+
+[data-mz-acc-item] ol {
+    padding: 20px 0;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+footer p br {
+    display: none;
+}
+
+nav.woocommerce-breadcrumb {
+    display: none;
+}
+
+h1.woocommerce-products-header__title.page-title {
+    display: none;
+}
+
+.woocommerce-js .variations select, .woocommerce-js .woocommerce-ordering select {
+    border: 1px solid #ddd;
+}
+
+.woocommerce-page.woocommerce-checkout #payment div.payment_box, .woocommerce.woocommerce-checkout #payment div.payment_box {
+    background: #ffc800;
+    color: #000;
+}
+
+
+.mz-prose ul  {
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+div[data-meziva-announcement] {
+    background: linear-gradient(90deg, #7dd6a2 0%, #b881ff 15.5%, #4ca0ff 32%, #b2ff98 49.5%, #fbf3b7 66.5%, #ffc868 81.5%, #ff6366 100%);
+    color: #000 !important;
+}
