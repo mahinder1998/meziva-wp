@@ -169,12 +169,12 @@ $cards = [$p1, $p2];
             </h3>
 
             <!-- Rating row -->
-            <div class="mz-mt-2 mz-flex mz-items-center mz-gap-2 mz-text-[12px] mz-text-text-body mz-justify-center">
+            <div class="mz-mt-2 mz-flex mz-items-center mz-gap-2 mz-text-xs mz-font-semibold xl:mz-text-text-body mz-justify-center">
               <span class="mz-inline-flex mz-items-center mz-gap-1">
                 <span class="mz-text-[#F59E0B]">★</span><span>4.7</span>
               </span>
-              <span class="mz-inline-flex mz-items-center mz-gap-1">
-                <span>Reviews</span>
+              <span class="mz-inline-flex mz-items-center mz-gap-1 product-reating">
+                <span>( 5+ Reviews )</span>
               </span>
             </div>
 
