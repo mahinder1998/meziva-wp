@@ -28,7 +28,7 @@ $wa_raw  = preg_replace('/\D+/', '', mz_get_field_safe('mz_whatsapp_number', '')
 $default_msg = "Hi Meziva Beauty 👋\nI’m interested in your skincare products. Could you please share more details?";
 $encoded_msg = rawurlencode($default_msg);
 $wa_link = $wa_raw 
-  ? ('https://wa.me/' . $wa_raw . '?text=' . $encoded_msg) 
+  ? ('https://wa.me/' . $wa_raw . '?text=' . $encoded_msg)  
   : '#';
 // Illustration (ACF image can be URL/ID/Array)
 $img = function_exists('get_field') ? get_field('mz_contact_illustration') : ''; 
