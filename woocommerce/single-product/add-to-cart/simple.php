@@ -64,6 +64,7 @@ if ($product->is_in_stock()) : ?>
 <?php endif; ?>
 
 
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.querySelector('form.cart');
@@ -72,6 +73,10 @@ document.addEventListener('DOMContentLoaded', function () {
   let alreadySubmitted = false;
 
   form.addEventListener('submit', function (e) {
+    const submitter = e.submitter;
+    const isBuyNow = submitter && submitter.name === 'mz_buy_now' && submitter.value === '1';
+    if (!isBuyNow) return;
+
     if (alreadySubmitted) return;
 
     e.preventDefault();
@@ -79,36 +84,53 @@ document.addEventListener('DOMContentLoaded', function () {
     const qtyEl = form.querySelector('input.qty');
     const qty = qtyEl ? (parseInt(qtyEl.value, 10) || 1) : 1;
 
+    const price = <?php echo json_encode((float) $product->get_price()); ?>;
+    const productId = <?php echo json_encode((string) $product->get_id()); ?>;
+    const productName = <?php echo json_encode((string) $product->get_name()); ?>;
+
     window.dataLayer = window.dataLayer || [];
+
+    window.dataLayer.push({ ecommerce: null });
+
+    function doRealSubmit(){
+      if (alreadySubmitted) return;
+      alreadySubmitted = true;
+
+      // ✅ IMPORTANT: submit with the same button so mz_buy_now=1 is sent
+      if (form.requestSubmit) {
+        form.requestSubmit(submitter);
+      } else {
+        // fallback: add hidden field then normal submit
+        let hidden = form.querySelector('input[name="mz_buy_now"]');
+        if (!hidden) {
+          hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = 'mz_buy_now';
+          form.appendChild(hidden);
+        }
+        hidden.value = '1';
+        form.submit();
+      }
+    }
 
     window.dataLayer.push({
       event: 'add_to_cart',
       ecommerce: {
         currency: 'INR',
-        value: <?= (float) $product->get_price(); ?> * qty,
+        value: (price * qty),
         items: [{
-          item_id: '<?= esc_js($product->get_id()); ?>',
-          item_name: '<?= esc_js($product->get_name()); ?>',
-          price: <?= (float) $product->get_price(); ?>,
+          item_id: productId,
+          item_name: productName,
+          price: price,
           quantity: qty
         }]
       },
-      eventCallback: function () {
-        if (alreadySubmitted) return;
-        alreadySubmitted = true;
-        form.submit(); // submit without re-triggering listener
-      },
+      eventCallback: doRealSubmit,
       eventTimeout: 1500
     });
 
-    console.log("hello buy now click")
+    setTimeout(doRealSubmit, 800);
 
-    // fallback in case callback doesn't run
-    setTimeout(function () {
-      if (alreadySubmitted) return;
-      alreadySubmitted = true;
-      form.submit();
-    }, 800);
   }, true);
 });
 </script>
