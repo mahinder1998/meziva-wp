@@ -69,25 +69,46 @@ document.addEventListener('DOMContentLoaded', function () {
   const form = document.querySelector('form.cart');
   if (!form) return;
 
-  form.addEventListener('submit', function () {
+  let alreadySubmitted = false;
+
+  form.addEventListener('submit', function (e) {
+    if (alreadySubmitted) return;
+
+    e.preventDefault();
+
     const qtyEl = form.querySelector('input.qty');
     const qty = qtyEl ? (parseInt(qtyEl.value, 10) || 1) : 1;
 
     window.dataLayer = window.dataLayer || [];
+
     window.dataLayer.push({
       event: 'add_to_cart',
       ecommerce: {
         currency: 'INR',
-        value: <?php echo (float) $product->get_price(); ?> * qty,
+        value: <?= (float) $product->get_price(); ?> * qty,
         items: [{
-          item_id: '<?php echo esc_js($product->get_id()); ?>',
-          item_name: '<?php echo esc_js($product->get_name()); ?>',
-          price: <?php echo (float) $product->get_price(); ?>,
-          quantity: qty,
-          item_category: 'Beauty'
+          item_id: '<?= esc_js($product->get_id()); ?>',
+          item_name: '<?= esc_js($product->get_name()); ?>',
+          price: <?= (float) $product->get_price(); ?>,
+          quantity: qty
         }]
-      }
+      },
+      eventCallback: function () {
+        if (alreadySubmitted) return;
+        alreadySubmitted = true;
+        form.submit(); // submit without re-triggering listener
+      },
+      eventTimeout: 1500
     });
-  });
+
+    console.log("hello buy now click")
+
+    // fallback in case callback doesn't run
+    setTimeout(function () {
+      if (alreadySubmitted) return;
+      alreadySubmitted = true;
+      form.submit();
+    }, 800);
+  }, true);
 });
 </script>
