@@ -593,54 +593,65 @@ function mz_parse_label_value_lines($text) {
  */
 add_action('wp_footer', function () {
   if (!function_exists('is_product') || !is_product()) return;
-  ?>
-  <script>
-    (function(){
-      function findQtyInput(scope){
-        return scope.querySelector('input.qty')
-          || scope.querySelector('input[name="quantity"]')
-          || scope.querySelector('input[type="number"]');
-      }
+?>
+<script>
+(function(){
 
-      function triggerAll(input){
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-        if (window.jQuery) {
-          window.jQuery(input).trigger('input').trigger('change');
-        }
-      }
+  // ✅ Prevent duplicate binding
+  if (window.__mzPdpQtyBound) return;
+  window.__mzPdpQtyBound = true;
 
-      document.addEventListener('click', function(e){
-        const btn = e.target.closest('.mz-qty-btn');
-        if(!btn) return;
+  function findQtyInput(scope){
+    return scope.querySelector('input.qty')
+      || scope.querySelector('input[name="quantity"]')
+      || scope.querySelector('input[type="number"]');
+  }
 
-        const form = btn.closest('form.cart') || btn.closest('.cart');
-        if(!form) return;
+  function triggerAll(input){
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    if (window.jQuery) {
+      window.jQuery(input).trigger('input').trigger('change');
+    }
+  }
 
-        const input = findQtyInput(form);
-        if(!input) return;
+  document.addEventListener('click', function(e){
 
-        const type = btn.getAttribute('data-type');
-        const step = parseFloat(input.getAttribute('step')) || 1;
-        const min  = input.getAttribute('min') !== null ? parseFloat(input.getAttribute('min')) : 1;
-        const max  = input.getAttribute('max') !== null ? parseFloat(input.getAttribute('max')) : Infinity;
+    const btn = e.target.closest('.mz-qty-btn');
+    if(!btn) return;
 
-        let val = parseFloat(input.value);
-        if (isNaN(val)) val = min;
+    e.preventDefault();
+    e.stopPropagation();
 
-        if(type === 'plus') val += step;
-        if(type === 'minus') val -= step;
+    const form = btn.closest('form.cart');
+    if(!form) return;
 
-        if(val < min) val = min;
-        if(val > max) val = max;
+    const input = findQtyInput(form);
+    if(!input) return;
 
-        input.value = val;
-        triggerAll(input);
-      });
-    })();
-  </script>
-  <?php
-}, 90);
+    const type = btn.dataset.type;
+    const step = parseFloat(input.getAttribute('step')) || 1;
+    const min  = input.getAttribute('min') !== null ? parseFloat(input.getAttribute('min')) : 1;
+    const max  = input.getAttribute('max') !== null ? parseFloat(input.getAttribute('max')) : Infinity;
+
+    let val = parseFloat(input.value);
+    if (isNaN(val)) val = min;
+
+    if(type === 'plus')  val += step;
+    if(type === 'minus') val -= step;
+
+    if(val < min) val = min;
+    if(val > max) val = max;
+
+    input.value = val;
+    triggerAll(input);
+
+  }, true); // capture mode prevents double bubbling
+
+})();
+</script>
+<?php
+}, 90);     
 
 
 /**
