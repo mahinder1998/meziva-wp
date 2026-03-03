@@ -62,3 +62,32 @@ if ($product->is_in_stock()) : ?>
   </form>
 
 <?php endif; ?>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('form.cart');
+  if (!form) return;
+
+  form.addEventListener('submit', function () {
+    const qtyEl = form.querySelector('input.qty');
+    const qty = qtyEl ? (parseInt(qtyEl.value, 10) || 1) : 1;
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'add_to_cart',
+      ecommerce: {
+        currency: 'INR',
+        value: <?php echo (float) $product->get_price(); ?> * qty,
+        items: [{
+          item_id: '<?php echo esc_js($product->get_id()); ?>',
+          item_name: '<?php echo esc_js($product->get_name()); ?>',
+          price: <?php echo (float) $product->get_price(); ?>,
+          quantity: qty,
+          item_category: 'Beauty'
+        }]
+      }
+    });
+  });
+});
+</script>
