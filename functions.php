@@ -1463,3 +1463,33 @@ add_action('manage_mz_contact_msg_posts_custom_column', function ($column, $post
 }, 10, 2);
 
 
+
+// checkout  shipping and billing method collect
+add_action('wp_footer', function () {
+  if (!is_checkout() || is_order_received_page()) return;
+?>
+<script>
+document.addEventListener('change', function(e){
+
+  // Shipping method select
+  if(e.target.matches('input[name^="shipping_method"]')){
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'add_shipping_info'
+    });
+    console.log('Shipping selected');
+  }
+
+  // Payment method select
+  if(e.target.matches('input[name="payment_method"]')){
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'add_payment_info'
+    });
+    console.log('Payment selected');
+  }
+
+});
+</script>
+<?php
+});
