@@ -624,6 +624,10 @@ h1, h2, h3, h4, h5, h6 {
   bottom: 1rem;
 }
 
+.mz-bottom-\[70px\] {
+  bottom: 70px;
+}
+
 .mz-left-0 {
   left: 0px;
 }
@@ -654,6 +658,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .mz-right-4 {
   right: 1rem;
+}
+
+.mz-right-\[24px\] {
+  right: 24px;
 }
 
 .mz-top-0 {
@@ -1601,6 +1609,11 @@ h1, h2, h3, h4, h5, h6 {
   border-color: rgb(90 74 79 / var(--tw-border-opacity, 1));
 }
 
+.mz-bg-\[\#25D366\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 211 102 / var(--tw-bg-opacity, 1));
+}
+
 .mz-bg-\[\#9B4A6A\] {
   --tw-bg-opacity: 1;
   background-color: rgb(155 74 106 / var(--tw-bg-opacity, 1));
@@ -2544,6 +2557,10 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0.9;
 }
 
+.hover\:mz-opacity-95:hover {
+  opacity: 0.95;
+}
+
 .hover\:mz-shadow-lg:hover {
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
@@ -2697,6 +2714,14 @@ h1, h2, h3, h4, h5, h6 {
     inset: 0px;
   }
 
+  .md\:mz-bottom-\[70px\] {
+    bottom: 70px;
+  }
+
+  .md\:mz-right-6 {
+    right: 1.5rem;
+  }
+
   .md\:mz-order-1 {
     order: 1;
   }
@@ -2798,6 +2823,10 @@ h1, h2, h3, h4, h5, h6 {
     aspect-ratio: auto;
   }
 
+  .md\:mz-h-12 {
+    height: 3rem;
+  }
+
   .md\:mz-h-14 {
     height: 3.5rem;
   }
@@ -2820,6 +2849,10 @@ h1, h2, h3, h4, h5, h6 {
 
   .md\:mz-max-h-\[75vh\] {
     max-height: 75vh;
+  }
+
+  .md\:mz-w-12 {
+    width: 3rem;
   }
 
   .md\:mz-w-14 {
