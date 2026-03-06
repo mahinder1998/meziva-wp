@@ -1534,3 +1534,82 @@ Please share shades, price & delivery details.';
 
   <?php
 }, 100);
+
+
+// 
+add_filter( 'woocommerce_product_review_list_args', 'mz_reviews_latest_first' );
+function mz_reviews_latest_first( $args ) {
+    $args['reverse_top_level'] = true;
+    return $args;
+}
+
+
+add_action('wp_enqueue_scripts', 'mz_force_cart_fragments_script', 20);
+function mz_force_cart_fragments_script() {
+    if (class_exists('WooCommerce')) {
+        wp_enqueue_script('wc-cart-fragments');
+    }
+}
+
+add_filter('woocommerce_add_to_cart_fragments', 'mz_refresh_cart_count_fragment');
+function mz_refresh_cart_count_fragment($fragments) {
+    if (!function_exists('WC') || !WC()->cart) {
+        return $fragments;
+    }
+
+    $cart_count = WC()->cart->get_cart_contents_count();
+
+    ob_start();
+    ?>
+    <span data-mz-cart-count
+        class="mz-absolute -mz-top-1 -mz-right-1 mz-min-w-[18px] mz-h-[18px] mz-rounded-full mz-bg-brand-accent mz-text-white mz-text-[11px] mz-leading-[18px] mz-text-center <?php echo ($cart_count > 0) ? '' : 'mz-hidden'; ?>"
+        aria-hidden="<?php echo ($cart_count > 0) ? 'false' : 'true'; ?>">
+        <?php echo esc_html($cart_count); ?>
+    </span>
+    <?php
+
+    $fragments['span[data-mz-cart-count]'] = ob_get_clean();
+
+    return $fragments;
+}
+
+
+
+add_action('wp_footer', 'mz_update_cart_count_after_ajax', 999);
+function mz_update_cart_count_after_ajax() {
+    if (is_admin()) return;
+    ?>
+    <script>
+    jQuery(function($){
+        $(document.body).on('added_to_cart', function(event, fragments){
+            if (fragments && fragments['span[data-mz-cart-count]']) {
+                $('span[data-mz-cart-count]').replaceWith(fragments['span[data-mz-cart-count]']);
+            } else {
+                $.get('<?php echo esc_url(admin_url('admin-ajax.php?action=mz_get_cart_count')); ?>', function(response){
+                    if (response && typeof response.count !== 'undefined') {
+                        var $count = $('span[data-mz-cart-count]');
+                        $count.text(response.count);
+
+                        if (parseInt(response.count, 10) > 0) {
+                            $count.removeClass('mz-hidden').attr('aria-hidden', 'false');
+                        } else {
+                            $count.addClass('mz-hidden').attr('aria-hidden', 'true');
+                        }
+                    }
+                });
+            }
+        });
+    });
+    </script>
+    <?php
+}
+
+
+add_action('wp_ajax_mz_get_cart_count', 'mz_get_cart_count');
+add_action('wp_ajax_nopriv_mz_get_cart_count', 'mz_get_cart_count');
+
+function mz_get_cart_count() {
+    wp_send_json(array(
+        'count' => (function_exists('WC') && WC()->cart) ? WC()->cart->get_cart_contents_count() : 0,
+    ));
+}
