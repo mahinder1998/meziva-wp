@@ -1464,35 +1464,88 @@ add_action('manage_mz_contact_msg_posts_custom_column', function ($column, $post
 
 
 
-// checkout  shipping and billing method collect
+// checkout tracking for GTM / Meta
 add_action('wp_footer', function () {
-  if (!is_checkout() || is_order_received_page()) return;
-?>
-<script>
-document.addEventListener('change', function(e){
+    if (!function_exists('is_checkout') || !is_checkout() || is_order_received_page()) return;
+    if (!function_exists('WC') || !WC()->cart) return;
 
-  // Shipping method select
-  if(e.target.matches('input[name^="shipping_method"]')){
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: 'add_shipping_info'
+    $currency = get_woocommerce_currency();
+    $total    = (float) WC()->cart->get_total('edit');
+    $items    = [];
+
+    foreach (WC()->cart->get_cart() as $cart_item) {
+        $product = $cart_item['data'];
+        if (!$product) continue;
+
+        $items[] = [
+            'item_id'   => (string) $product->get_id(),
+            'item_name' => (string) $product->get_name(),
+            'price'     => (float) wc_get_price_to_display($product),
+            'quantity'  => (int) $cart_item['quantity'],
+        ];
+    }
+    ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      window.dataLayer = window.dataLayer || [];
+
+      const checkoutCurrency = <?php echo wp_json_encode($currency); ?>;
+      const checkoutValue    = <?php echo wp_json_encode($total); ?>;
+      const checkoutItems    = <?php echo wp_json_encode($items); ?>;
+
+      // prevent duplicate begin_checkout on refresh fragments
+      const checkoutKey = 'mz_begin_checkout_fired';
+      if (!sessionStorage.getItem(checkoutKey)) {
+        window.dataLayer.push({ ecommerce: null });
+
+        window.dataLayer.push({
+          event: 'begin_checkout',
+          ecommerce: {
+            currency: checkoutCurrency,
+            value: checkoutValue,
+            items: checkoutItems
+          }
+        });
+
+        sessionStorage.setItem(checkoutKey, '1');
+        console.log('begin_checkout fired');
+      }
+
+      // Shipping method select
+      document.addEventListener('change', function (e) {
+        if (e.target.matches('input[name^="shipping_method"]')) {
+          window.dataLayer.push({ ecommerce: null });
+          window.dataLayer.push({
+            event: 'add_shipping_info',
+            ecommerce: {
+              currency: checkoutCurrency,
+              value: checkoutValue,
+              shipping_tier: e.target.value || '',
+              items: checkoutItems
+            }
+          });
+          console.log('add_shipping_info fired');
+        }
+
+        // Payment method select
+        if (e.target.matches('input[name="payment_method"]')) {
+          window.dataLayer.push({ ecommerce: null });
+          window.dataLayer.push({
+            event: 'add_payment_info',
+            ecommerce: {
+              currency: checkoutCurrency,
+              value: checkoutValue,
+              payment_type: e.target.value || '',
+              items: checkoutItems
+            }
+          });
+          console.log('add_payment_info fired');
+        }
+      });
     });
-    console.log('Shipping selected');
-  }
-
-  // Payment method select
-  if(e.target.matches('input[name="payment_method"]')){
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: 'add_payment_info'
-    });
-    console.log('Payment selected');
-  }
-
-});
-</script>
-<?php
-});
+    </script>
+    <?php
+}, 99);   
 
 
 
