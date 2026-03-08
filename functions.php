@@ -1678,8 +1678,8 @@ if (!defined('ABSPATH')) exit;
  */
 function mz_bogo_product_map() {
     return array(
-        621 => 928,
-        928 => 621,
+        784 => 743,
+        743 => 784,
     );
 }
 
