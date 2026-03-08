@@ -1666,3 +1666,270 @@ function mz_get_cart_count() {
         'count' => (function_exists('WC') && WC()->cart) ? WC()->cart->get_cart_contents_count() : 0,
     ));
 }
+
+
+
+if (!defined('ABSPATH')) exit;
+
+/**
+ * ---------------------------------------------------------
+ * PAID PRODUCT => FREE PRODUCT MAP
+ * ---------------------------------------------------------
+ */
+function mz_bogo_product_map() {
+    return array(
+        784 => 743,
+        743 => 784,
+    );
+}
+
+/**
+ * Check if cart item is free
+ */
+function mz_is_free_cart_item($cart_item) {
+    return !empty($cart_item['mz_is_free']);
+}
+
+/**
+ * Get mapped free product ID
+ */
+function mz_get_free_product_id_for_paid($paid_product_id) {
+    $map = mz_bogo_product_map();
+    return isset($map[$paid_product_id]) ? (int) $map[$paid_product_id] : 0;
+}
+
+/**
+ * Check whether free product can be added
+ */
+function mz_can_add_free_product($product_id) {
+    $product = wc_get_product($product_id);
+
+    if (!$product || !is_a($product, 'WC_Product')) {
+        return false;
+    }
+
+    if ($product->is_type('variable') || $product->is_type('grouped') || $product->is_type('external')) {
+        return false;
+    }
+
+    if (!$product->is_purchasable()) {
+        return false;
+    }
+
+    if (!$product->is_in_stock()) {
+        return false;
+    }
+
+    if ('publish' !== get_post_status($product_id)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Set free item price = 0
+ */
+add_action('woocommerce_before_calculate_totals', function($cart) {
+    if (is_admin() && !defined('DOING_AJAX')) return;
+    if (!$cart || $cart->is_empty()) return;
+
+    foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
+        if (mz_is_free_cart_item($cart_item) && !empty($cart_item['data']) && is_a($cart_item['data'], 'WC_Product')) {
+            $cart_item['data']->set_price(0);
+        }
+    }
+}, 10);
+
+/**
+ * Main BOGO sync logic
+ * FREE product always qty = 1 only
+ */
+add_action('woocommerce_before_calculate_totals', function($cart) {
+    if (is_admin() && !defined('DOING_AJAX')) return;
+    if (!$cart || $cart->is_empty()) return;
+
+    static $running = false;
+    if ($running) return;
+    $running = true;
+
+    $required_free = array();
+    $existing_free = array();
+
+    foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
+        $product_id = (int) $cart_item['product_id'];
+
+        // collect existing FREE rows
+        if (mz_is_free_cart_item($cart_item)) {
+            $source_paid_id  = !empty($cart_item['mz_source_paid_product_id']) ? (int) $cart_item['mz_source_paid_product_id'] : 0;
+            $free_product_id = $product_id;
+
+            if ($source_paid_id > 0) {
+                $group_key = $source_paid_id . '=>' . $free_product_id;
+
+                if (!isset($existing_free[$group_key])) {
+                    $existing_free[$group_key] = array();
+                }
+
+                $existing_free[$group_key][] = $cart_item_key;
+            }
+
+            continue;
+        }
+
+        // mapped free product
+        $free_product_id = mz_get_free_product_id_for_paid($product_id);
+        if (!$free_product_id) {
+            continue;
+        }
+
+        if (!mz_can_add_free_product($free_product_id)) {
+            continue;
+        }
+
+        $group_key = $product_id . '=>' . $free_product_id;
+
+        // IMPORTANT: always only 1 free
+        $required_free[$group_key] = array(
+            'paid_product_id' => $product_id,
+            'free_product_id' => $free_product_id,
+            'qty'             => 1,
+        );
+    }
+
+    // add/update free rows
+    foreach ($required_free as $group_key => $data) {
+        $needed_qty      = 1; // always only 1 free
+        $paid_product_id = (int) $data['paid_product_id'];
+        $free_product_id = (int) $data['free_product_id'];
+
+        $free_keys = !empty($existing_free[$group_key]) ? $existing_free[$group_key] : array();
+
+        if (!empty($free_keys)) {
+            $primary_key = array_shift($free_keys);
+
+            if (isset($cart->cart_contents[$primary_key])) {
+                $cart->set_quantity($primary_key, $needed_qty, false);
+            }
+
+            foreach ($free_keys as $extra_key) {
+                $cart->remove_cart_item($extra_key);
+            }
+        } else {
+            $cart->add_to_cart(
+                $free_product_id,
+                $needed_qty,
+                0,
+                array(),
+                array(
+                    'mz_is_free'                => true,
+                    'mz_source_paid_product_id' => $paid_product_id,
+                    'mz_bogo_unique'            => md5($group_key),
+                )
+            );
+        }
+    }
+
+    // remove unwanted free rows
+    foreach ($existing_free as $group_key => $free_keys) {
+        if (!isset($required_free[$group_key])) {
+            foreach ($free_keys as $free_key) {
+                $cart->remove_cart_item($free_key);
+            }
+        }
+    }
+
+    $running = false;
+}, 20);
+
+/**
+ * Show FREE label in price
+ */
+add_filter('woocommerce_cart_item_price', function($price, $cart_item, $cart_item_key) {
+    if (mz_is_free_cart_item($cart_item)) {
+        return '<span style="color:#16a34a;font-weight:700;">FREE</span>';
+    }
+    return $price;
+}, 10, 3);
+
+/**
+ * Show FREE label in subtotal
+ */
+add_filter('woocommerce_cart_item_subtotal', function($subtotal, $cart_item, $cart_item_key) {
+    if (mz_is_free_cart_item($cart_item)) {
+        return '<span style="color:#16a34a;font-weight:700;">FREE</span>';
+    }
+    return $subtotal;
+}, 10, 3);
+
+/**
+ * Add FREE label in name
+ */
+add_filter('woocommerce_cart_item_name', function($name, $cart_item, $cart_item_key) {
+    if (mz_is_free_cart_item($cart_item)) {
+        $name .= ' <small style="color:#16a34a;font-weight:600;">(FREE)</small>';
+    }
+    return $name;
+}, 10, 3);
+
+/**
+ * Hide quantity controls for FREE items
+ */
+add_filter('woocommerce_cart_item_quantity', function($product_quantity, $cart_item_key, $cart_item) {
+    if (mz_is_free_cart_item($cart_item)) {
+        return '<span class="mz-free-qty" style="display:inline-block;min-width:20px;text-align:center;">1</span>';
+    }
+    return $product_quantity;
+}, 10, 3);
+
+/**
+ * Hide remove link for FREE items
+ */
+add_filter('woocommerce_cart_item_remove_link', function($link, $cart_item_key) {
+    if (!WC()->cart) return $link;
+
+    $cart_item = WC()->cart->get_cart_item($cart_item_key);
+    if (!empty($cart_item['mz_is_free'])) {
+        return '';
+    }
+
+    return $link;
+}, 10, 2);
+
+/**
+ * Prevent manual qty update for FREE items
+ */
+add_filter('woocommerce_update_cart_validation', function($passed, $cart_item_key, $values, $quantity) {
+    if (!empty($values['mz_is_free'])) {
+        return false;
+    }
+    return $passed;
+}, 10, 4);
+
+/**
+ * Add custom class
+ */
+add_filter('woocommerce_cart_item_class', function($class, $cart_item, $cart_item_key) {
+    if (mz_is_free_cart_item($cart_item)) {
+        $class .= ' mz-free-item';
+    }
+    return $class;
+}, 10, 3);
+
+/**
+ * Remove invalid FREE items before checkout
+ */
+add_action('woocommerce_check_cart_items', function() {
+    if (!WC()->cart) return;
+
+    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+        if (!empty($cart_item['mz_is_free'])) {
+            $product_id = (int) $cart_item['product_id'];
+
+            if (!mz_can_add_free_product($product_id)) {
+                WC()->cart->remove_cart_item($cart_item_key);
+            }
+        }
+    }
+});
+

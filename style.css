@@ -1133,3 +1133,21 @@ div[data-meziva-announcement] {
     background: linear-gradient(90deg, #7dd6a2 0%, #b881ff 15.5%, #4ca0ff 32%, #b2ff98 49.5%, #fbf3b7 66.5%, #ffc868 81.5%, #ff6366 100%);
     color: #000 !important;
 }
+
+ .woocommerce .mz-free-qty {
+            font-weight: 600;
+        }
+
+        .woocommerce .mz-free-item .quantity input,
+        .woocommerce .mz-free-item .quantity button,
+        .woocommerce .mz-free-item .qty {
+            display: none !important;
+        }
+
+.mz-free-item .mz-ck-qty.mz-inline-flex.mz-items-center.mz-gap-2 {
+    display: none !important;
+}
+
+.mz-free-item button.mz-ck-remove.mz-bg-white.mz-w-2.mz-h-2 {
+    display: none;
+}
