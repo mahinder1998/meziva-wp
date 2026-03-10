@@ -64,7 +64,7 @@ $mz_review_count = is_array( $mz_reviews ) ? count( $mz_reviews ) : 0;
 		<div id="review_form_wrapper" class="">
 			<div id="review_form">
 				<?php
-				$commenter    = wp_get_current_commenter();
+				$commenter    = wp_get_current_commenter(); 
 				$comment_form = array(
 					'title_reply'         => have_comments() ? esc_html__( 'Add a review', 'woocommerce' ) : sprintf( esc_html__( 'Be the first to review &ldquo;%s&rdquo;', 'woocommerce' ), get_the_title() ),
 					'title_reply_to'      => esc_html__( 'Leave a Reply to %s', 'woocommerce' ),

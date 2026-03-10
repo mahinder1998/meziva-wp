@@ -1173,3 +1173,24 @@ div[data-meziva-announcement] {
   border: 0 !important;
   padding: 0 !important;
 }
+
+
+[data-mz-thumb] {
+  transition: all 0.25s ease;
+}
+
+[data-mz-thumb].mz-ring-2 {
+  border-radius: 0.75rem;
+}
+
+[data-mz-slider-dots] button {
+  border: none;
+  padding: 0;
+  outline: none;
+}
+
+[data-mz-main-slider] .keen-slider__slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}  

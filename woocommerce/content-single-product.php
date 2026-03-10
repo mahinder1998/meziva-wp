@@ -128,24 +128,43 @@ $short = $product ? $product->get_short_description() : '';
 
         <div class="mz-relative mz-rounded-2xl mz-overflow-hidden mz-bg-gray-50 mz-border mz-border-gray-200">
 
-          <a
-            href="<?php echo esc_url($first_full); ?>"
-            class="mz-block"
-            data-fancybox="mz-product"
-            data-mz-main-link
-          >
-            <img
-              src="<?php echo esc_url($first_large); ?>"
-              alt="<?php echo esc_attr($first_alt); ?>"
-              class="mz-w-full mz-h-[420px] sm:mz-h-[500px] md:mz-h-[620px] mz-object-contain"
-              data-mz-main-img
-              loading="eager"
-            />
-          </a>
+          <!-- MAIN SLIDER -->
+          <div class="keen-slider" data-mz-main-slider>
+            <?php foreach ($image_ids as $i => $img_id) :
+              $large = wp_get_attachment_image_url($img_id, 'large');
+              $full  = wp_get_attachment_image_url($img_id, 'full');
+              $alt   = get_post_meta($img_id, '_wp_attachment_image_alt', true);
+            ?>
+              <div
+                class="keen-slider__slide"
+                data-mz-slide
+                data-full="<?php echo esc_url($full); ?>"
+                data-large="<?php echo esc_url($large); ?>"
+                data-index="<?php echo (int) $i; ?>"
+              >
+                <a
+                  href="<?php echo esc_url($full); ?>"
+                  class="mz-block"
+                  data-fancybox="mz-product"
+                  data-mz-main-link
+                  data-index="<?php echo (int) $i; ?>"
+                >
+                  <img
+                    src="<?php echo esc_url($large); ?>"
+                    alt="<?php echo esc_attr($alt); ?>"
+                    class="mz-w-full mz-h-[420px] sm:mz-h-[500px] md:mz-h-[620px] mz-object-contain"
+                    loading="<?php echo $i === 0 ? 'eager' : 'lazy'; ?>"
+                    data-mz-main-img
+                  />
+                </a>
+              </div>
+            <?php endforeach; ?>
+          </div>
 
+          <!-- ZOOM -->
           <button
             type="button"
-            class="mz-absolute mz-top-4 mz-right-4 mz-w-10 mz-h-10 mz-rounded-full mz-bg-white/90 mz-shadow-md mz-border mz-border-gray-200 mz-flex mz-items-center mz-justify-center hover:mz-scale-105 mz-transition"
+            class="mz-absolute mz-top-4 mz-right-4 mz-z-10 mz-w-10 mz-h-10 mz-rounded-full mz-bg-white/90 mz-shadow-md mz-border mz-border-gray-200 mz-flex mz-items-center mz-justify-center hover:mz-scale-105 mz-transition"
             data-mz-zoom
             aria-label="Zoom image"
           >
@@ -155,15 +174,18 @@ $short = $product ? $product->get_short_description() : '';
           </button>
 
           <?php if ($product->is_on_sale()) : ?>
-            <span class="mz-absolute mz-top-4 mz-left-4 mz-bg-brand-accent mz-text-white mz-text-xs mz-font-semibold mz-px-3 mz-py-1.5 mz-rounded-full mz-shadow">
+            <span class="mz-absolute mz-top-4 mz-left-4 mz-z-10 mz-bg-brand-accent mz-text-white mz-text-xs mz-font-semibold mz-px-3 mz-py-1.5 mz-rounded-full mz-shadow">
               Sale!
             </span>
           <?php endif; ?>
+
+          <!-- DOTS -->
+          <div class="mz-absolute mz-bottom-4 mz-left-1/2 -mz-translate-x-1/2 mz-z-10 mz-flex mz-items-center mz-gap-2 lg:mz-hidden" data-mz-slider-dots></div>
         </div>
 
+        <!-- HIDDEN EXTRA FANCYBOX LINKS -->
         <div class="mz-hidden">
           <?php foreach ($image_ids as $img_id) :
-            if ((int) $img_id === (int) $first_id) continue;
             $full = wp_get_attachment_image_url($img_id, 'full');
             $alt  = get_post_meta($img_id, '_wp_attachment_image_alt', true);
           ?>
@@ -171,6 +193,7 @@ $short = $product ? $product->get_short_description() : '';
           <?php endforeach; ?>
         </div>
 
+        <!-- THUMBS -->
         <div class="mz-mt-4">
           <div class="mz-keen-thumbs keen-slider" data-mz-thumbs>
             <?php foreach ($image_ids as $i => $img_id) :
@@ -185,6 +208,7 @@ $short = $product ? $product->get_short_description() : '';
                 data-mz-thumb
                 data-large="<?php echo esc_url($large); ?>"
                 data-full="<?php echo esc_url($full); ?>"
+                data-index="<?php echo (int) $i; ?>"
                 aria-label="Select image <?php echo (int) ($i + 1); ?>"
               >
                 <span class="mz-rounded-xl mz-overflow-hidden mz-h-20 mz-p-1 mz-flex mz-items-center mz-justify-center">
@@ -204,7 +228,7 @@ $short = $product ? $product->get_short_description() : '';
         <div class="mz-text-gray-500">No product images found.</div>
       <?php endif; ?>
     </div>
-
+   
     <!-- RIGHT: Summary -->
     <div class="mz-order-3 lg:mz-order-2 mz-text-center lg:mz-text-left xl:mz-ml-12">
 
@@ -505,11 +529,11 @@ $short = $product ? $product->get_short_description() : '';
 </div>
 
 <!-- MOBILE STICKY CTA -->
-<div class="lg:mz-hidden mz-fixed mz-bottom-0 mz-left-0 mz-right-0 mz-z-50 mz-bg-white mz-border-t mz-border-gray-200 mz-shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+<div class="lg:mz-hidden mz-fixed mz-bottom-0 mz-left-0 mz-right-0  mz-bg-white mz-border-t mz-border-gray-200 mz-shadow-[0_-4px_20px_rgba(0,0,0,0.08)] mz-z-[999999]">
   <div class="mz-px-4 mz-py-3 mz-flex mz-items-center mz-gap-3 mz-relative mz-z-[999]">
-    <div class="mz-flex-1 mz-min-w-0">
+    <div class="mz-flex-1 mz-min-w-0"> 
       <?php if (!$product->is_type('variable')) : ?>
-        <div class="mz-text-[20px] mz-font-extrabold mz-leading-tight mz-text-gray-900">
+        <div class="mz-text-[18px] mz-font-extrabold mz-leading-tight mz-text-gray-900">
           <?php echo wp_kses_post($product->get_price_html()); ?>
         </div>
       <?php else : ?>
@@ -520,13 +544,49 @@ $short = $product ? $product->get_short_description() : '';
       <?php endif; ?>
     </div>
 
-    <a
-      href="#mz-pdp-cart-form"
-      class="mz-inline-flex mz-items-center mz-justify-center mz-h-[50px] mz-min-w-[170px] mz-px-6 mz-rounded-xl mz-bg-brand-accent mz-text-white mz-font-bold mz-text-[16px] hover:mz-opacity-90 mz-transition"
-    >
-      Buy Now
-    </a>
+   <button
+  type="button"
+  data-mz-sticky-buy-now
+  class="mz-inline-flex mz-items-center mz-justify-center mz-h-[50px] mz-min-w-[170px] mz-px-6 mz-rounded-xl mz-bg-brand-accent mz-text-white mz-font-bold mz-text-[16px] hover:mz-opacity-90 mz-transition"
+>
+  Buy Now
+</button>
   </div>
 </div>
 
 <?php do_action('woocommerce_after_single_product'); ?> 
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const stickyBtn = document.querySelector('[data-mz-sticky-buy-now]');
+  if (!stickyBtn) return;
+
+  stickyBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    const cartForm = document.querySelector('#mz-pdp-cart-form form.cart');
+    if (!cartForm) return;
+
+    const realBuyNowBtn = cartForm.querySelector('[data-mz-real-buy-now]');
+    if (!realBuyNowBtn) {
+      cartForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // pehle form tak smooth scroll
+    cartForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // thoda delay deke actual buy now trigger karo
+    setTimeout(function () {
+      if (realBuyNowBtn.disabled) return;
+
+      if (typeof cartForm.requestSubmit === 'function') {
+        cartForm.requestSubmit(realBuyNowBtn);
+      } else {
+        realBuyNowBtn.click();
+      }
+    }, 250);
+  });
+});
+</script>  
