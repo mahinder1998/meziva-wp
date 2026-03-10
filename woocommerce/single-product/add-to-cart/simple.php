@@ -19,7 +19,7 @@ if ($product->is_in_stock()) : ?>
 
     <div class="mz-grid mz-place-items-center mz-items-center mz-gap-4 lg:mz-flex lg:mz-gap-5 lg:mz-flex-nowrap">
 
-      <div class="mz-flex mz-max-w-[250px] lg:mz-max-w-full mz-mx-auto mz-border mz-rounded-xl mz-border-gray-200 mz-overflow-hidden">
+      <div class="mz-flex lg:mz-max-w-full mz-mx-auto mz-border mz-rounded-xl mz-border-gray-200 mz-overflow-hidden">
         <button type="button" class="mz-qty-btn mz-w-12 mz-h-12 mz-flex mz-items-center mz-justify-center mz-text-lg mz-select-none mz-border-none" data-type="minus">
           <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"/>
@@ -51,7 +51,7 @@ if ($product->is_in_stock()) : ?>
       <button type="submit"
               name="mz_buy_now"
               value="1"
-              class="button button-buy-now alt mz-h-12 mz-px-10 lg:mz-mt-0 mz-flex mz-max-w-[250px] mz-w-full mz-justify-center mz-bg-brand-accent hover:mz-bg-brand-primary mz-text-white mz-font-semibold mz-rounded-md">
+              class="button button-buy-now alt mz-h-12 mz-px-10 lg:mz-mt-0 mz-flex  mz-w-full mz-justify-center mz-bg-brand-accent hover:mz-bg-brand-primary mz-text-white mz-font-semibold mz-rounded-md">
         Buy now
       </button>
 

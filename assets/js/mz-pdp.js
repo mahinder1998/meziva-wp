@@ -15,20 +15,108 @@
       </svg>
     `;
 
-    function setPanel(panel, open) {
-      if (!panel) return;
-      if (open) {
-        panel.style.height = panel.scrollHeight + "px";
-        panel.dataset.open = "1";
-      } else {
-        panel.style.height = "0px";
-        panel.dataset.open = "0";
-      }
+    // Sticky header offset
+    function getStickyOffset() {
+      const selectors = [
+        '.site-header',
+        '.ast-sticky-active',
+        '.main-header-bar',
+        '[data-sticky-header]',
+        '.header-sticky',
+        '.sticky-header',
+        'header'
+      ];
+
+      let maxHeight = 0;
+
+      selectors.forEach((selector) => {
+        document.querySelectorAll(selector).forEach((el) => {
+          const style = window.getComputedStyle(el);
+          const isStickyLike =
+            style.position === "sticky" || style.position === "fixed";
+
+          if (isStickyLike) {
+            const rect = el.getBoundingClientRect();
+            if (rect.height > maxHeight) {
+              maxHeight = rect.height;
+            }
+          }
+        });
+      });
+
+      return maxHeight + 12; // little breathing space
     }
 
     function setIcon(iconEl, open) {
       if (!iconEl) return;
       iconEl.innerHTML = open ? MINUS_SVG : PLUS_SVG;
+    }
+
+    function openPanel(panel) {
+      if (!panel) return;
+
+      panel.style.overflow = "hidden";
+      panel.style.height = panel.scrollHeight + "px";
+      panel.dataset.open = "1";
+
+      const onEnd = function (e) {
+        if (e.propertyName !== "height") return;
+        if (panel.dataset.open === "1") {
+          panel.style.height = "auto";
+        }
+        panel.removeEventListener("transitionend", onEnd);
+      };
+
+      panel.addEventListener("transitionend", onEnd);
+    }
+
+    function closePanel(panel) {
+      if (!panel) return;
+
+      panel.style.overflow = "hidden";
+
+      // if panel already auto, first lock current height
+      panel.style.height = panel.scrollHeight + "px";
+
+      requestAnimationFrame(() => {
+        panel.style.height = "0px";
+      });
+
+      panel.dataset.open = "0";
+    }
+
+    function keepTriggerVisible(btn, beforeTop) {
+      const stickyOffset = getStickyOffset();
+
+      // frame 1
+      requestAnimationFrame(() => {
+        const afterTop1 = btn.getBoundingClientRect().top;
+        const delta1 = afterTop1 - beforeTop;
+        if (Math.abs(delta1) > 1) {
+          window.scrollBy(0, delta1);
+        }
+
+        // frame 2
+        requestAnimationFrame(() => {
+          const afterTop2 = btn.getBoundingClientRect().top;
+          const delta2 = afterTop2 - beforeTop;
+          if (Math.abs(delta2) > 1) {
+            window.scrollBy(0, delta2);
+          }
+        });
+
+        // after transition completes, ensure button is not hidden behind sticky header
+        setTimeout(() => {
+          const rect = btn.getBoundingClientRect();
+
+          if (rect.top < stickyOffset) {
+            window.scrollBy({
+              top: rect.top - stickyOffset,
+              behavior: "auto",
+            });
+          }
+        }, 320);
+      });
     }
 
     triggers.forEach((btn) => {
@@ -37,40 +125,60 @@
       const icon = btn.querySelector("[data-mz-acc-icon]");
       if (!panel) return;
 
-      // initial state
       const isOpen = btn.getAttribute("aria-expanded") === "true";
-      setPanel(panel, isOpen);
+
+      if (isOpen) {
+        panel.dataset.open = "1";
+        panel.style.height = "auto";
+      } else {
+        panel.dataset.open = "0";
+        panel.style.height = "0px";
+      }
+
       setIcon(icon, isOpen);
       if (item) item.classList.toggle("mz-acc-open", isOpen);
 
       btn.addEventListener("click", () => {
+        const beforeTop = btn.getBoundingClientRect().top;
+
         const isCurrentlyOpen = panel.dataset.open === "1";
         const willOpen = !isCurrentlyOpen;
 
-        // close others (tabs style)
+        // close others
         triggers.forEach((b) => {
           if (b === btn) return;
+
           const it = b.closest("[data-mz-acc-item]");
           const p = it ? it.querySelector("[data-mz-acc-panel]") : null;
           const ic = b.querySelector("[data-mz-acc-icon]");
           if (!p) return;
 
           b.setAttribute("aria-expanded", "false");
-          setPanel(p, false);
+          closePanel(p);
           setIcon(ic, false);
           if (it) it.classList.remove("mz-acc-open");
         });
 
         // toggle current
         btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
-        setPanel(panel, willOpen);
+
+        if (willOpen) {
+          openPanel(panel);
+        } else {
+          closePanel(panel);
+        }
+
         setIcon(icon, willOpen);
         if (item) item.classList.toggle("mz-acc-open", willOpen);
-      });
 
-      // keep height correct on resize
-      window.addEventListener("resize", () => {
-        if (panel.dataset.open === "1") {
+        // important fix
+        keepTriggerVisible(btn, beforeTop);
+      });
+    });
+
+    window.addEventListener("resize", () => {
+      document.querySelectorAll("[data-mz-acc-panel]").forEach((panel) => {
+        if (panel.dataset.open === "1" && panel.style.height !== "auto") {
           panel.style.height = panel.scrollHeight + "px";
         }
       });
@@ -82,5 +190,4 @@
   } else {
     initAccordion();
   }
-})();
-  
+})(); 

@@ -1933,3 +1933,100 @@ add_action('woocommerce_check_cart_items', function() {
     }
 });
 
+
+
+
+
+// 
+
+if ( ! function_exists( 'mz_render_review_stars' ) ) {
+	function mz_render_review_stars( $rating = 0 ) {
+		$rating = (int) $rating;
+		if ( $rating < 0 ) $rating = 0;
+		if ( $rating > 5 ) $rating = 5;
+
+		ob_start(); ?>
+		<div class="mz-flex mz-items-center">
+			<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
+				<?php $filled = $i <= $rating; ?>
+				<svg class="mz-w-5 mz-h-5" viewBox="0 0 20 20" fill="#fda256" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.156c.969 0 1.371 1.24.588 1.81l-3.363 2.443a1 1 0 00-.364 1.118l1.285 3.955c.3.921-.755 1.688-1.538 1.118l-3.363-2.443a1 1 0 00-1.176 0l-3.363 2.443c-.783.57-1.838-.197-1.538-1.118l1.285-3.955a1 1 0 00-.364-1.118L2.07 9.382c-.783-.57-.38-1.81.588-1.81h4.156a1 1 0 00.95-.69l1.286-3.955z"></path></svg>
+			<?php endfor; ?>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
+}
+
+if ( ! function_exists( 'mz_wc_review_card_callback' ) ) {
+	function mz_wc_review_card_callback( $comment, $args, $depth ) {
+		$GLOBALS['comment'] = $comment;
+
+		if ( 'comment' !== get_comment_type( $comment ) && 'review' !== get_comment_type( $comment ) ) {
+			return;
+		}
+
+		$comment_id = $comment->comment_ID;
+		$author     = get_comment_author( $comment );
+		$rating     = (int) get_comment_meta( $comment_id, 'rating', true );
+		$verified   = function_exists( 'wc_review_is_from_verified_owner' ) ? wc_review_is_from_verified_owner( $comment_id ) : false;
+
+		$author_initial = ! empty( $author ) ? strtoupper( mb_substr( trim( $author ), 0, 1 ) ) : 'U';
+
+		$time_ago = human_time_diff( get_comment_date( 'U', $comment ), current_time( 'timestamp' ) ) . ' ago';
+
+		$review_title = get_comment_meta( $comment_id, 'review_title', true );
+
+		if ( ! $review_title ) {
+			$plain = trim( wp_strip_all_tags( $comment->comment_content ) );
+			if ( $plain ) {
+				$words = preg_split( '/\s+/', $plain );
+				$review_title = implode( ' ', array_slice( $words, 0, 5 ) );
+				if ( count( $words ) > 5 ) {
+					$review_title .= '...';
+				}
+			}
+		}
+		?>
+		<li <?php comment_class( 'mz-list-none mz-m-0 mz-p-0' ); ?> id="li-comment-<?php comment_ID(); ?>">
+			<div id="comment-<?php comment_ID(); ?>" class="mz-border mz-border-[#d9d9d9] mz-rounded-[20px] mz-bg-white mz-p-4 md:mz-p-6 mz-mb-4">
+				<div class="mz-flex mz-items-center mz-justify-between mz-gap-3 mz-mb-5">
+					<div class="mz-shrink-0"><?php echo mz_render_review_stars( $rating ); ?></div>
+					<div class="mz-text-[#7a7a7a] mz-text-sm md:mz-text-[15px] mz-leading-none mz-whitespace-nowrap"><?php echo esc_html( $time_ago ); ?></div>
+				</div>
+
+				<div class="mz-flex mz-items-center mz-gap-4 mz-mb-5">
+					<div class="mz-relative mz-shrink-0">
+						<div class="mz-w-12 mz-h-12 md:mz-w-14 md:mz-h-14  mz-bg-[#9B4A6A] mz-rounded-full mz-text-white mz-font-bold mz-text-2xl md:mz-text-3xl mz-flex mz-items-center mz-justify-center">
+							<?php echo esc_html( $author_initial ); ?>
+						</div>
+
+						<?php if ( $verified ) : ?>
+							<span class="mz-absolute mz-right-[-4px] mz-bottom-[-4px] mz-w-6 mz-h-6 mz-rounded-full mz-bg-[#0f9d3e] mz-border-2 mz-border-white mz-flex mz-items-center mz-justify-center mz-text-white">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" class="mz-w-3 mz-h-3" aria-hidden="true">
+									<path d="M16.667 5 7.5 14.167 3.333 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+							</span>
+						<?php endif; ?>
+					</div>
+
+					<div class="mz-min-w-0">
+						<div class="mz-text-[#9B4A6A] mz-font-bold mz-text-xl md:mz-text-[18px] mz-leading-tight">
+							<?php echo esc_html( $author ); ?>
+						</div>
+
+						<?php if ( $verified ) : ?>
+							<div class="mz-text-[#118a2f] mz-font-bold mz-text-base md:mz-text-[17px] mz-leading-tight mz-mt-1">
+								Verified User
+							</div>
+						<?php endif; ?>
+					</div>
+				</div>
+
+				<div class="mz-text-[#5b5b5b] mz-text-base md:mz-text-[18px] mz-leading-[1.6] [&>p:last-child]:mz-mb-0">
+					<?php comment_text(); ?>
+				</div>
+			</div>
+		</li>
+		<?php
+	}
+}    
