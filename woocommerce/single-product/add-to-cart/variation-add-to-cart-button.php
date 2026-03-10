@@ -10,7 +10,7 @@ global $product;
 
     <?php do_action('woocommerce_before_add_to_cart_quantity'); ?>
 
-    <div class="mz-flex mz-max-w-[250px] lg:mz-max-w-full mz-mx-auto mz-border mz-rounded-xl mz-border-gray-200 mz-overflow-hidden">
+    <div class="mz-flex  lg:mz-max-w-full mz-mx-auto mz-border mz-rounded-xl mz-border-gray-200 mz-overflow-hidden">
       <button type="button" class="mz-qty-btn mz-w-12 mz-h-12 mz-flex mz-items-center mz-justify-center mz-text-lg mz-select-none mz-border-none" data-type="minus">
         <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"/>
@@ -39,18 +39,18 @@ global $product;
 
     <!-- (Optional) Normal Add to cart button -->
     <button type="submit"
-      class="single_add_to_cart_button button alt mz-h-12 mz-px-10 lg:mz-mt-0 mz-flex mz-max-w-[250px] mz-w-full mz-justify-center mz-bg-green-500 hover:mz-bg-green-600 mz-text-white mz-font-semibold mz-rounded-md">
+      class="single_add_to_cart_button button alt mz-h-12 mz-px-10 lg:mz-mt-0 mz-flex  mz-w-full mz-justify-center mz-bg-green-500 hover:mz-bg-green-600 mz-text-white mz-font-semibold mz-rounded-md">
       <?php echo esc_html($product->single_add_to_cart_text()); ?>
     </button>
 
-    <!-- ✅ Buy Now -->
+    <!--  Buy Now -->
     <button type="submit"
       name="mz_buy_now"
       value="1"
-      class="button button-buy-now  alt mz-h-12 mz-px-10 lg:mz-mt-0 mz-flex mz-max-w-[250px] mz-w-full mz-justify-center mz-bg-brand-accent hover:mz-bg-brand-primary mz-text-white mz-font-bold mz-rounded-md">
+      class="button button-buy-now  alt mz-h-12 mz-px-10 lg:mz-mt-0 mz-flex  mz-w-full mz-justify-center mz-bg-brand-accent hover:mz-bg-brand-primary mz-text-white mz-font-bold mz-rounded-md">
       Buy now
-    </button>
-
+    </button> 
+  
     <input type="hidden" name="add-to-cart" value="<?php echo absint($product->get_id()); ?>" />
     <input type="hidden" name="product_id" value="<?php echo absint($product->get_id()); ?>" />
     <input type="hidden" name="variation_id" class="variation_id" value="0" />

@@ -1151,3 +1151,25 @@ div[data-meziva-announcement] {
 .mz-free-item button.mz-ck-remove.mz-bg-white.mz-w-2.mz-h-2 {
     display: none;
 }
+
+
+
+.woocommerce #reviews #comments ol.commentlist {
+  padding-left: 0 !important;
+}
+
+.woocommerce #reviews #comments ol.commentlist li {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+}
+
+.woocommerce #reviews #comments ol.commentlist li img.avatar {
+  display: none !important;
+}
+
+.woocommerce #reviews #comments ol.commentlist li .comment-text {
+  margin: 0 !important;
+  border: 0 !important;
+  padding: 0 !important;
+}
