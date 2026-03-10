@@ -49,11 +49,12 @@ if ($product->is_in_stock()) : ?>
 
       <!-- ✅ Buy Now (adds to cart + redirects to checkout via filter) -->
       <button type="submit"
-              name="mz_buy_now"
-              value="1"
-              class="button button-buy-now alt mz-h-12 mz-px-10 lg:mz-mt-0 mz-flex  mz-w-full mz-justify-center mz-bg-brand-accent hover:mz-bg-brand-primary mz-text-white mz-font-semibold mz-rounded-md">
-        Buy now
-      </button>
+        name="mz_buy_now"
+        value="1"
+        data-mz-real-buy-now
+        class="button button-buy-now alt mz-h-12 mz-px-10 lg:mz-mt-0 mz-flex mz-w-full mz-justify-center mz-bg-brand-accent hover:mz-bg-brand-primary mz-text-white mz-font-semibold mz-rounded-md">
+      Buy now
+    </button>
 
     </div>
 
